@@ -7,7 +7,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3000/posts')
+      .get('http://localhost:3001/posts')
       .then((response) => {
         setPosts(response.data);
       })

@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Connect to MongoDB database
-mongoose.connect('mongodb://localhost:27017/blog', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://Afriscope:FxSjSDlVSlcuZDGa@afriscope-cluster.ud7aekw.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
   })
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 // Start the server
-const port = 3000;
+const port = 3001;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
