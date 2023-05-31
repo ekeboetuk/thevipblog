@@ -1,0 +1,60 @@
+/** Root Reset **/
+
+*{
+    font-family: 'Hanuman', serif;
+    font-family: 'Raleway', sans-serif;
+}
+
+:root {
+    --primary-color: #74415D;
+    --secondary-color: #2F2B2B;
+}
+
+/** Overwrites **/
+.container-md {
+    max-width: 1140px !important;
+}
+
+.row {
+    --mdb-gutter-x: 0.6rem !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+  }
+
+.bg-secondary {
+    background-color: var(--secondary-color) !important;
+  }
+
+.border-primary {
+    border-color:  var(--primary-color) !important;;
+}
+
+.fs-7 {
+    font-size: 16px;
+}
+
+.carousel-caption {
+    position: absolute !important;
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+    margin: auto;
+    width: 40vw !important;
+    bottom: 10rem !important;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 2px solid #FFFFFF;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 27% !important;
+}
+
+.carousel-indicators [data-mdb-target] {
+    width: 15px !important;
+    height: 14px !important;
+    border-radius: 50%;
+}
+
+/** Customs **/
+

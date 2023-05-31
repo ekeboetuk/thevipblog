@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import axios from 'axios';
+import Header from './components/header';
+import Slider from './components/slider';
+import Postcard from './components/postcard';
+import Footer from './components/footer';
+import Copyright from './components/copyright'
 
 const App = () => {
   const [posts, setPosts] = useState([]);
@@ -17,28 +22,33 @@ const App = () => {
   }, []);
 
   return (
-    <Router>
+    <div>
+      <Header sticky="top"/>
+      <Slider />
       <div>
-        <h1>Blog</h1>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-          </ul>
-        </nav>
-
-        <Route exact path="/">
-          <h2>Recent Posts</h2>
-          {posts.map((post) => (
-            <div key={post.id}>
-              <h3>{post.title}</h3>
-              <p>{post.content}</p>
-            </div>
-          ))}
-        </Route>
+        <div className="container-md mx-auto py-5">
+          <h2 className="text-center">FEATURED POSTS</h2>
+          <Router>
+    `       <Routes>
+              <Route exact path="/">
+                {posts.map((post) => (
+                  <div key={post.id}>
+                    <Postcard
+                      image={post.image}
+                      title={post.title}
+                      content={post.content}
+                      category={post.category}
+                    />
+                  </div>
+                ))}
+              </Route>
+            </Routes>
+          </Router>
+        </div>
       </div>
-    </Router>
+      <Footer />
+      <Copyright />
+    </div>
   );
 };
 
