@@ -1,5 +1,3 @@
-import '../styles.css';
-
 function Copyright() {
   return (
     <div className="bg-secondary square border-top border-primary py-3 text-light">

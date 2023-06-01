@@ -1,60 +1,187 @@
 /** Root Reset **/
 
-*{
-    font-family: 'Hanuman', serif;
-    font-family: 'Raleway', sans-serif;
+:root {
+  --primary-color: #74415D;
+  --secondary-color: #2F2B2B;
+  --tertiary-color: #F5EFEF;
 }
 
-:root {
-    --primary-color: #74415D;
-    --secondary-color: #2F2B2B;
+body {
+  margin: 0;
+  font-family: 'Hanuman', BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight:lighter !important;
 }
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 
 /** Overwrites **/
+
 .container-md {
-    max-width: 1140px !important;
+  max-width: 1240px !important;
+}
+
+.container-sm {
+  max-width: 768px !important;
 }
 
 .row {
-    --mdb-gutter-x: 0.6rem !important;
+  --mdb-gutter-x: 0.6rem !important;
 }
 
 .bg-primary {
-    background-color: var(--primary-color) !important;
-  }
+  background-color: var(--primary-color) !important;
+}
 
 .bg-secondary {
-    background-color: var(--secondary-color) !important;
-  }
+  background-color: var(--secondary-color) !important;
+}
+
+.bg-tertiary {
+  background-color: var(--tertiary-color) !important;
+}
 
 .border-primary {
     border-color:  var(--primary-color) !important;;
 }
 
+.border-seconday {
+    border-color:  var(--secondary-color) !important;;
+}
+
+.btn:hover {
+  background-color: var(--tertiary-color) !important;
+  color: #000000 !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  box-shadow: none !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color) !important;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+.btn-tertiary {
+  background-color: var(--tertiary-color) !important;
+}
+
+button.btn:hover {
+  background-color: var(--secondary-color) !important;
+  color: #FFFFFF !important;
+
+}
+
 .fs-7 {
-    font-size: 16px;
+  font-size: 16px;
+}
+
+.fs-8 {
+  font-size: 12px;
 }
 
 .carousel-caption {
-    position: absolute !important;
-    padding-top: 5rem !important;
-    padding-bottom: 5rem !important;
-    margin: auto;
-    width: 40vw !important;
-    bottom: 10rem !important;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 2px solid #FFFFFF;
+  position: absolute !important;
+  padding-top: 5rem !important;
+  padding-bottom: 5rem !important;
+  margin: auto;
+  width: 40vw !important;
+  bottom: 10rem !important;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 2px solid #FFFFFF;
 }
 
 .carousel-control-prev, .carousel-control-next {
-    width: 27% !important;
+  width: 27% !important;
 }
 
-.carousel-indicators [data-mdb-target] {
-    width: 15px !important;
-    height: 14px !important;
-    border-radius: 50%;
+.carousel-indicators [data-bs-target] {
+  width: 15px !important;
+  height: 14px !important;
+  border-radius: 50%;
+}
+
+.form-control {
+  border-top-right-radius: 1.5rem !important;
+  border-bottom-right-radius: 1.5rem !important;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+}
+
+.input-group-addon {
+  border-top-left-radius: 1.5rem !important;
+  border-bottom-left-radius: 1.5rem !important;
+  background-color: #FFFFFF !important;
+  color: #4f4f4f !important;
+}
+
+textarea {
+  resize: none !important;
+}
+
+input[type="text"],
+input[type="password"],
+textarea, select {
+  border:  1px solid #ccc;
+  outline: none;
+}
+
+input[type="checkbox"] {
+  width: 1.2em;
+  height: 1.2rem;
+  border: 0.15em solid var(--primary-color);
+  border-radius: 0 !important;
+}
+
+input #file-upload-button {
+  background: var(--primary-color);
+}
+
+.ql-editor {
+  overflow-y: scroll;
+  min-height: 300px;
+  background-color: #FFFFFF !important;
+}
+
+.fa-trash:hover {
+  color: red !important;
 }
 
 /** Customs **/
 
+.text-brand {
+  color: var(--primary-color);
+}
+
+#usermenu {
+  z-index: 99999 !important;
+}
+
+#usermenu .menuitem {
+  padding: 10px 20px !important;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+#usermenu .menuitem:hover {
+  background-color: var(--secondary-color) !important;
+  color: #FFFFFF !important;
+}
+
+@media only screen and (min-width: 768px) {
+
+}
