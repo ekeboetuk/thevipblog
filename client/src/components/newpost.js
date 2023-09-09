@@ -13,6 +13,7 @@ function NewPost( {token} ) {
         featuredImage: null,
         category: "",
         introText: "",
+        tags: "",
         textarea: ""
     }
     const [sending, setSending] = useState(false)
@@ -28,6 +29,7 @@ function NewPost( {token} ) {
         formData.append("image", post.featuredImage);
         formData.append("title", post.title);
         formData.append("intro", post.introText);
+        formData.append("tags", post.tags);
         formData.append("body", post.textarea);
         formData.append("category", post.category);
         formData.append("featured", post.isFeatured);
@@ -101,6 +103,10 @@ function NewPost( {token} ) {
                             required
                         />
                         <small className="fs-8">Note less than 200 or more than 400 characters ({400 - post.introText.length} remaining)</small>
+                    </div>
+                    <div className="mb-3 d-block">
+                        <input type="text" name="tags" className="w-100" value={post.tags} onChange={(e)=>setPost({...post, tags: e.target.value})} placeholder="Tags"/>
+                        <small className="fs-8">Enter tags for post, comma seperated if multiple</small>
                     </div>
                     {post.introText.length >= 200 &&
                         <>
