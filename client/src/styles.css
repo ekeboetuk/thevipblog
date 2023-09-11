@@ -116,7 +116,7 @@ button:disabled {
 .nav-link {
   color: #FFFFFF;
   font-weight: 500;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .fs-7 {
@@ -168,8 +168,9 @@ select,
 .tox-tinymce
 {
   outline: none;
-  border: 2px solid var(--primary-color) !important;
-  border-radius: 4px !important;
+  border: 0 !important;
+  border-bottom: 2px solid var(--primary-color) !important;
+  border-radius: 0px !important;
 }
 
 select {
@@ -198,7 +199,7 @@ input[type=file]::file-selector-button {
   background-color: #fff;
   color: #000;
   border: 2px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 10px 15px 6px;
   margin-right: 20px;
   transition: .5s;
@@ -231,6 +232,12 @@ input[type=file]::file-selector-button:hover {
   font-style: italic
 }
 
+/*.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}*/
+
 .text-justify{
   text-align:justify !important;
 }
@@ -243,11 +250,11 @@ a.text-brand:hover {
   color: var(--secondary-color) !important;
 }
 
-div i[type="button"], div span[type="button"] {
+div i[type="button"], div span[type="button"], i.blank {
   display: none;
 }
 
-div.listing:hover i[type="button"], div.post:hover span[type="button"]{
+div.listing:hover i[type="button"], div.post:hover span[type="button"], .text-black:hover i {
   display: flex;
 }
 
@@ -259,6 +266,10 @@ form > div {
 
 #search {
   transition: display 5s;
+}
+
+.toggler:hover {
+  background-color: var(--tertiary-color);
 }
 
 .actionmenu {

@@ -37,9 +37,9 @@ function Administrator() {
             <div className="d-flex justify-content-start row mb-4" style={{minHeight:"90vh"}}>
                 <div className="col-md-2 bg-primary shadow-sm">
                 </div>
-                <div id="contentarea" className="d-flex col-12 col-md-7 justify-content-between">
+                <div id="contentarea" className="d-flex col-12 col-md-7 justify-content-between p-4">
                     <Outlet />
-                    <div type="button" className="d-none d-md-flex align-items-center" onClick={toggleUtilbar}><i id="toggler" className="bx bxs-right-arrow text-brand"></i></div>
+                    <div type="button" className="toggler d-none d-md-flex align-items-center h-100 position-fixed top-0 end-0" onClick={toggleUtilbar}><i id="toggler" className="bx bxs-right-arrow text-brand"></i></div>
                 </div>
                 <div id="utilbar" className="col-12 col-md-3 ps-2 pe-3 py-3 mb-5">
                     <Statistics />

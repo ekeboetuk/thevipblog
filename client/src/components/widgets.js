@@ -1,9 +1,9 @@
 import { usePosts, useUsers } from '../hooks/fetchers';
-import RecentPosts from './recentposts'
+import RecentPosts from './recentpost'
 import { Widgetcard } from './cards'
 
 export const Statistics = () => {
-    const [posts] = usePosts('s/');
+    const{posts, isLoading} = usePosts('s/');
     const [users] = useUsers();
     const stats = {
         totalposts: 0,
@@ -27,23 +27,23 @@ export const Statistics = () => {
                 <tbody>
                     <tr>
                         <th scope="row">No. of Posts<i className="fas fa-caret-right"></i></th>
-                        <td>{stats?.totalposts||<span className="placeholder col-6"></span>}</td>
+                        <td>{isLoading?<span className="placeholder col-6"></span>:stats?.totalposts||0}</td>
                     </tr>
                     <tr>
                         <th scope="row">No. of Comments<i className="fas fa-caret-right"></i></th>
-                        <td>{stats?.totalcomments||<span className="placeholder col-9"></span>}</td>
+                        <td>{isLoading?<span className="placeholder col-9"></span>:stats?.totalcomments||0}</td>
                     </tr>
                     <tr>
                         <th scope="row">Total Likes<i className="fas fa-caret-right"></i></th>
-                        <td>{stats?.totallikes||<span className="placeholder col-8"></span>}</td>
+                        <td>{isLoading?<span className="placeholder col-8"></span>:stats?.totallikes||0}</td>
                     </tr>
                     <tr>
                         <th scope="row">Total Views<i className="fas fa-caret-right"></i></th>
-                        <td>{stats?.totalviews||<span className="placeholder col-12"></span>}</td>
+                        <td>{isLoading?<span className="placeholder col-12"></span>:stats?.totalviews||0}</td>
                     </tr>
                     <tr>
                         <th scope="row">Total Users<i className="fas fa-caret-right"></i></th>
-                        <td>{stats?.totalusers||<span className="placeholder col-3"></span>}</td>
+                        <td>{isLoading?<span className="placeholder col-3"></span>:stats?.totalusers||0}</td>
                     </tr>
                 </tbody>
             </table>

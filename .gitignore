@@ -131,3 +131,6 @@ dist
 
 # editors
 .swp
+
+# Temp uploaded files
+server/public/media/uploads/

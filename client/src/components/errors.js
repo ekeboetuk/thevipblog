@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function Error() {
+export const Error = () => {
     return (
         <div className="container-md text-center my-5 py-5">
             <h1 className="fs-1 fw-semibold text-brand">404</h1>
@@ -11,4 +11,11 @@ function Error() {
     )
 }
 
-export default Error;
+export const Empty = ({ text }) => {
+    return(
+        <div className="w-100 p-5 text-center align-self-center">
+            <img src="/media/no_post.png" width="50px" className="pb-3" alt="nopost" />
+            <h6 className="fw-bold">{text}</h6>
+        </div>
+    )
+}

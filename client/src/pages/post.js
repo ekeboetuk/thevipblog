@@ -5,14 +5,14 @@ import axios from 'axios';
 import moment from 'moment';
 
 import { usePosts } from '../hooks/fetchers';
-import RecentPosts from '../components/recentposts'
+import RecentPosts from '../components/recentpost'
 import Meta from '../components/meta';
 
 function Post({ token }) {
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false)
     const params = useParams();
-    const [post, isError, isLoading] = usePosts(`/${params.slug}`);
+    const {posts, isError, isLoading} = usePosts(`/${params.slug}`);
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -26,7 +26,7 @@ function Post({ token }) {
             comment: comment,
             user: token?.id,
             post: params.slug,
-            id: post._id
+            id: posts._id
         })
         .then(()=>{
             message.innerHTML = '<span class="text-success">Comment successfully submitted. Will show up here after moderation!</span>';
@@ -49,51 +49,36 @@ function Post({ token }) {
             <div className="text-center">
                 <img src="/assets/spinner_block.gif" className="mt-5 pt-5" width="60px" alt="loading" />
             </div>
-    } else if(isError) {
+    } else if(posts) {
         content=
-        <div className="text-center">
-            <img src="/media/awsnapidle.webp" width="60px" className="py-3" alt="awsnap" />
-            <h6>Aw snap! Currently unable to fetch posts.</h6>
-            <h6 className='text-danger fs-8'>{isError.message}</h6>
-        </div>
-    } else {
-        if(post.length === 0){
-            content=
-            <div className="text-center mb-5 py-5">
-                <h5 className="fw-semibold">Post not found</h5>
-                <p>Oops! The post you are looking for does not exist. it might have been moved or deleted</p>
-                <Link className="text-white btn-primary rounded-9 px-3 pt-2 pb-1 fw-semibold" to="/" type="button"><i className="fas fa-home pe-2"></i>Back to home</Link>
-            </div>
-        }else{
-            content=
             <>
                 <div className="d-flex align-items-center pb-3">
                     <img src="/assets/icon.png" alt="afriscope icon" className="square bg-tertiary rounded-circle p-1 me-3" />
                     <div className="align-items-center">
-                        <div className="m-0 mb-2 lh-1 fs-2 fw-bold pe-4">{post.title}</div>
+                        <div className="m-0 mb-2 lh-1 fs-2 fw-bold pe-4">{posts.title}</div>
                         <div className="d-flex flex-wrap justify-content-start me-4">
-                            <h6 className="text-brand me-3 fs-8"><i className="fas fa-list me-1"></i>{post.meta.category.charAt(0).toUpperCase() + post.meta.category.slice(1)}</h6>
-                            <h6 className="me-3 fs-8"><i className="fas fa-edit me-1"></i>{(post.meta.author.isActive && post.meta.author?.name) || "Administrator"}</h6>
-                            <h6 className="fs-8"><i className="fas fa-clock me-1"></i>{moment(post.timestamp).format("YYYY-MM-DD h:mm")}</h6>
+                            <h6 className="text-brand me-3 fs-8"><i className="fas fa-list me-1"></i>{posts.meta.category.charAt(0).toUpperCase() + posts.meta.category.slice(1)}</h6>
+                            <h6 className="me-3 fs-8"><i className="fas fa-edit me-1"></i>{(posts.meta.author.isActive && posts.meta.author?.name) || "Administrator"}</h6>
+                            <h6 className="fs-8"><i className="fas fa-clock me-1"></i>{moment(posts.timestamp).format("YYYY-MM-DD h:mm")}</h6>
                         </div>
                     </div>
                 </div>
-                <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(data:image/jpeg;base64,${btoa(new Uint8Array(post.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "500px"}}>
+                <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(data:image/jpeg;base64,${btoa(new Uint8Array(posts.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
                 </div>
-                <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:post.body}} />}</div>
+                <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:posts.body}} />}</div>
                 <div className="mt-2 bg-tertiary px-3">
-                    <Meta id={post._id} views={post.meta.views} comments={post.comments} likes={post.meta.likes} />
+                    <Meta id={posts._id} views={posts.meta.views} comments={posts.comments} likes={posts.meta.likes} />
                 </div>
                 <table className="table table-striped mb-0">
                     <tbody className="position-relative">
-                    {post.comments?.length > 0 && post.comments.map((comment, index) => (
+                    {posts.comments?.length > 0 && posts.comments.map((comment, index) => (
                         comment.approved &&
                         <tr key={index} id="comments" className="d-flex">
                             <td className="avatar flex-shrink-0 p-2 border-0">
                                 <img src="/assets/icon.png" className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
                             </td>
                             <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
-                                <div className="fw-bold p-0">{token?.name === comment.user.name ? "You": (comment.user.isActive && comment.user._id === post.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
+                                <div className="fw-bold p-0">{token?.name === comment.user.name ? "You": (comment.user.isActive && comment.user._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
                                 <div className="d-flex justify-content-between p-0">
                                     {comment.content}
                                 </div>
@@ -115,10 +100,33 @@ function Post({ token }) {
                         <Link to="/signin" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Sign In</Link>
                     </div>
                 }
+                    {posts.meta.tags &&
+                        <>
+                            <h6>Tags</h6>
+                            <div className="d-flex flex-wrap py-3">
+                                {posts.meta.tags.split(", ").map((tag, index) => <span key={index} className="rounded-pill px-4 py-2 me-2 bg-light">{tag}</span>)}
+                            </div>
+                        </>
+                    }
                 <ScrollRestoration getKey={(location, matches) => {
                     return location.pathname;
                 }}/>
             </>
+    } else {
+        if(posts.length === 0){
+            content=
+            <div className="text-center mb-5 py-5">
+                <h5 className="fw-semibold">Post not found</h5>
+                <p>Oops! The post you are looking for does not exist. it might have been moved or deleted</p>
+                <Link className="text-white btn-primary rounded-9 px-3 pt-2 pb-1 fw-semibold" to="/" type="button"><i className="fas fa-home pe-2"></i>Back to home</Link>
+            </div>
+        }else{
+            content=
+            <div className="text-center">
+                <img src="/media/awsnapidle.webp" width="60px" className="py-3" alt="awsnap" />
+                <h6>Aw snap! Currently unable to fetch posts.</h6>
+                <h6 className='text-danger fs-8'>{isError?.message}</h6>
+            </div>
         }
     }
 

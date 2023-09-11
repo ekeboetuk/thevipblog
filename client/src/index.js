@@ -12,8 +12,8 @@ import Posts from "./pages/posts";
 import Post from "./pages/post";
 import About from "./pages/about";
 import Contact from "./pages/contact";
-import NewPost from "./components/newpost";
-import Error from "./pages/error";
+import NewPost from "./pages/newpost";
+import { Error } from "./components/errors";
 import Administrator from "./pages/administrator";
 import { Signin, Signup, Profile } from "./components/users";
 import { useToken } from "./hooks/authentication";
@@ -21,6 +21,7 @@ import { useToken } from "./hooks/authentication";
 import Dashboard from "./admin/dashboard";
 import Users from "./admin/users";
 import PostsBackend from "./admin/posts";
+import Postform from './components/postform';
 
 export const userContext = createContext()
 
@@ -43,7 +44,7 @@ function Afriscope() {
           <Route path="signin" element={token ? <Navigate replace to="profile" /> : <Signin setToken = {setToken} />} />
           <Route path="signup" element={token ? <Navigate replace to="profile" /> : <Signup />} />
           <Route path="profile" element={!token ? <Navigate replace to="signin" /> : <Profile token={token}/>} />
-          <Route path="newpost" element={<NewPost token={token}/>} />
+          <Route path="post/newpost" element={<NewPost token={token}/>} />
           <Route path="*" element={<Error />} />
         </Route>
 
@@ -55,6 +56,7 @@ function Afriscope() {
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="posts" element={<PostsBackend />} />
+          <Route path="newpost" element={<Postform token={token} bgclass = "bg-light"/>} />
           <Route path="*" element={<Error />} />
         </Route>
       </>

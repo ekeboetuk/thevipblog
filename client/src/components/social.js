@@ -31,7 +31,7 @@ function Social( ) {
 				<div className='col-12 col-md-5 mt-3 mt-md-0 d-flex justify-content-center justify-content-md-end align-items-center'>
 					{token ?
 						<>
-							{token.type!== "Subscriber" && <Link className="btn d-flex text-white fw-bold me-4 border border-primary rounded-0" to="/newpost" role="button">
+							{token.type!== "Subscriber" && <Link className="btn d-flex text-white fw-bold me-4 border border-primary rounded-0" to="/post/newpost" role="button">
 								<i className="bx bx-notepad me-2 fs-6"></i>
 								Create Post
 							</Link>}

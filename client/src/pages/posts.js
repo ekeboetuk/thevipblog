@@ -5,7 +5,7 @@ import { usePosts } from '../hooks/fetchers';
 
 function Posts() {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-    const [posts, isError, isLoading] = usePosts('s/')
+    const {posts, isError, isLoading} = usePosts('s/')
     const params = useParams()
     let content;
 
@@ -40,7 +40,7 @@ function Posts() {
                         slug={post.slug}
                         image={post.image}
                         height="320px"
-                        title={`${post.title.split(' ').slice(0,6).join(' ')}...`}
+                        title={post.title}
                         intro={post.intro}
                         comments={post.comments}
                         category={post.meta.category}

@@ -51,7 +51,7 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
                 </>
               }
             </div>
-            <Link className="text-black fs-6 fw-bold text-body lh-sm" to={`/post/${slug}`}>{title}</Link>
+            <Link className="title text-black fs-6 fw-bold text-body lh-sm" to={`/post/${slug}`}>{title}</Link>
             <div className="mb-0">
                 <p className="text-justify">{intro}</p>
                 <Link to={`/post/${slug.toLowerCase()}`} className="text-brand fw-bold stretched-link" onClick={updateViews}>Readmore

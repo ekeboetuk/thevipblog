@@ -42,7 +42,8 @@ const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} }
 
 // Define routes
 app.get('/posts', async (req, res) => {
-  await posts.find({}).sort('-created').populate('meta.author').populate('comments.user')
+  const {sortby} = req.query
+  await posts.find({}).sort(`-${sortby}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
@@ -99,7 +100,9 @@ app.post('/post/newpost', upload.single('image'), async (req, res, next) => {
       category: req.body.category,
       author: req.body.author,
       featured: req.body.featured,
-    }
+      tags: req.body.tags
+    },
+    isApproved: req.body.approved
   })
 
   await post.save()
@@ -262,7 +265,7 @@ app.delete('/user/:userId', async(req, res) => {
 
 // Connect to MongoDB database
 const db = process.env.CONNECTION_STRING;
-connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
+connect(db)
   .then(() => {
     console.log('Connection to database successful');
   })
