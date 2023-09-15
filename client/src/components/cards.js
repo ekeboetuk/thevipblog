@@ -31,29 +31,25 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
       </div>
       <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom">
         <div className="d-flex flex-column py-3 px-4 justify-content-between position-relative">
-            <div className="d-inline-flex mb-3">
-              {category &&
-                <>
-                  <img src="/assets/icon.png" style={{height: "50px", width: "50px"}} alt="afriscope icon" className="square bg-tertiary rounded-circle p-1 me-3" />
-                  <div>
-                      <div className="text-brand fw-bold fs-5">{meta.category.toUpperCase()}</div>
-                      <div className="d-flex flex-wrap">
-                        <div>
-                          <small className="fas fa-edit fs-8 me-1"></small>
-                          <small className="me-2 fs-8 flex-fill">{(meta.author.isActive && meta.author.name)||"Administrator"}</small>
-                        </div>
-                        <div>
-                          <small className="fas fa-clock fs-8 me-1"></small>
-                          <small className="me-1 fs-8 fst-italic">{moment(created).format("YYYY-MM-DD h:mm")}</small>
-                        </div>
+            <div className="d-inline-flex align-items-center mb-2">
+                <img src="/assets/icon.png" style={{height: "30px", width: "30px"}} alt="afriscope icon" className="square bg-tertiary rounded-circle p-1 me-3" />
+                <div className="lh-sm">
+                    <div className="text-brand fw-bold fs-6">{category?.toUpperCase()}</div>
+                    <div className="d-flex flex-wrap">
+                      <div>
+                        <small className="fas fa-user fs-8 me-1"></small>
+                        <small className="me-2 fs-8 flex-fill">{(meta.author.isActive && meta.author.name)||"Administrator"}</small>
                       </div>
-                  </div>
-                </>
-              }
+                      <div>
+                        <small className="fas fa-calendar-days fs-8 me-1"></small>
+                        <small className="me-1 fs-8 fst-italic">{moment(created).format("YYYY-MM-DD h:mm")}</small>
+                      </div>
+                    </div>
+                </div>
             </div>
-            <Link className="title text-black fs-6 fw-bold text-body lh-sm" to={`/post/${slug}`}>{title}</Link>
+            <Link className="title text-black fs-6 fw-bold text-body" to={`/post/${slug}`}>{title}</Link>
             <div className="mb-0">
-                <p className="text-justify">{intro}</p>
+                <p className="text-justify lh-sm mb-1">{intro}</p>
                 <Link to={`/post/${slug.toLowerCase()}`} className="text-brand fw-bold stretched-link" onClick={updateViews}>Readmore
                   <i className="fas fa-arrow-circle-right ms-2"></i>
                 </Link>
