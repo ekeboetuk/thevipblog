@@ -129,12 +129,13 @@ app.patch('/post/views', async (req, res) => {
 })
 
 app.patch('/post/togglestatus', async (req, res) => {
-  let post = await posts.findByIdAndUpdate(req.body.id,
+  const {id, property, status} = req.body
+  let post = await posts.findByIdAndUpdate(id,
     {$set:
-      {isApproved: req.body.status}
+      {[property]: status}
     })
-  if(!post) return res.status(404).send('Error Publishing Post');
-  res.send('')
+  if(!post) return res.status(404).send('Error updating post');
+  res.send('Post updated successfully')
 })
 
 app.patch('/post/comment', async (req, res) => {

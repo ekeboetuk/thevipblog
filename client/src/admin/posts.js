@@ -41,6 +41,7 @@ function Posts() {
             }),
             await axios.patch(`http://localhost:3001/post/togglestatus`,{
                 id: postId,
+                property: "isApproved",
                 status: !status
             })
         )
@@ -89,9 +90,21 @@ function Posts() {
         setOperation(false)
     }
 
-    const toggleFeatured = (index, featured) => {
-        //setOperation(true)
-        console.log({...posts})
+    const toggleFeatured = async(postIndex, postId, featured) => {
+        await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
+            id: postId,
+            property: "meta.featured",
+            status: !featured
+        })
+        .then((response)=>{
+            mutate()
+            document.getElementById('alert').classList.toggle('alert-success')
+            document.getElementById('alert').innerHTML = `<i class='fa-regular fa-circle-check pe-2'></i>${response.data}`
+            setTimeout(()=>{
+                document.getElementById('alert').classList.toggle('alert-success')
+                document.getElementById('alert').innerHTML = ""
+            }, 5000)
+        })
     }
 
     const toggleActionmenu = (e, index)=>{
@@ -157,7 +170,7 @@ function Posts() {
                                                     maxHeight: "142px"
                                                 }}
                                                 className="me-0 me-md-3 mb-3 mb-md-0 col-md-2 align-self-stretch rounded-6 border border-3 border-white">
-                                            <i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning fs-6`} onClick={()=>toggleFeatured(index, post.meta.featured)}></i>
+                                            <div type="button" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning fs-6`}></i></div>
                                             </div>
                                             <div className="d-flex flex-column flex-grow-1 me-md-3">
                                                 <Link to={`/post/${post.title}`} target="_blank" className="d-flex align-items-center text-black"><h6 className="title fw-bold pe-1">{post.title}</h6><i className="blank fa-solid fa-arrow-up-right-from-square fs-8"></i></Link>

@@ -39,11 +39,10 @@ function Posts() {
                         id={post._id}
                         slug={post.slug}
                         image={post.image}
-                        height="320px"
-                        title={post.title}
-                        intro={post.intro}
+                        height="200px"
+                        title={`${post.title.slice(0,38)}...`}
+                        intro={`${post.intro.slice(0, 200)}...`}
                         comments={post.comments}
-                        category={post.meta.category}
                         meta={post.meta}
                         created={post.created}
                         />

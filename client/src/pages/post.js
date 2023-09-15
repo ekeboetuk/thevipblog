@@ -58,14 +58,14 @@ function Post({ token }) {
                         <div className="m-0 mb-2 lh-1 fs-2 fw-bold pe-4">{posts.title}</div>
                         <div className="d-flex flex-wrap justify-content-start me-4">
                             <h6 className="text-brand me-3 fs-8"><i className="fas fa-list me-1"></i>{posts.meta.category.charAt(0).toUpperCase() + posts.meta.category.slice(1)}</h6>
-                            <h6 className="me-3 fs-8"><i className="fas fa-edit me-1"></i>{(posts.meta.author.isActive && posts.meta.author?.name) || "Administrator"}</h6>
-                            <h6 className="fs-8"><i className="fas fa-clock me-1"></i>{moment(posts.timestamp).format("YYYY-MM-DD h:mm")}</h6>
+                            <h6 className="me-3 fs-8"><i className="fas fa-user me-1"></i>{(posts.meta.author.isActive && posts.meta.author?.name) || "Administrator"}</h6>
+                            <h6 className="fs-8"><i className="fas fa-calendar-days me-1"></i>{moment(posts.timestamp).format("YYYY-MM-DD h:mm")}</h6>
                         </div>
                     </div>
                 </div>
                 <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(data:image/jpeg;base64,${btoa(new Uint8Array(posts.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
                 </div>
-                <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:posts.body}} />}</div>
+                <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:posts.body.replace(/\s{1,}/gim, ' ')}} />}</div>
                 <div className="mt-2 bg-tertiary px-3">
                     <Meta id={posts._id} views={posts.meta.views} comments={posts.comments} likes={posts.meta.likes} />
                 </div>
@@ -104,7 +104,7 @@ function Post({ token }) {
                         <>
                             <h6>Tags</h6>
                             <div className="d-flex flex-wrap py-3">
-                                {posts.meta.tags.split(", ").map((tag, index) => <span key={index} className="rounded-pill px-4 py-2 me-2 bg-light">{tag}</span>)}
+                                {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-2 me-2 mb-2 bg-tertiary text-body fw-semibold">{tag}</Link>)}
                             </div>
                         </>
                     }

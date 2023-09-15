@@ -24,7 +24,7 @@ function RecentPosts( {number} ) {
                                 id={post._id}
                                 slug={post.slug}
                                 image={post.image}
-                                title={`${post.title.split(" ").slice(0, 6).join(" ")}...`}
+                                title={`${post.title.slice(0, 25)}...`}
                                 comments={post.comments}
                                 meta={post.meta}
                                 created={post.created}

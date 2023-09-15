@@ -19,6 +19,7 @@ function Administrator() {
     return (
         <div className=" d-flex flex-column">
             <div id="toolbar" className="navbar navbar-expand-md container-fluid sticky-top d-flex flex-row align-items-center bg-primary border-bottom border-primary border-3 mx-auto px-md-4 pb-0">
+                <div className="position-absolute top-0 start-50 translate-middle-x alert text-center mt-2" id="alert" role="alert"></div>
                 <Toolbar />
                 <button
                 className="navbar-toggler text-white pe-2 ms-2"
