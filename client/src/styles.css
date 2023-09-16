@@ -209,6 +209,11 @@ input[type=file]::file-selector-button:hover {
   background-color: #eee;
 }
 
+td, th {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important
+}
+
 .fa-trash:hover {
   color: red !important;
 }
@@ -277,8 +282,9 @@ form > div {
 }
 
 .actionmenu .menuitem {
+  border-radius: 5px;
   padding: 10px 20px !important;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   font-size: 0.7rem;
   text-align: left !important;
 }

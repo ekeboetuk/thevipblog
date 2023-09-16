@@ -21,6 +21,7 @@ import { useToken } from "./hooks/authentication";
 import Dashboard from "./admin/dashboard";
 import Users from "./admin/users";
 import PostsBackend from "./admin/posts";
+import Comments from './admin/comments';
 import Postform from './components/postform';
 
 export const userContext = createContext()
@@ -56,6 +57,7 @@ function Afriscope() {
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="posts" element={<PostsBackend />} />
+          <Route path="comments" element={<Comments />} />
           <Route path="newpost" element={<Postform token={token} bgclass = "bg-light"/>} />
           <Route path="*" element={<Error />} />
         </Route>

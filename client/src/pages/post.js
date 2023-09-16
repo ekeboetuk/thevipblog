@@ -79,7 +79,7 @@ function Post({ token }) {
                             </td>
                             <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
                                 <div className="fw-bold p-0">{token?.name === comment.user.name ? "You": (comment.user.isActive && comment.user._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
-                                <div className="d-flex justify-content-between p-0">
+                                <div className="d-flex justify-content-between p-0" contenteditable={comment.user.name === token?.name ?"true":"false"}>
                                     {comment.content}
                                 </div>
                             </td>

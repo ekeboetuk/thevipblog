@@ -13,6 +13,9 @@ function Posts() {
     const [actionmenu, setActionmenu] = useState({})
     const [operation, setOperation] = useState();
 
+    const spinnerbound = document.getElementById("contentarea")
+
+
     const handlePostsort = (e) => {
         setSortby(e.target.value)
         mutate(posts.sort((a, b)=>{
@@ -119,18 +122,18 @@ function Posts() {
             )
         }else{
             return (
-                <div className={`position-relative`}>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}
+                <div>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{top: `40vh`, right: `calc(${spinnerbound.offsetWidth/2}px)`}}></i>}
                     <div className={`${isLoading && "opacity-25"} mb-0 mb-md-5 pe-md-0`} onClick={()=>setActionmenu({})}>
                     <input type="text" id="search" className="w-100 bg-light mb-3 px-3 py-1" value={search} onChange={(e)=>handleSearch(e)} placeholder="Ajax Search" />
                     <div className="d-flex flex-column flex-md-row justify-content-between mb-2">
-                        <div className="d-flex align-items-center mb-2">
+                        <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">View As:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
                                 <label className="pe-3"><input type="radio" name="view" value="Table" /> Table</label>
                                 <label className="pe-3"><input type="radio" name="view" value="List" defaultChecked={true}/> List</label>
                             </div>
                         </div>
-                        <div className="d-flex align-items-center mb-2">
+                        <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">Sort By:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
                                 <select id="postssort" className="border-0" name="postssort" value={sortby} onChange={(e)=>handlePostsort(e)}>
@@ -144,7 +147,7 @@ function Posts() {
                                 </select>
                             </div>
                         </div>
-                        <div className="d-flex align-items-center mb-2">
+                        <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">Posts Per Page:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
                                 <select id="postsquantity" className="border-0" name="postsquantity" defaultValue={20}>
@@ -198,7 +201,7 @@ function Posts() {
                                             <div className="actionmenu">
                                                 <span type="button" className="fa-solid fa-ellipsis-vertical fs-5 bg-transparent border-0 position-absolute top-0 end-0" onClick={(e)=>toggleActionmenu(e, index)}></span>
                                                 {actionmenu[index] &&
-                                                <div className="d-flex flex-column position-absolute top-0 end-0 mt-4 bg-tertiary actionmenu">
+                                                <div className="d-flex flex-column position-absolute top-0 end-0 mt-4 bg-tertiary p-1 actionmenu rounded-5 shadow-sm">
                                                     <button className="border-0 menuitem"  onClick={()=>togglePublishPost(post._id, post.isApproved, index)}>{post.isApproved?'Unpublish':'Publish'}</button>
                                                     <button className="border-0 menuitem">Edit Post</button>
                                                     <button className="border-0 menuitem"  onClick={()=>handleDeletePost(post._id)}>Delete</button>
@@ -218,9 +221,7 @@ function Posts() {
     } else {
         if(isLoading) {
             return (
-                <div className={`position-relative`}>
-                    <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>
-                </div>
+              <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{top: `calc(${spinnerbound?.offsetHeight/2}px)`, right: `calc(${spinnerbound?.offsetWidth/2}px)`}}></i>
             )
         }else if(error?.message.startsWith('timeout')) {
             return (

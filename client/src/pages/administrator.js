@@ -4,6 +4,7 @@ import Toolbar from '../admin/toolbar';
 import Navigation from '../admin/navigation';
 import Copyright from '../components/copyright';
 
+import { ErrorBoundary } from '../components/errors';
 import { Statistics, RecentUser, LatestPost, Trending } from '../components/widgets';
 
 function Administrator() {
@@ -19,10 +20,10 @@ function Administrator() {
     return (
         <div className=" d-flex flex-column">
             <div id="toolbar" className="navbar navbar-expand-md container-fluid sticky-top d-flex flex-row align-items-center bg-primary border-bottom border-primary border-3 mx-auto px-md-4 pb-0">
-                <div className="position-absolute top-0 start-50 translate-middle-x alert text-center mt-2" id="alert" role="alert"></div>
+                <div className="position-absolute top-0 end-0 alert mt-2 me-2" id="alert" role="alert"></div>
                 <Toolbar />
                 <button
-                className="navbar-toggler text-white pe-2 ms-2"
+                className="navbar-toggler text-white pe-4 ms-2"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#adminnavigation"
@@ -35,11 +36,13 @@ function Administrator() {
                     <Navigation />
                 </div>
             </div>
-            <div className="d-flex justify-content-start row mb-4" style={{minHeight:"90vh"}}>
+            <div className="d-flex justify-content-start row mb-4" >
                 <div className="col-md-2 bg-primary shadow-sm">
                 </div>
-                <div id="contentarea" className="d-flex col-12 col-md-7 justify-content-between p-4">
+                <div id="contentarea" className="d-flex col-12 col-md-7 justify-content-between p-4 position-relative">
+                  <ErrorBoundary fallback={<p>Something terrible went wrong, please try again</p>}>
                     <Outlet />
+                  </ErrorBoundary>
                     <div type="button" className="toggler d-none d-md-flex align-items-center h-100 position-fixed top-0 end-0" onClick={toggleUtilbar}><i id="toggler" className="bx bxs-right-arrow text-brand"></i></div>
                 </div>
                 <div id="utilbar" className="col-12 col-md-3 ps-2 pe-3 py-3 mb-5">
