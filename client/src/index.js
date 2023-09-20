@@ -42,16 +42,16 @@ function Afriscope() {
           <Route path="post/:slug" element={<Post token={token} />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="signin" element={token ? <Navigate replace to="profile" /> : <Signin setToken = {setToken} />} />
-          <Route path="signup" element={token ? <Navigate replace to="profile" /> : <Signup />} />
-          <Route path="profile" element={!token ? <Navigate replace to="signin" /> : <Profile token={token}/>} />
+          <Route path="signin" element={token ? <Navigate replace to="/user/profile" /> : <Signin setToken = {setToken} />} />
+          <Route path="signup" element={token ? <Navigate replace to="/user/profile" /> : <Signup />} />
+          <Route path="/user/profile" element={!token ? <Navigate replace to="/signin" /> : <Profile token={token}/>} />
           <Route path="post/newpost" element={<NewPost token={token}/>} />
-          <Route path="*" element={<Error />} />
+          <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
 
-        <Route exact path="/afriscope-admin" element={
+        <Route exact path="/administrator" element={
           <userContext.Provider value={{token: token, unsetToken: unsetToken }}>
-          {token ? (!token?.isAdmin ? <Navigate replace to="profile" /> : <Administrator />): <Navigate replace to="signin" />}
+          {token ? (!token?.isAdmin ? <Navigate replace to="../user/profile" /> : <Administrator />): <Navigate replace to="../signin" />}
           </userContext.Provider>
         }>
           <Route index element={<Dashboard />} />
@@ -59,7 +59,7 @@ function Afriscope() {
           <Route path="posts" element={<PostsBackend />} />
           <Route path="comments" element={<Comments />} />
           <Route path="newpost" element={<Postform token={token} bgclass = "bg-light"/>} />
-          <Route path="*" element={<Error />} />
+          <Route path="*" element={<Error status="404" text="Page Not Found"/>} />
         </Route>
       </>
     )

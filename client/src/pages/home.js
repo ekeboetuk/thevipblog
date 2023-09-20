@@ -2,19 +2,21 @@
 
 import Carousel from '../components/carousel';
 import { Postcard } from '../components/cards';
-import { Empty } from '../components/errors'
+import { Error } from '../components/errors'
 
 import { usePosts } from '../hooks/fetchers';
 
 
 function Home() {
-    const {posts, isLoading} = usePosts('s?sortby=created')
+    const {posts, error, isLoading} = usePosts('s?sort=-_id')
     let content
 
-    if(posts) {
+    if(isLoading){
+        content = null
+    } else if(posts) {
         const home = posts?.filter((post) => post.isApproved && post.meta.featured)
         if(home.length === 0) {
-            content = <Empty text="No Featured Post" />
+            content = <Error status="204" document="Featured Post" />
         } else {
             content =
                 home.map((post) => (
@@ -34,22 +36,15 @@ function Home() {
                 </div>
             ))
         }
-    } else if(isLoading) {
-        content = null
-    } else {
-        content =
-            <div className="text-center">
-                <img src="/media/no_post.png" width="50px" className="py-3" alt="nopost" />
-                <h6 className="fw-bold">Error fetching posts under this category.</h6>
-                <h6>Someone probably forgot to connect something. Please check back later. Thank you!</h6>
-            </div>
+    } else if(error || error === undefined) {
+            content = <Error status="500" />
     }
 
     return (
         <>
             <Carousel />
             <div className={`container-md py-5 position-relative`}>
-                <h2 className="text-center pb-4 fs-5 fw-bold">FEATURED POSTS</h2>
+                {posts && <h4 className="text-center pb-4 fw-bold">FEATURED POSTS</h4>}
                 {isLoading &&
                     <div className="text-center">
                         <img src="/assets/spinner_block.gif" className="my-5 py-5" width="60px" alt="loading" />

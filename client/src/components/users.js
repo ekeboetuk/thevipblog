@@ -123,9 +123,9 @@ export function Signin( {setToken} ) {
             .then((response) => {
                 message.innerHTML = "Login successful";
                 message.style.color = "green";
-                setToken(response.data);
+                navigate(-1)
                 setTimeout(()=>{
-                  navigate(-1)
+                  setToken(response.data);
                 }, 10)
             })
             .catch((error) => {
@@ -140,7 +140,7 @@ export function Signin( {setToken} ) {
               ...state,
               [e.target.name]: value
             });
-  
+
             if(message){
               message.innerHTML = ""
             }

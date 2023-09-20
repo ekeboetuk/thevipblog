@@ -23,7 +23,10 @@ function Postform ( {token} ) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const alert = document.getElementById('alert');
+        const main = document.getElementsByTagName('main')[0]
+        if(main.firstElementChild.nodeName === 'SPAN') {
+            main.removeChild(main.firstElementChild)
+        }
 
         const formData = new FormData();
         formData.append("image", post.featuredImage);
@@ -48,25 +51,21 @@ function Postform ( {token} ) {
             window.scrollTo(0,0)
             setSending(false)
             imageRef.current.value = ""
-            alert.className = "alert alert-success text-center"
-            alert.innerHTML = "<i class='fa-regular fa-circle-check pe-2'></i>Post successfully sent, thank you! Kindly wait for moderation before publishing"
+            main.insertAdjacentHTML('afterbegin', '<span class="d-flex alert alert-success text-center align-items-center" id="alert" role="alert"><i class="fa-regular fa-circle-check pe-2"></i>Post successfully sent, thank you! Kindly wait for moderation before publishing</span>')
             setPost(initialstate);
             setTimeout(()=>{
-                alert.innerHTML = ""
-                alert.className = ""
-            },20000)
+                main.firstElementChild.remove()
+            },8000)
         })
         .catch((error) => {
             window.scrollTo(0,0)
             setSending(false)
-            alert.className = "alert alert-danger text-center"
-            alert.innerHTML = "<i class='fa-solid fa-triangle-exclamation pe-2'></i>Post Failed. Please try again!"
+            main.insertAdjacentHTML('afterbegin', `<span class="d-flex alert alert-danger text-center align-items-center" id="alert" role="alert"><i class="fa-solid fa-triangle-exclamation pe-2"></i>Post Failed <i>(${error.message})</i>. Please try again!</span>`)
         })
     }
 
     return (
-        <div className="flex-fill">
-            <span className="text-center w-100" id="alert" role="alert"></span>
+        <main className="flex-fill px-2">
             <form id="postform" onSubmit={handleSubmit} className={`row py-3 mx-auto fs-6 fw-normal justify-content-between align-items-center`}>
                 <div className="col-12 col-md-6 d-block mb-3">
                     <label htmlFor="title" className="pe-2 fs-7 fw-bold">Subject</label>
@@ -97,7 +96,7 @@ function Postform ( {token} ) {
                         placeholder="The introduction of this blog post goes here. As described below, when the content hits 200 characters the field for the body will automatically be mounted."
                         required
                     />
-                    <small className="fs-8">Note less than 200 or more than 400 characters ({400 - post.introText.length} remaining)</small>
+                    <small className="fs-8">Note less than 200 or more than 300 characters ({300 - post.introText.length} remaining)</small>
                 </div>
                 <div className="mb-3 d-block">
                     <input type="text" name="tags" className="w-100 px-2" value={post.tags} onChange={(e)=>setPost({...post, tags: e.target.value})} placeholder="Tags"/>
@@ -118,7 +117,7 @@ function Postform ( {token} ) {
                             body_class: 'content',
                             menubar: false,
                             toolbar_sticky: true,
-                            toolbar_sticky_offset: 70,
+                            toolbar_sticky_offset: 50,
                             toolbar_mode: 'wrap',
                             body_id : "content",
                             browser_spellcheck : true,
@@ -167,19 +166,19 @@ function Postform ( {token} ) {
                 <input type="file" id="featuredImage" name="featuredImage" ref={imageRef} size="60" className="col-12 col-md-6 px-0 mb-4" onChange={(e) => setPost({...post, featuredImage: e.target.files[0]})} required/>
                 {token?.type==="Administrator" &&
                     <>
-                        <label htmlFor="featured" className="col-6 col-md-3">
+                        <label htmlFor="featured" className="d-flex col-6 col-md-3 align-items-center mb-4">
                             <input type="checkbox" className="col-1 me-2" id="featured" name="featured" checked={post.featured} onChange={(e) => setPost({...post, featured: !post.featured})} />
                             Featured
                         </label>
-                        <label htmlFor="approved" className="col-6 col-md-3">
+                        <label htmlFor="approved" className="d-flex col-6 col-md-3 align-items-center mb-4">
                             <input type="checkbox" className="col-1 me-2" id="approved" name="approved" checked={post.approved} onChange={(e) => setPost({...post, approved: !post.approved})} />
                             Published
                         </label>
                     </>
                 }
-                <button type="submit" id="submit" className="col-12 my-3 py-2 border-0 btn-primary text-white rounded" disabled={sending}>{sending?<i className="fa-solid fa-circle-notch fa-spin"></i>:"Post"}</button>
+                <button type="submit" id="submit" className="col-12 py-2 border-0 btn-primary text-white rounded" disabled={sending}>{sending?<i className="fa-solid fa-circle-notch fa-spin"></i>:"Post"}</button>
             </form>
-        </div>
+        </main>
     )
 }
 

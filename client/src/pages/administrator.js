@@ -20,7 +20,6 @@ function Administrator() {
     return (
         <div className=" d-flex flex-column">
             <div id="toolbar" className="navbar navbar-expand-md container-fluid sticky-top d-flex flex-row align-items-center bg-primary border-bottom border-primary border-3 mx-auto px-md-4 pb-0">
-                <div className="position-absolute top-0 end-0 alert mt-2 me-2" id="alert" role="alert"></div>
                 <Toolbar />
                 <button
                 className="navbar-toggler text-white pe-4 ms-2"
@@ -37,22 +36,23 @@ function Administrator() {
                 </div>
             </div>
             <div className="d-flex justify-content-start row mb-4" >
-                <div className="col-md-2 bg-primary shadow-sm">
+                <div className="d-none d-md-flex col-md-2 bg-primary shadow-sm" style={{minHeight: "88vh"}}>
                 </div>
-                <div id="contentarea" className="d-flex col-12 col-md-7 justify-content-between p-4 position-relative">
-                  <ErrorBoundary fallback={<p>Something terrible went wrong, please try again</p>}>
-                    <Outlet />
-                  </ErrorBoundary>
-                    <div type="button" className="toggler d-none d-md-flex align-items-center h-100 position-fixed top-0 end-0" onClick={toggleUtilbar}><i id="toggler" className="bx bxs-right-arrow text-brand"></i></div>
-                </div>
-                <div id="utilbar" className="col-12 col-md-3 ps-2 pe-3 py-3 mb-5">
-                    <Statistics />
-                    <LatestPost />
-                    <Trending />
-                    <RecentUser />
-                </div>
+                <ErrorBoundary fallback={<div class="d-flex col-12 col-md-7 p-4">Something terrible happened, please refresh to try again</div>}>
+                    <div id="contentarea" className="d-flex col-12 col-md-7 justify-content-center p-3 position-relative">
+                        <Outlet />
+                        <div type="button" className="toggler d-none d-md-flex align-items-center h-100 position-fixed top-0 end-0" onClick={toggleUtilbar}><i id="toggler" className="bx bxs-right-arrow text-brand"></i></div>
+                    </div>
+                    <div id="utilbar" className="col-12 col-md-3 ps-2 pe-3 py-3">
+                        <Statistics />
+                        <LatestPost />
+                        <Trending />
+                        <RecentUser />
+                    </div>
+                </ErrorBoundary>
             </div>
             <div className="fixed-bottom">
+                <div className="position-fixed bottom-0 end-0 alert mb-2 me-3" id="alert" role="alert"></div>
                 <Copyright />
             </div>
         </div>

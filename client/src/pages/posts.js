@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom';
 import { Postcard } from '../components/cards';
 import { usePosts } from '../hooks/fetchers';
 
+import { Error } from '../components/errors';
+
 function Posts() {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-    const {posts, isError, isLoading} = usePosts('s/')
+    const {posts, error, isLoading} = usePosts('s?sort=-_id')
     const params = useParams()
     let content;
 
@@ -14,22 +16,10 @@ function Posts() {
             <div className="text-center">
                 <img src="/assets/spinner_block.gif" className="my-5 py-5" width="60px" alt="loading" />
             </div>
-    } else if(isError) {
-        content =
-            <div className="text-center py-5">
-                <img src="/media/no_post.png" width="50px" className="py-3" alt="nopost" />
-                <h6 className="fw-bold">Currently unable to display posts under this category.</h6>
-                <h6>Either it's empty or someone forgot to connect something. Please check back later. Thank you!</h6>
-            </div>
-    } else {
+    } else if(posts) {
         const category = posts.filter((post) => post.meta.category === params.slug && post.isApproved)
         category.length === 0?
-        content =
-            <div className="text-center py-5">
-                <img src="/media/no_post.png" width="50px" className="py-3" alt="nopost" />
-                <h6 className="fw-bold">Currently unable to display posts under this category.</h6>
-                <h6>Either it's empty or someone forgot to connect something. Please check back later. Thank you!</h6>
-            </div>:
+        content = <Error status="204" document={`post under ${params.slug} category`} />:
         content =
         <div className="container-md d-grid gap-4 py-5">
             <div className="row row-cols-md-3">
@@ -50,6 +40,8 @@ function Posts() {
                 ))}
             </div>
         </div>
+    } else if(error || error === undefined) {
+        content = <Error status="500" />
     }
 
     return (

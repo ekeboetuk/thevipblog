@@ -1,9 +1,9 @@
 import { usePosts } from '../hooks/fetchers';
 import { Postcard } from './cards';
-import { Empty } from './errors'
+import { Error } from './errors'
 
 function RecentPosts( {number} ) {
-    const {posts, isLoading} = usePosts('s?sortby=_id')
+    const {posts, isLoading} = usePosts('s?sort=-_id')
 
     if (isLoading) {
         return (
@@ -12,9 +12,7 @@ function RecentPosts( {number} ) {
     }else if(posts){
         const approved = posts.filter((post) => post.isApproved)
         if(approved.length === 0) {
-            return (
-               <Empty text="No Recent Post" />
-            )
+            return <Error status="204" document="recent post" />
         }else{
             return (
                 <div className={`row row-cols-1 row-cols-md-${number} p-0 py-md-${number}`}>
@@ -36,9 +34,8 @@ function RecentPosts( {number} ) {
             )}
     }else {
         return (
-            <div className="text-center py-5">
-                <img src="/media/no_post.png" width="50px" className="pb-2" alt="nopost" />
-                <h6 className="fw-bold">Error loading recent posts</h6>
+            <div className="text-center py-4">
+                <h6 className="fst-italic text-danger fs-8">Error loading recent posts</h6>
             </div>
         )
     }

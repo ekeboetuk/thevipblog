@@ -3,7 +3,7 @@
 :root {
   --primary-color: #74415D;
   --secondary-color: #2F2B2B;
-  --tertiary-color: #EEEEEE;
+  --tertiary-color: #FAFAFA;
 }
 
 body, td, pre, .content {
@@ -219,7 +219,9 @@ td, th {
 }
 
 .alert {
+  --mdb-alert-padding-x: 1.0rem !important;
   --mdb-alert-padding-y: 0.5rem !important;
+  border-radius: 5px !important
 }
 
 .container-sm span img {
@@ -232,6 +234,7 @@ td, th {
 #contentarea, #utilbar {
   transition: width .2s linear !important;
 }
+
 ::placeholder, select:required:invalid {
   font-size: 12px !important;
   font-style: italic
@@ -277,15 +280,19 @@ form > div {
   background-color: var(--tertiary-color);
 }
 
-.actionmenu {
-  z-index: 9 !important;
+.actionmenu{
+  border: 1px solid #DFDFDF;
+  border-radius: 5px;
+  padding: 5px 0;
+  z-index: 999 !important;
+  transform: translateY(20px);
 }
 
 .actionmenu .menuitem {
-  border-radius: 5px;
-  padding: 10px 20px !important;
+  border-radius: 0px;
+  padding: 8px 20px !important;
   /*text-transform: uppercase;*/
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   text-align: left !important;
 }
 
@@ -340,8 +347,12 @@ form > div {
   background-color: var(--secondary-color);
 }
 
+#comments:nth-child(even) {
+  background-color: var(--tertiary-color) !important;
+}
+
 /* Media queries */
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   #adminnavigation {
     position: relative !important;
     top: inherit !important;

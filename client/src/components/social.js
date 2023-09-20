@@ -1,14 +1,18 @@
 import { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { userContext } from '../index';
 
 function Social( ) {
 	const [usermenu, showUsermenu] = useState(false)
 	const {token, unsetToken} = useContext(userContext)
+	const navigate = useNavigate()
 
 	function handleLogout() {
-		unsetToken();
+		navigate(0)
+		setTimeout(()=>{
+			unsetToken();
+		},10)
 	}
 
 	return (
@@ -42,9 +46,9 @@ function Social( ) {
 								</button>
 								{usermenu &&
 									<div id="usermenu" className="d-flex flex-column position-absolute top-100 start-0 w-100 bg-tertiary actionmenu">
-										<Link to="/profile" className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
-										<Link to={`/posts?${token?.name}`} className="menuitem link-dark"><li className="fas fa-edit me-2"></li>My Posts</Link>
-										{token?.isAdmin && <Link to="/afriscope-admin" className="menuitem link-dark"><li className="fas fa-gear me-2"></li>Admin Panel</Link>}
+										<Link to="/user/profile" className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
+										<Link to={`/posts/?q=${token?.name}`} className="menuitem link-dark"><li className="fas fa-edit me-2"></li>My Posts</Link>
+										{token?.isAdmin && <Link to="/administrator" className="menuitem link-dark"><li className="fas fa-gear me-2"></li>Admin Panel</Link>}
 										<Link className="menuitem link-dark" onClick={handleLogout}><li className="fas fa-unlock me-2"></li>Sign Out</Link>
 									</div>}
 							</div>

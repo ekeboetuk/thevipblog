@@ -42,8 +42,8 @@ const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} }
 
 // Define routes
 app.get('/posts', async (req, res) => {
-  const {sortby} = req.query
-  await posts.find({}).sort(`-${sortby}`).populate('meta.author').populate('comments.user')
+  const {sort} = req.query
+  await posts.find({}).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })

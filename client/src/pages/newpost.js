@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
 
 import Postform from '../components/postform';
+import { Error } from '../components/errors';
 
 function NewPost( {token} ) {
 
@@ -18,15 +18,7 @@ function NewPost( {token} ) {
                     </div>
                 </div>
             </>:
-            <div className="container-md text-center my-5 py-5">
-                <h1 className="fs-1 fw-semibold text-brand">403</h1>
-                <h5 className="fw-semibold">Access Denied</h5>
-                <p>Page is restricted to authorized users only. Please contact site Administrator!</p>
-                {token ?
-                    <Link className="text-white btn-primary px-3 py-2 fw-semibold" to="/" type="button"><i className="fas fa-home pe-2"></i>Go To Home</Link>:
-                    <Link to="/signin" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Sign In</Link>
-                }
-            </div>
+            <Error status="401" token={token} />
     )
 }
 

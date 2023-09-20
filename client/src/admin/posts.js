@@ -3,21 +3,22 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { usePosts } from '../hooks/fetchers';
-import { Empty } from '../components/errors'
+import { Error } from '../components/errors'
 import axios from 'axios';
 
 function Posts() {
-    const [sortby, setSortby] = useState("_id");
-    const {posts, error, isLoading, mutate} = usePosts(`s?sortby=${sortby}`)
+    const [sort, setSort] = useState("-_id");
+    const {posts, error, isLoading, mutate} = usePosts(`s?sort=${sort}`)
     const [search, setSearch] = useState("");
     const [actionmenu, setActionmenu] = useState({})
     const [operation, setOperation] = useState();
 
     const spinnerbound = document.getElementById("contentarea")
-
+    const navwidth = document.getElementById("adminnavigation")
+    const alert = document.getElementById('alert')
 
     const handlePostsort = (e) => {
-        setSortby(e.target.value)
+        setSort(e.target.value)
         mutate(posts.sort((a, b)=>{
             return (a.meta.category).localeCompare((b.meta.category))
         }))
@@ -64,23 +65,44 @@ function Posts() {
 
     const togglePublishComment = async(postId, commentId, status)=>{
         setOperation(true)
-        mutate(posts.map((post)=>{
-            return {
-                ...post, comments: post.comments.map((comment) => {
-                    if(comment._id === commentId) {
-                        return {
-                            ...comment, approved: !status}
-                    }else{
-                        return comment
-                    }
+        try{
+            mutate(posts.map((post)=>{
+                return {
+                    ...post, comments: post.comments.map((comment) => {
+                        if(comment._id === commentId) {
+                            return {
+                                ...comment, approved: !status}
+                        }else{
+                            return comment
+                        }
+                    })
+                }}),
+                await axios.patch('http://localhost:3001/post/comment/togglestatus', {
+                    postId: postId,
+                    commentId: commentId,
+                    status: !status
+                },
+                {
+                    signal: AbortSignal.timeout(10000)
                 })
-            }}),
-            await axios.patch('http://localhost:3001/post/comment/togglestatus', {
-                postId: postId,
-                commentId: commentId,
-                status: !status
-            }))
+                .then(()=>{
+                    alert.classList.add('alert-success')
+                    alert.innerHTML = '<i class="fa-regular fa-circle-check pe-2"></i>Comment update successful'
+                })
+            )
+        } catch(err) {
+            alert.classList.add('alert-danger')
+            alert.innerHTML = '<i class="fa-solid fa-triangle-exclamation pe-2"></i>Error updating comment'
+        }
         setOperation(false)
+        setTimeout(()=>{
+            if(alert.classList.contains('alert-danger')){
+                alert.classList.remove('alert-danger')
+            }else{
+                alert.classList.remove('alert-success')
+            }
+            alert.innerHTML = ''
+        }, 8000)
     }
 
     const handleDeleteComment = async (postId, postIndex, commentId) => {
@@ -93,21 +115,31 @@ function Posts() {
         setOperation(false)
     }
 
-    const toggleFeatured = async(postIndex, postId, featured) => {
-        await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
-            id: postId,
-            property: "meta.featured",
-            status: !featured
-        })
-        .then((response)=>{
-            mutate()
-            document.getElementById('alert').classList.toggle('alert-success')
-            document.getElementById('alert').innerHTML = `<i class='fa-regular fa-circle-check pe-2'></i>${response.data}`
-            setTimeout(()=>{
-                document.getElementById('alert').classList.toggle('alert-success')
-                document.getElementById('alert').innerHTML = ""
-            }, 5000)
-        })
+    const toggleFeatured = async(index, postId, featured) => {
+        setOperation(true)
+        mutate(await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
+                id: postId,
+                property: "meta.featured",
+                status: !featured
+            })
+            .then((response)=>{
+                alert.classList.add('alert-success')
+                alert.innerHTML = `<i class='fa-regular fa-circle-check pe-2'></i>${response.data}`
+            })
+            .catch((err) => {
+                alert.classList.add('alert-danger')
+                alert.innerHTML = `<i class="fa-regular fa-circle-check pe-2"></i>Error updating post (${err.message})`
+            })
+        )
+        setOperation(false)
+        setTimeout(()=>{
+            if(alert.classList.contains('alert-danger')){
+                alert.classList.remove('alert-danger')
+            }else{
+                alert.classList.remove('alert-success')
+            }
+            alert.innerHTML = ''
+        }, 8000)
     }
 
     const toggleActionmenu = (e, index)=>{
@@ -118,14 +150,14 @@ function Posts() {
     if(posts){
         if(posts.length === 0) {
             return (
-               <Empty text="No Post Found" />
+               <Error status="204" document="Post" />
             )
         }else{
             return (
-                <div>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{top: `40vh`, right: `calc(${spinnerbound.offsetWidth/2}px)`}}></i>}
+                <div>{isLoading && <div className="position-fixed translate-middle-x" style={{top: `50vh`, left: `calc(${navwidth?.clientWidth + spinnerbound?.clientWidth/2}px)`}}><i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait...</i></div>}
                     <div className={`${isLoading && "opacity-25"} mb-0 mb-md-5 pe-md-0`} onClick={()=>setActionmenu({})}>
                     <input type="text" id="search" className="w-100 bg-light mb-3 px-3 py-1" value={search} onChange={(e)=>handleSearch(e)} placeholder="Ajax Search" />
-                    <div className="d-flex flex-column flex-md-row justify-content-between mb-2">
+                    <div className="d-flex flex-column flex-sm-row justify-content-between mb-2">
                         <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">View As:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
@@ -136,13 +168,13 @@ function Posts() {
                         <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">Sort By:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
-                                <select id="postssort" className="border-0" name="postssort" value={sortby} onChange={(e)=>handlePostsort(e)}>
-                                    <option value="_id">Created</option>
+                                <select id="postssort" className="border-0" name="postssort" value={sort} onChange={(e)=>handlePostsort(e)}>
+                                    <option value="-_id">Created</option>
                                     <option value="updatedAt">Updated</option>
-                                    <option value="meta.category">Category</option>
-                                    <option value="meta.author">Author</option>
-                                    <option value="isApproved">Status</option>
-                                    <option value="meta.featured">Featured</option>
+                                    <option value="-meta.category">Category</option>
+                                    <option value="-meta.author">Author</option>
+                                    <option value="-isApproved">Status</option>
+                                    <option value="-meta.featured">Featured</option>
                                     <option value="comments">Engagement</option>
                                 </select>
                             </div>
@@ -172,8 +204,8 @@ function Posts() {
                                                     height: "142px",
                                                     maxHeight: "142px"
                                                 }}
-                                                className="me-0 me-md-3 mb-3 mb-md-0 col-md-2 align-self-stretch rounded-6 border border-3 border-white">
-                                            <div type="button" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning fs-6`}></i></div>
+                                                className="d-flex me-0 me-md-3 mb-3 mb-md-0 col-md-2 align-self-stretch rounded-6 border border-3 border-white">
+                                                <div type="button" className="align-self-start" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning fs-6`}></i></div>
                                             </div>
                                             <div className="d-flex flex-column flex-grow-1 me-md-3">
                                                 <Link to={`/post/${post.title}`} target="_blank" className="d-flex align-items-center text-black"><h6 className="title fw-bold pe-1">{post.title}</h6><i className="blank fa-solid fa-arrow-up-right-from-square fs-8"></i></Link>
@@ -181,7 +213,7 @@ function Posts() {
                                                 <small className="fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name}</small>
                                                 <small className=""><i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</small>
                                                 <details>
-                                                    <summary><small>Comments({post.comments.length})</small></summary>
+                                                    <summary><small>Comments <span className="badge rounded-pill badge-dark">{post.comments.length}</span></small></summary>
                                                     {post.comments.map((comment, postIndex) => (
                                                         <div key={postIndex} className="listing d-flex py-1 justify-content-between">
                                                             <small className="ps-4 pe-2"><i className="fas fa-caret-right"></i></small>
@@ -198,10 +230,10 @@ function Posts() {
                                                     ))}
                                                 </details>
                                             </div>
-                                            <div className="actionmenu">
+                                            <div className="actionbutton">
                                                 <span type="button" className="fa-solid fa-ellipsis-vertical fs-5 bg-transparent border-0 position-absolute top-0 end-0" onClick={(e)=>toggleActionmenu(e, index)}></span>
                                                 {actionmenu[index] &&
-                                                <div className="d-flex flex-column position-absolute top-0 end-0 mt-4 bg-tertiary p-1 actionmenu rounded-5 shadow-sm">
+                                                <div className="d-flex flex-column position-absolute top-0 end-0 bg-tertiary actionmenu shadow-sm">
                                                     <button className="border-0 menuitem"  onClick={()=>togglePublishPost(post._id, post.isApproved, index)}>{post.isApproved?'Unpublish':'Publish'}</button>
                                                     <button className="border-0 menuitem">Edit Post</button>
                                                     <button className="border-0 menuitem"  onClick={()=>handleDeletePost(post._id)}>Delete</button>
@@ -212,26 +244,20 @@ function Posts() {
                                     </td>
                                 </tr>
                             ))}
-                            {operation ? <tr><td className="position-absolute top-0 start-0 opacity-75 w-100 h-100 text-dark text-center align-middle bg-white"><i className="fa-solid fa-circle-notch fa-spin position-fixed top-50 start-50"></i></td></tr>:null}
+                            {operation ? <tr><td className="position-absolute top-0 start-0 opacity-75 w-100 h-100 bg-white"><div className="position-absolute top-50 start-50 translate-middle-x fst-italic"><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait...</div></td></tr>:null}
                             </tbody>
                         </table>
                     </div>
                 </div>
             )}
-    } else {
-        if(isLoading) {
-            return (
-              <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{top: `calc(${spinnerbound?.offsetHeight/2}px)`, right: `calc(${spinnerbound?.offsetWidth/2}px)`}}></i>
-            )
-        }else if(error?.message.startsWith('timeout')) {
-            return (
-                <h4>Network Timeout</h4>
-            )
-        }else{
-            return (
-                <p>Something terrible happened</p>
-            )
-        }
+    } else if(isLoading) {
+        return (
+            <div className="position-absolute align-self-center fw-semibold" style={{top: `calc(${spinnerbound?.offsetHeight/2}px)`, right: `calc(${spinnerbound?.offsetWidth/2}px)`}}>
+                <i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait! Loading...</i>
+            </div>
+        )
+    }else if(error || error === undefined) {
+        return <Error status="500" />
     }
 }
 

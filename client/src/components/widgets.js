@@ -3,8 +3,8 @@ import RecentPosts from './recentpost'
 import { Widgetcard } from './cards'
 
 export const Statistics = () => {
-    const{posts, isLoading} = usePosts('s/');
-    const [users] = useUsers();
+    const {posts, isLoading} = usePosts('s?sort=-_id');
+    const {users} = useUsers();
     const stats = {
         totalposts: 0,
         totalcomments: 0,
@@ -13,13 +13,15 @@ export const Statistics = () => {
         totalusers: 0,
     };
 
-    stats.totalposts += posts?.length
-    stats.totalusers += users?.length
-    posts?.forEach((post)=> {
-        stats.totalcomments += post.comments.length
-        stats.totallikes += post.meta.likes
-        stats.totalviews += post.meta.views
-    })
+    if(posts && users) {
+        stats.totalposts += posts?.length
+        stats.totalusers += users?.length
+        posts?.forEach((post)=> {
+            stats.totalcomments += post.comments.length
+            stats.totallikes += post.meta.likes
+            stats.totalviews += post.meta.views
+        })
+    }
 
     return (
         <Widgetcard title="Site Stats">
