@@ -44,10 +44,10 @@ export function Signup() {
                     setSending(false)
                 }, 5000)
             })
-            .catch(() => {
+            .catch((error) => {
                 setTimeout(()=>{
                     message.classList.add('text-danger')
-                    message.innerHTML = "Error signing up, please try again"
+                    message.innerHTML = `Error signing up (${error.message}), please try again`
                     formelements.forEach(elem => elem.disabled = false);
                     setSending(false)
                 })
@@ -108,18 +108,25 @@ export function Signup() {
 }
 
 export function Signin( {setToken} ) {
-    const [state, setState] = useState({password:''})
+    const [state, setState] = useState({
+        password:'',
+        remember_me:sessionStorage.getItem('remember_me')==="true"
+        })
     const message = document.getElementById("message")
 
     const navigate = useNavigate();
 
         async function handleLogin(e) {
             e.preventDefault()
+            sessionStorage.setItem("remember_me", state.remember_me)
 
            await axios.post(`http://localhost:3001/user/login`,{
                 email: state.email,
-                password: state.password
-            })
+                password: state.password,
+                remember_me: state.remember_me
+            },{
+                withCredentials: true
+              })
             .then((response) => {
                 message.innerHTML = "Login successful";
                 message.style.color = "green";
@@ -129,7 +136,7 @@ export function Signin( {setToken} ) {
                 }, 10)
             })
             .catch((error) => {
-                message.innerHTML = error.response.data;
+                message.innerHTML = `An error occured (${error.message}), please try again`;
                 message.style.color = "red";
             })
         }
@@ -166,11 +173,15 @@ export function Signin( {setToken} ) {
                 <form onSubmit={handleLogin} className="d-flex flex-column align-items-center mt-3">
                     <div>
                         <i className="fas fa-at text-brand position-absolute top-50 start-0 translate-middle ps-5 lh-1"></i>
-                        <input type="email" id="email" name="email" onChange={handleChange} value={state.email??""} className="flex-fill border border-1 border-primary rounded-pill text-black-50 ps-5 pe-3 pt-1" placeholder="E-mail"/>
+                        <input type="email" id="email" name="email" onChange={handleChange} value={state.email??""} className="flex-fill border border-1 border-primary rounded-pill text-black-50 ps-5 pe-3 pt-1" placeholder="E-mail" autoComplete="on"/>
                     </div>
                     <div>
                         <i className="fas fa-lock  text-brand position-absolute top-50 start-0 translate-middle ps-5 lh-1"></i>
                         <input type="password" id="password" name="password" onChange={handleChange} value={state.password??""} className="flex-fill border border-1 border-primary rounded-pill text-black-50 ps-5 pe-3 pt-1" placeholder="Password"/>
+                    </div>
+                    <div className="d-flex flex-row">
+                        <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setState({...state, remember_me: !state.remember_me})} checked={state.remember_me} />
+                        <label htmlFor="remember_me">Remember Me</label>
                     </div>
                     <button type="submit" className="btn btn-primary px-5 rounded-8"  disabled={!state.email || state.password.length < 5}>Sign In</button>
                     <p id="message" className="mt-3 fw-bold" style={{height:"20px"}}>&nbsp;</p>

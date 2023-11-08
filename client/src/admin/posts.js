@@ -48,9 +48,21 @@ function Posts() {
                 property: "isApproved",
                 status: !status
             })
+            .then(()=>{
+                alert.classList.add('alert-success')
+                alert.innerHTML = `<i class="fa-regular fa-circle-check pe-2"></i>Post ${status===true?'unplubished':'published'} successfully`
+            })
         )
         setOperation(false)
         setActionmenu({})
+        setTimeout(()=>{
+            if(alert.classList.contains('alert-danger')){
+                alert.classList.remove('alert-danger')
+            }else{
+                alert.classList.remove('alert-success')
+            }
+            alert.innerHTML = ''
+        }, 8000)
     }
 
     const handleDeletePost = async (postId) => {
@@ -83,16 +95,16 @@ function Posts() {
                     status: !status
                 },
                 {
-                    signal: AbortSignal.timeout(10000)
+                    signal: AbortSignal.timeout(20000)
                 })
                 .then(()=>{
                     alert.classList.add('alert-success')
-                    alert.innerHTML = '<i class="fa-regular fa-circle-check pe-2"></i>Comment update successful'
+                    alert.innerHTML = `<i class="fa-regular fa-circle-check pe-2"></i>Comment successfully ${status?'unpublished':'published'}`
                 })
             )
         } catch(err) {
             alert.classList.add('alert-danger')
-            alert.innerHTML = '<i class="fa-solid fa-triangle-exclamation pe-2"></i>Error updating comment'
+            alert.innerHTML = `<i class="fa-solid fa-triangle-exclamation pe-2"></i>Error updating comment (${err.message})`
         }
         setOperation(false)
         setTimeout(()=>{
@@ -107,16 +119,17 @@ function Posts() {
 
     const handleDeleteComment = async (postId, postIndex, commentId) => {
         setOperation(true)
-        mutate(
-            [...posts, {...posts[postIndex], comments: posts[postIndex].comments.filter(comment => !comment.commentId)
-            }],
-            await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}/${commentId}`)
-        )
+        await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}/${commentId}`)
+        mutate(posts.map((post)=>{
+                return {
+                    ...post, comments: post.comments.filter((comment) => comment._id !== commentId)
+                }
+            }))
         setOperation(false)
     }
 
     const toggleFeatured = async(index, postId, featured) => {
-        setOperation(true)
+        //setOperation(true)
         mutate(await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
                 id: postId,
                 property: "meta.featured",
@@ -131,7 +144,7 @@ function Posts() {
                 alert.innerHTML = `<i class="fa-regular fa-circle-check pe-2"></i>Error updating post (${err.message})`
             })
         )
-        setOperation(false)
+        //setOperation(false)
         setTimeout(()=>{
             if(alert.classList.contains('alert-danger')){
                 alert.classList.remove('alert-danger')
@@ -172,7 +185,7 @@ function Posts() {
                                     <option value="-_id">Created</option>
                                     <option value="updatedAt">Updated</option>
                                     <option value="-meta.category">Category</option>
-                                    <option value="-meta.author">Author</option>
+                                    <option value="meta.author">Author</option>
                                     <option value="-isApproved">Status</option>
                                     <option value="-meta.featured">Featured</option>
                                     <option value="comments">Engagement</option>
@@ -210,10 +223,10 @@ function Posts() {
                                             <div className="d-flex flex-column flex-grow-1 me-md-3">
                                                 <Link to={`/post/${post.title}`} target="_blank" className="d-flex align-items-center text-black"><h6 className="title fw-bold pe-1">{post.title}</h6><i className="blank fa-solid fa-arrow-up-right-from-square fs-8"></i></Link>
                                                 <small className="mb-2 text-justify">{post.intro}</small>
-                                                <small className="fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name}</small>
-                                                <small className=""><i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</small>
-                                                <details>
-                                                    <summary><small>Comments <span className="badge rounded-pill badge-dark">{post.comments.length}</span></small></summary>
+                                                <small className="ps-1"><i className="fas fa-bars-staggered pe-2"></i>{post.meta.category[0].toUpperCase()+post.meta.category.slice(1)}</small>
+                                                <small className="ps-1 fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name} &ensp;<i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</small>
+                                                <details className="ps-1">
+                                                    <summary><small> Comments <span className="badge rounded-pill badge-dark">{post.comments.length}</span></small></summary>
                                                     {post.comments.map((comment, postIndex) => (
                                                         <div key={postIndex} className="listing d-flex py-1 justify-content-between">
                                                             <small className="ps-4 pe-2"><i className="fas fa-caret-right"></i></small>
@@ -234,9 +247,9 @@ function Posts() {
                                                 <span type="button" className="fa-solid fa-ellipsis-vertical fs-5 bg-transparent border-0 position-absolute top-0 end-0" onClick={(e)=>toggleActionmenu(e, index)}></span>
                                                 {actionmenu[index] &&
                                                 <div className="d-flex flex-column position-absolute top-0 end-0 bg-tertiary actionmenu shadow-sm">
-                                                    <button className="border-0 menuitem"  onClick={()=>togglePublishPost(post._id, post.isApproved, index)}>{post.isApproved?'Unpublish':'Publish'}</button>
-                                                    <button className="border-0 menuitem">Edit Post</button>
-                                                    <button className="border-0 menuitem"  onClick={()=>handleDeletePost(post._id)}>Delete</button>
+                                                    <button className="border-0 menuitem bg-tertiary"  onClick={()=>togglePublishPost(post._id, post.isApproved, index)}>{post.isApproved?'Unpublish':'Publish'}</button>
+                                                    <button className="border-0 menuitem bg-tertiary">Edit Post</button>
+                                                    <button className="border-0 menuitem bg-tertiary"  onClick={()=>handleDeletePost(post._id)}>Delete</button>
                                                 </div>
                                                 }
                                             </div>

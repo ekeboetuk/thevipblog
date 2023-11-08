@@ -6,7 +6,8 @@ export function usePosts(apiendpoint) {
     const {data, error, isLoading, isValidating, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/post${apiendpoint}`,
         fetcher,
         {
-            keepPreviousData: true
+            keepPreviousData: true,
+            refreshInterval: 1000
         })
 
     return {

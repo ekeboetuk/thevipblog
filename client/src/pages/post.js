@@ -28,6 +28,10 @@ function Post({ token }) {
             user: token?.id,
             post: params.slug,
             id: posts._id
+        }, {
+            headers: {
+                Authorization: `Bearer ${document.cookie.split("; ").find(row=>row.startsWith('SessionToken='))?.split('=')[1]}`
+            }
         })
         .then(()=>{
             message.innerHTML = '<span class="text-success">Comment successfully submitted. Will show up here after moderation!</span>';
@@ -36,16 +40,17 @@ function Post({ token }) {
             setTimeout(()=>{
                 message.innerHTML = "";
             }, 10000)
-        })
-        .catch((error) => {
-            message.innerHTML = '<span class="text-danger">Comment Failed, Try Again!</span>';
+        },(error) => {
+            message.innerHTML = `<span class="text-danger">${error.message}</span>`;
             setSending(false)
         })
     }
 
     let content;
 
-    if(posts) {
+    if(isLoading) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+    } else if(posts) {
         if(posts.length === 0 || !posts.isApproved){
             content = <Error status="404" document="Post" />
         }else if (!posts._id){
@@ -116,7 +121,6 @@ function Post({ token }) {
         }
     } else {
         if(error) {
-            console.log('Error here')
             content = <Error status="500" />
         }else{
             content = <Error status="404" document="Post" />
@@ -129,10 +133,10 @@ function Post({ token }) {
                 {isLoading ? <img src="/assets/spinner_block.gif" width="60px" alt="loading" />:
                 <div className={`${isLoading && "opacity-25"}`}>{content}</div>}
             </div>
-            <div className="container-fluid d-flex flex-column bg-tertiary">
-                <div className="container-md d-grid">
-                <h6 className=" text-center text-uppercase fw-bold pt-4 mb-0 mx-md-3">Recent Posts</h6>
-                    <RecentPosts number={4} />
+            <div className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
+                <div className="container-md py-5">
+                    <h6 className=" text-center text-uppercase text-white fw-bold mb-0 mx-md-3">Most Recent</h6>
+                    <RecentPosts number={3} />
                 </div>
             </div>
         </>

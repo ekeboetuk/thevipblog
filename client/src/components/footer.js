@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
-    <div id="footer" className="bg-secondary py-5 px-4 text-light">
+    <div id="footer" className="bg-secondary px-4 text-light">
 			<div className="row container-md mx-auto">
 				<div className='col-12 col-md-6 pe-5'>
 					<img src="/assets/logo-white.png" width="140" height="40" className="d-inline-block align-top mb-3" alt="Afriscope Logo"

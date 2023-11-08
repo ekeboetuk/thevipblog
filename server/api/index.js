@@ -19,7 +19,11 @@ const app = express();
 //app.use(morgan('tiny'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+}));
 app.use(cookieparser());
 
 // Models
@@ -139,15 +143,26 @@ app.patch('/post/togglestatus', async (req, res) => {
 })
 
 app.patch('/post/comment', async (req, res) => {
-  let comment = await posts.findByIdAndUpdate(req.body.id,
-    {$push:
-      {comments:
-        {content: req.body.comment, user: req.body.user}
-      }
-    })
-  if(!comment) return res.status(404).send('Error Posting Comment');
-  res.send('')
+  try{
+    const token = req.headers.authorization.split(' ')[1]
+    const verifyToken = jwt.verify(token, JWT_SECRET)
+    const user = await users.findById(verifyToken.user.id)
+    if(user){
+      let comment = await posts.findByIdAndUpdate(req.body.id,
+        {$push:
+          {comments:
+            {content: req.body.comment, user: req.body.user}
+          }
+        })
+      if(!comment) return res.status(404).send('Error Posting Comment');
+      console.log('Successful')
+      res.send('Comment successfully posted')
+    }
+  }catch(error){
+    res.status(401).send('Failed to post comment - unauthorized')
+    }
 })
+
 
 app.patch('/post/comment/togglestatus', async (req, res) => {
   const {postId, commentId, status} = req.body
@@ -215,12 +230,12 @@ app.post('/user/login', async (req, res) => {
 
   const data = {
     user: {
-      id: user._id,
+      id: user._id
     }
   }
 
   const authtoken = jwt.sign(data, JWT_SECRET)
-  res.send({id: user._id, name: user.name, type: user.type, isAdmin: user.isAdmin, token:authtoken});
+  res.cookie('SessionToken', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):""}).send({id: user._id, name: user.name, type: user.type, isAdmin: user.isAdmin});
 })
 
 app.post("/user/newuser", async (req, res) => {
@@ -276,6 +291,10 @@ connect(db)
 
 // Start the server
 const port = process.env.MONITOR_PORT || 3001;
-app.listen(port, () => {
-  console.debug(`Server is running on port ${port}`);
-});
+try{
+  app.listen(port, () => {
+    console.debug(`Server is running on port ${port}`);
+  })
+}catch (error) {
+  console.log(error)
+}

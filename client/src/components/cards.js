@@ -15,9 +15,6 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
     }, {
       withCredentials: true
     })
-    .catch((error) => {
-      console.log(error)
-    })
   }
 
   const imageBuffer = btoa(new Uint8Array(image.data.data).reduce(function (data, byte) {
@@ -27,7 +24,7 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
   return (
     <>
       <div className="w-100 w-md-50 position-relative" style={{backgroundImage: `url(data:image/jpeg;base64,${imageBuffer})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: height}}>
-        {meta.featured && <i className="fa-solid fa-star p-2 text-warning fs-6"></i>}
+        {meta.featured && <span className="bg-warning px-2 py-1 text-white fs-8 fw-normal position-absolute start-0 top-0">Featured</span>}
       </div>
       <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom">
         <div className="d-flex flex-column py-3 px-4 justify-content-between position-relative">
@@ -57,6 +54,41 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
         </div>
         <div className="bg-tertiary px-3">
             <Meta id={id} views={meta.views} comments={comments} likes={meta.likes} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+export const PostcardTransparent = ({id, slug, image, height, title, intro, comments, meta, category, created }) => {
+
+  const updateViews = () => {
+    axios
+    .patch(process.env.REACT_APP_SERVER_URL + `/post/views`, {
+      id: id
+    }, {
+      withCredentials: true
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+  const imageBuffer = btoa(new Uint8Array(image.data.data).reduce(function (data, byte) {
+    return data + String.fromCharCode(byte);
+  }, ''));
+
+  return (
+    <>
+      <div className="w-100 w-md-50 position-relative" style={{backgroundImage: `url(data:image/jpeg;base64,${imageBuffer})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: height}}>
+        {meta.featured && <span className="bg-warning px-2 py-1 text-white fs-8 fw-normal position-absolute start-0 top-0">Featured</span>}
+        <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-dark text-white overflow-hidden position-absolute bottom-0 opacity-75">
+          <div className="d-flex flex-column py-3 px-4 justify-content-between position-relative">
+              <Link className="title fs-5 fw-normal text-white lh-sm" to={`/post/${slug}`} onClick={updateViews}>{title}</Link>
+          </div>
+          <div className="bg-dark px-3">
+              <Meta id={id} views={meta.views} comments={comments} likes={meta.likes} />
+          </div>
         </div>
       </div>
     </>

@@ -8,7 +8,7 @@ import { usePosts } from '../hooks/fetchers';
 
 
 function Home() {
-    const {posts, error, isLoading} = usePosts('s?sort=-_id')
+    const {posts, error, isLoading} = usePosts('s/published')
     let content
 
     if(isLoading){

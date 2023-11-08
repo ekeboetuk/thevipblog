@@ -7,7 +7,7 @@ function RecentPosts( {number} ) {
 
     if (isLoading) {
         return (
-            <p className="py-3 fs-italic fw-bold text-center"><i className="fa-solid fa-circle-notch fa-spin me-2"></i>Loading Recent</p>
+            <p className="py-3 fs-italic fw-bold text-white text-center"><i className="fa-solid fa-circle-notch fa-spin me-2"></i>Loading Recent</p>
         )
     }else if(posts){
         const approved = posts.filter((post) => post.isApproved)
@@ -17,12 +17,12 @@ function RecentPosts( {number} ) {
             return (
                 <div className={`row row-cols-1 row-cols-md-${number} p-0 py-md-${number}`}>
                     {approved.slice(0, number).map((post) => (
-                        <div key={post._id} className={`col g-2 gx-md-${number} gy-md-0`}>
+                        <div key={post._id} className={`col g-4 gx-md-${number} gy-md-0`}>
                             <Postcard
                                 id={post._id}
                                 slug={post.slug}
                                 image={post.image}
-                                title={`${post.title.slice(0, 25)}...`}
+                                title={post.title}
                                 comments={post.comments}
                                 meta={post.meta}
                                 created={post.created}

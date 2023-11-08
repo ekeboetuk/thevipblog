@@ -7,8 +7,8 @@ export const Error = ({ status, document, image, token }) => {
         description:'No Content',
         message: `No ${document}`,
         image: {
-          source: image || '/media/error_no_post.png',
-          width: "40px"
+          source: image || '/media/error_no_document_(1).jpeg',
+          width: "200px"
         }
       },
       '401': {
@@ -31,8 +31,8 @@ export const Error = ({ status, document, image, token }) => {
         description:'Internal Server Error',
         message: `Problem trying to connect to server.`,
         image: {
-          source: image || '/media/error_network_cable.png',
-          width: "50px"
+          source: image || '/media/internal_server_error.avif',
+          width: "200px"
         }
       }
     }
@@ -40,7 +40,7 @@ export const Error = ({ status, document, image, token }) => {
     return (
         <div className="text-center py-5">
             <img src={error[status].image.source} width={error[status].image.width} className="pb-3" alt="error" />
-            {status !== "204" && <h6 className="fw-semibold">{error[status].description}</h6>}
+            {status !== "204" && <h6 className="fw-semibold">{error[status].description.toUpperCase()}</h6>}
             <p>{error[status].message}{status === "500" && <Link classsName="text-black fw-semibold" onClick={()=>window.location.reload()}> Please retry</Link>}</p>
             {status === "401"?
               <Link className="text-white btn-primary px-3 py-2 fw-semibold" to={token?"/":"/signin"} type="button"><i className={`fas ${token?"fa-home":"fa-right-to-bracket"} pe-2`}></i>{token?"Back to home":"Sign In"}</Link>:
