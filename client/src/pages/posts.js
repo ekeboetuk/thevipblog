@@ -6,8 +6,10 @@ import { usePosts } from '../hooks/fetchers';
 import { Error } from '../components/errors';
 
 function Posts() {
-    const {posts, error, isLoading} = usePosts('s?sort=-_id')
     const params = useParams()
+    document.title = `Afriscope Blog - ${params.slug.charAt(0).toUpperCase()+params.slug.slice(1)} Category`
+
+    const {posts, error, isLoading} = usePosts('s?sort=-_id')
     let content;
     let filter;
 

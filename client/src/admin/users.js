@@ -9,6 +9,8 @@ import { Usercard } from '../components/cards';
 
 
 function Users() {
+    document.title = "Afriscope Administrator - Manage Users"
+
     const {users, error, isLoading, mutate} = useUsers()
     const [view, setView] = useState('List');
 	const {token} = useContext(userContext)
@@ -23,7 +25,7 @@ function Users() {
                     return user
                 }
             }),
-            await axios.patch('http://localhost:3001/user', {
+            await axios.patch(process.env.REACT_APP_SERVER_URL + '/user', {
                 id: id,
                 status: !status
             })
@@ -34,7 +36,7 @@ function Users() {
         mutate(users.filter((user)=>{
                 return user._id !== userId
             }),
-            await axios.delete(`http://localhost:3001/user/${userId}`)
+            await axios.delete(process.env.REACT_APP_SERVER_URL + `/user/${userId}`)
         )
     }
 

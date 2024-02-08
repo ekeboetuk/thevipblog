@@ -3,10 +3,10 @@ import Social from './social';
 
 function Header( ) {
   return (
-    <>
+    <div className="sticky-top">
         <Navbar />
         <Social />
-    </>
+    </div>
   );
 }
 

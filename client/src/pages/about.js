@@ -1,4 +1,6 @@
 function About() {
+    document.title = "Afriscope Blog - About Us"
+
     return (
         <>
             <div className="container-fluid mx-auto text-center fw-bold fs-4 py-5 bg-tertiary">

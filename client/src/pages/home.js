@@ -8,7 +8,9 @@ import { usePosts } from '../hooks/fetchers';
 
 
 function Home() {
-    const {posts, error, isLoading} = usePosts('s/published')
+    document.title = "Afriscope - Your Favourite Blog - Homepage"
+
+    const {posts, error, isLoading} = usePosts('s?sort=-_id')
     let content
 
     if(isLoading){

@@ -22,15 +22,15 @@ function Administrator() {
             <div id="toolbar" className="navbar navbar-expand-md container-fluid sticky-top d-flex flex-row align-items-center bg-primary border-bottom border-primary border-3 mx-auto px-md-4 pb-0">
                 <Toolbar />
                 <button
-                className="navbar-toggler text-white pe-4 ms-2"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#adminnavigation"
-                aria-controls="adminnavigation"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-                <i className="fas fa-bars"></i>
-            </button>
+                    className="navbar-toggler text-white pe-4 ms-2"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#adminnavigation"
+                    aria-controls="adminnavigation"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <i className="fas fa-bars"></i>
+                </button>
                 <div id="adminnavigation" className="col-2 navbar-collapse collapse p-0">
                     <Navigation />
                 </div>

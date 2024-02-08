@@ -28,7 +28,7 @@ import Postform from "./components/postform";
 export const userContext = createContext()
 
 function Afriscope() {
-  const {token, setToken, unsetToken} = useToken(); 
+  const {token, setToken, unsetToken} = useToken();
 
   const router = createBrowserRouter(
     createRoutesFromElements(

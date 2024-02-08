@@ -10,7 +10,7 @@ function Navbar() {
     }
 
     return (
-        <nav className="navbar sticky-top navbar-expand-lg navbar-light bg-primary square border-top border-primary border-3">
+        <nav className="navbar navbar-expand-lg navbar-light bg-primary square border-top border-primary border-3">
             <div className="container-md mx-auto">
                 <Link className="navbar-brand me-5 me-sm-0" to="/">
                     <img

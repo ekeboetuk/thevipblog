@@ -47,7 +47,7 @@ const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} }
 // Define routes
 app.get('/posts', async (req, res) => {
   const {sort} = req.query
-  await posts.find({}).sort(`${sort}`).populate('meta.author').populate('comments.user')
+  await posts.find({}).select('-body').sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
@@ -57,7 +57,7 @@ app.get('/posts', async (req, res) => {
 })
 
 app.get('/posts/published', async (req, res) => {
-  await posts.find({isApproved:true}).sort('-created').populate('meta.author').populate('comments.user')
+  await posts.find({isApproved:true}).select('-body').sort('-created').populate('meta.author').populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
@@ -127,7 +127,7 @@ app.patch('/post/views', async (req, res) => {
   !req.cookies[id] ?
   await posts.findByIdAndUpdate(id, {$inc: {'meta.views': 1}})
   .then(()=>{
-    res.cookie(id, "Viewed").send();
+    res.cookie(id, "Viewed", {sameSite: "None", secure: true}).send();
   }):
   res.send();
 })
@@ -144,10 +144,10 @@ app.patch('/post/togglestatus', async (req, res) => {
 
 app.patch('/post/comment', async (req, res) => {
   try{
-    const token = req.headers.authorization.split(' ')[1]
+    const token = req.headers.cookie.split('; ').find(row => row.startsWith('authorization_token='))?.split('=')[1]
     const verifyToken = jwt.verify(token, JWT_SECRET)
     const user = await users.findById(verifyToken.user.id)
-    if(user){
+    if(user && (user.type === "Administrator"||user.type === "Editor"||user.type === "Author"||user.type === "Contributor")){
       let comment = await posts.findByIdAndUpdate(req.body.id,
         {$push:
           {comments:
@@ -155,7 +155,6 @@ app.patch('/post/comment', async (req, res) => {
           }
         })
       if(!comment) return res.status(404).send('Error Posting Comment');
-      console.log('Successful')
       res.send('Comment successfully posted')
     }
   }catch(error){
@@ -222,11 +221,11 @@ app.get('/users', async(req, res) => {
 
 app.post('/user/login', async (req, res) => {
   let user = await users.findOne({email: req.body.email});
-  if (!user) return res.status(404).send("Email address doesn't exist. Sign up?")
-  if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator')
+  if (!user) return res.status(404).send("Email address doesn't exist! Sign up?")
+  if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator.')
 
   const validPassword = await bcrypt.compare(req.body.password, user.pswdhash);
-  if (!validPassword) return res.status(403).send('Invalid Password!')
+  if (!validPassword) return res.status(403).send('Invalid Password! Please Try Again.')
 
   const data = {
     user: {
@@ -235,7 +234,7 @@ app.post('/user/login', async (req, res) => {
   }
 
   const authtoken = jwt.sign(data, JWT_SECRET)
-  res.cookie('SessionToken', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):""}).send({id: user._id, name: user.name, type: user.type, isAdmin: user.isAdmin});
+  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, type: user.type, isAdmin: user.isAdmin});
 })
 
 app.post("/user/newuser", async (req, res) => {
@@ -254,7 +253,11 @@ app.post("/user/newuser", async (req, res) => {
     res.send();
   })
   .catch((error) => {
-      res.status(400).send(String(error))
+    if(error.code === 11000) {
+      res.status(409).send(`User already exist with supplied email. Sign in?`)
+    }else{
+      res.status(500).send(`Failure signing up. Please try again.`)
+    }
   })
 })
 

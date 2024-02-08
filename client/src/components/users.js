@@ -5,6 +5,8 @@ import axios from "axios";
 
 
 export function Signup() {
+    document.title = "Afriscope Blog - Sign Up"
+
     const [state, setState] = useState({password:''})
     const [sending, setSending] = useState(false)
     const message = document.getElementById("message")
@@ -29,7 +31,7 @@ export function Signup() {
             message.innerHTML = "Please wait..."
             formelements.forEach(elem => elem.disabled = true);
 
-           await axios.post("http://localhost:3001/user/newuser", {
+           await axios.post(process.env.REACT_APP_SERVER_URL + `/user/newuser`, {
                     email: state.email,
                     password: state.password,
                     name: state.names
@@ -47,7 +49,7 @@ export function Signup() {
             .catch((error) => {
                 setTimeout(()=>{
                     message.classList.add('text-danger')
-                    message.innerHTML = `Error signing up (${error.message}), please try again`
+                    message.innerHTML = `${error.response.data}`
                     formelements.forEach(elem => elem.disabled = false);
                     setSending(false)
                 })
@@ -108,8 +110,11 @@ export function Signup() {
 }
 
 export function Signin( {setToken} ) {
+    document.title = "Afriscope Blog - Sign In"
+
     const [state, setState] = useState({
-        password:'',
+        email: sessionStorage.getItem('email')||"",
+        password:"",
         remember_me:sessionStorage.getItem('remember_me')==="true"
         })
     const message = document.getElementById("message")
@@ -118,9 +123,8 @@ export function Signin( {setToken} ) {
 
         async function handleLogin(e) {
             e.preventDefault()
-            sessionStorage.setItem("remember_me", state.remember_me)
 
-           await axios.post(`http://localhost:3001/user/login`,{
+           await axios.post(process.env.REACT_APP_SERVER_URL + `/user/login`,{
                 email: state.email,
                 password: state.password,
                 remember_me: state.remember_me
@@ -128,15 +132,22 @@ export function Signin( {setToken} ) {
                 withCredentials: true
               })
             .then((response) => {
+                if(state.remember_me && state.email !== sessionStorage.getItem('email')) {
+                    sessionStorage.setItem("email", state.email)
+                    sessionStorage.setItem("remember_me", state.remember_me)
+                }else if(!state.remember_me && state.email !== "") {
+                    sessionStorage.removeItem("email", state.email)
+                    sessionStorage.removeItem("remember_me", state.remember_me)
+                }
                 message.innerHTML = "Login successful";
                 message.style.color = "green";
                 navigate(-1)
                 setTimeout(()=>{
-                  setToken(response.data);
+                    setToken(response.data);
                 }, 10)
             })
             .catch((error) => {
-                message.innerHTML = `An error occured (${error.message}), please try again`;
+                message.innerHTML = `${error.response.data}`;
                 message.style.color = "red";
             })
         }

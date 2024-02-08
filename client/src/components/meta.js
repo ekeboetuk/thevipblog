@@ -11,7 +11,7 @@ function Meta({id, views, comments, likes}) {
   const updateLikes = async() => {
     try{
       if(liked) {
-        await axios.patch(`http://localhost:3001/post/likes`, {
+        await axios.patch(process.env.REACT_APP_SERVER_URL + '/post/likes', {
           id: id,
           likes: like - 1
         })
@@ -23,7 +23,7 @@ function Meta({id, views, comments, likes}) {
           alert.innerHTML = '<i class="fa-solid fa-circle-check pe-2"></i>Likes update successful.'
         })
       } else {
-        await axios.patch(`http://localhost:3001/post/likes`, {
+        await axios.patch(process.env.REACT_APP_SERVER_URL + '/post/likes', {
           id: id,
           likes: like + 1
         })

@@ -8,7 +8,7 @@ import Meta from './meta';
 
 export const Postcard = ({id, slug, image, height, title, intro, comments, meta, category, created }) => {
 
-  const updateViews = () => {
+  const handleClick = () => {
     axios
     .patch(process.env.REACT_APP_SERVER_URL + `/post/views`, {
       id: id
@@ -47,7 +47,7 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
             <Link className="title text-black fs-6 fw-bold text-body" to={`/post/${slug}`}>{title}</Link>
             <div className="mb-0">
                 <p className="text-justify lh-sm mb-1">{intro}</p>
-                <Link to={`/post/${slug.toLowerCase()}`} className="text-brand fw-bold stretched-link" onClick={updateViews}>Readmore
+                <Link to={`/post/${slug.toLowerCase()}`} className="text-brand fw-bold stretched-link" onClick={handleClick}>Readmore
                   <i className="fas fa-arrow-circle-right ms-2"></i>
                 </Link>
             </div>

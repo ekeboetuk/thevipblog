@@ -6,6 +6,8 @@ import { Error } from '../components/errors'
 import axios from 'axios';
 
 function Comments() {
+    document.title = "Afriscope Administrator - Manage Comments"
+
     const [sortby, setSortby] = useState("_id");
     const {posts, error, isLoading, mutate} = usePosts(`s?sortby=${sortby}`)
     const [search, setSearch] = useState("");
@@ -44,7 +46,7 @@ function Comments() {
                     }
                 })
             }}),
-            await axios.patch('http://localhost:3001/post/comment/togglestatus', {
+            await axios.patch(process.env.REACT_APP_SERVER_URL + '/post/comment/togglestatus', {
                 postId: postId,
                 commentId: commentId,
                 status: !status

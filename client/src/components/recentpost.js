@@ -2,7 +2,18 @@ import { usePosts } from '../hooks/fetchers';
 import { Postcard } from './cards';
 import { Error } from './errors'
 
-function RecentPosts( {number} ) {
+export function Tags() {
+    const {posts} = usePosts('s')
+    const tags = new Set()
+    if(posts) {
+        for (var i=0; i<posts.length; i++) {
+            posts[i].meta.tags.split(", ").forEach(tag =>  tags.add(tag))
+        }
+    }
+    return [...tags]
+}
+
+export default function RecentPosts( {number} ) {
     const {posts, isLoading} = usePosts('s?sort=-_id')
 
     if (isLoading) {
@@ -40,5 +51,3 @@ function RecentPosts( {number} ) {
         )
     }
 }
-
-export default RecentPosts

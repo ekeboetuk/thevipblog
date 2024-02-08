@@ -6,6 +6,8 @@ import tinymce from 'tinymce'
 import { Editor } from '@tinymce/tinymce-react';
 
 function Postform ( {token} ) {
+    document.title = "Afriscope Administrator - Create Post"
+
     const initialstate = {
         title: "",
         featured: false,

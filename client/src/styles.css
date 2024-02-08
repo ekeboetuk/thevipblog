@@ -224,7 +224,7 @@ td, th {
   border-radius: 5px !important
 }
 
-.container-sm span img {
+.container-md span img, .container-sm span img {
   width: 100% !important;
   height: auto !important;
 }

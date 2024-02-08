@@ -7,6 +7,8 @@ import { Error } from '../components/errors'
 import axios from 'axios';
 
 function Posts() {
+    document.title = "Afriscope Administrator - Manage Post"
+
     const [sort, setSort] = useState("-_id");
     const {posts, error, isLoading, mutate} = usePosts(`s?sort=${sort}`)
     const [search, setSearch] = useState("");
@@ -43,7 +45,7 @@ function Posts() {
                     return post
                 }
             }),
-            await axios.patch(`http://localhost:3001/post/togglestatus`,{
+            await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
                 id: postId,
                 property: "isApproved",
                 status: !status
@@ -70,7 +72,7 @@ function Posts() {
         mutate(posts.filter((post)=>{
                 return post._id !== postId
             }),
-            await axios.delete(`http://localhost:3001/post/${postId}`)
+            await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}`)
         )
         setOperation(false)
     }
@@ -89,7 +91,7 @@ function Posts() {
                         }
                     })
                 }}),
-                await axios.patch('http://localhost:3001/post/comment/togglestatus', {
+                await axios.patch(process.env.REACT_APP_SERVER_URL + '/post/comment/togglestatus', {
                     postId: postId,
                     commentId: commentId,
                     status: !status

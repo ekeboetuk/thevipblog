@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
-import RecentPosts from '../components/recentpost'
+import RecentPosts, { Tags } from '../components/recentpost';
 
 function Post({ token }) {
     const [comment, setComment] = useState();
@@ -29,8 +29,9 @@ function Post({ token }) {
             post: params.slug,
             id: posts._id
         }, {
+            withCredentials: true,
             headers: {
-                Authorization: `Bearer ${document.cookie.split("; ").find(row=>row.startsWith('SessionToken='))?.split('=')[1]}`
+                Authorization: `Bearer ${document.cookie.split("; ").find(row=>row.startsWith('authorization_token='))?.split('=')[1]}`
             }
         })
         .then(()=>{
@@ -41,8 +42,11 @@ function Post({ token }) {
                 message.innerHTML = "";
             }, 10000)
         },(error) => {
-            message.innerHTML = `<span class="text-danger">${error.message}</span>`;
+            message.innerHTML = `<span class="text-danger">${error.response.data}</span>`;
             setSending(false)
+            setTimeout(()=>{
+                message.innerHTML = "";
+            }, 5000)
         })
     }
 
@@ -53,9 +57,12 @@ function Post({ token }) {
     } else if(posts) {
         if(posts.length === 0 || !posts.isApproved){
             content = <Error status="404" document="Post" />
+            document.title = "Afriscope Blog - Not Found"
         }else if (!posts._id){
             content = <Error status="500" />
+            document.title = "Afriscope Blog - Internal Server Error"
         } else {
+            document.title = `Afriscope Blog - ${posts.title}`
             content=
                 <>
                     <div className="d-flex align-items-center pb-3">
@@ -84,8 +91,8 @@ function Post({ token }) {
                                     <img src="/assets/icon.png" className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
                                 </td>
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
-                                    <div className="fw-bold p-0">{token?.name === comment.user.name ? "You": (comment.user.isActive && comment.user._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
-                                    <div className="d-flex justify-content-between p-0" contentEditable={comment.user.name === token?.name ?"true":"false"} suppressContentEditableWarning>
+                                    <div className="fw-bold p-0">{token?.name === comment.user?.name ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
+                                    <div className="d-flex justify-content-between p-0" contentEditable={comment.user?.name === token?.name ?"true":"false"} suppressContentEditableWarning>
                                         {comment.content}
                                     </div>
                                 </td>
@@ -106,14 +113,6 @@ function Post({ token }) {
                             <Link to="/signin" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Sign In</Link>
                         </div>
                     }
-                        {posts.meta.tags &&
-                            <>
-                                <h6>Tags</h6>
-                                <div className="d-flex flex-wrap py-3">
-                                    {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-2 me-2 mb-2 bg-tertiary text-body fw-semibold">{tag}</Link>)}
-                                </div>
-                            </>
-                        }
                     <ScrollRestoration getKey={(location, matches) => {
                         return location.pathname;
                     }}/>
@@ -129,9 +128,26 @@ function Post({ token }) {
 
     return (
         <>
-            <div className={`container-sm d-grid justify-content-center my-5`}>
-                {isLoading ? <img src="/assets/spinner_block.gif" width="60px" alt="loading" />:
-                <div className={`${isLoading && "opacity-25"}`}>{content}</div>}
+            <div className={`container-md d-flex flex-column flex-md-row my-5 gap-4`}>
+                {isLoading ? <div className="col-12 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
+                <div className={`${isLoading && "opacity-25"} col-12 col-md-9`}>{content}</div>}
+                {content && <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-center align-items-md-start position-sticky" >
+                        <div>
+                            <span className="fs-6 fw-bold text-uppercase px-1">Trending</span>
+                            <RecentPosts number={1} />
+                        </div>
+                        <div>
+                            <span className="fs-6 fw-bold text-uppercase px-1">Tags</span>
+                            {posts.meta.tags &&
+                                <>
+                                    <div className="d-flex flex-wrap py-3">
+                                        {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-2 me-2 mb-2 bg-tertiary text-body fw-semibold">{tag}</Link>)}
+                                    </div>
+                                </>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
             <div className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
                 <div className="container-md py-5">
