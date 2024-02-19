@@ -30,7 +30,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .container-md {
-  max-width: 1000px !important;
+  max-width: 1040px !important;
 }
 
 .container-sm {
@@ -311,7 +311,7 @@ form > div {
 }
 
 /**Admin Area Only**/
-#socialbar, #toolbar {
+#header, #toolbar {
   background-color: #74415D;
   opacity: 1;
   background-size: 5px 5px;

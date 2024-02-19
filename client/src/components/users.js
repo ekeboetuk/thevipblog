@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+import { userContext } from '../index';
 
 import axios from "axios";
 
@@ -206,6 +208,48 @@ export function Signin( {setToken} ) {
         </div>
         </div>
     )
+}
+
+export function UserMenu( ) {
+	const [usermenu, showUsermenu] = useState(false)
+	const {token, unsetToken} = useContext(userContext)
+	//const navigate = useNavigate()
+
+	function handleLogout() {
+		document.cookie = "SessionToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
+		unsetToken();
+	}
+
+	return (
+		<>
+			{token ?
+				<>
+					<div className="position-relative" onClick={()=>showUsermenu(!usermenu)}>
+						<button className={`btn d-flex justify-content-between text-white ${usermenu && "bg-secondary"} fw-bold`}>
+							Hi, {token?.name.split(" ")[0]}!
+							<i className="fas fa-circle-chevron-down fa-lg lh-1 ms-1"></i>
+						</button>
+						{usermenu &&
+							<div id="usermenu" className="d-flex flex-column position-absolute top-100 start-0 w-100 bg-tertiary actionmenu">
+								<Link to={`/${token.name.split(' ').join('.')}/profile`} className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
+								{token?.type !== 'Subscriber' &&
+									<>
+										<Link to={`/posts/user/${token?.name.split(' ').join('.')}`} className="menuitem link-dark"><li className="fas fa-edit me-2"></li>My Posts</Link>
+										<Link className="menuitem link-dark" to="/post/newpost"><i className="bx bx-notepad me-2 fs-6"></i>Create Post</Link>
+									</>
+								}
+								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fas fa-gear me-2"></li>Administrator</Link>}
+								<Link className="menuitem link-dark" onClick={handleLogout}><li className="fas fa-unlock me-2"></li>Sign Out</Link>
+							</div>}
+					</div>
+				</> :
+				<Link className="btn text-white border border-primary" to="/signin" role="button">
+					<i className="fas fa-right-to-bracket me-2"></i>
+					Sign Up/Sign In
+				</Link>
+			}
+		</>
+	);
 }
 
 export function Profile({ token }) {

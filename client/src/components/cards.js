@@ -26,7 +26,7 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
       <div className="w-100 w-md-50 position-relative" style={{backgroundImage: `url(data:image/jpeg;base64,${imageBuffer})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: height}}>
         {meta.featured && <span className="bg-warning px-2 py-1 text-white fs-8 fw-normal position-absolute start-0 top-0">Featured</span>}
       </div>
-      <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom">
+      <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
         <div className="d-flex flex-column py-3 px-4 justify-content-between position-relative">
             <div className="d-inline-flex align-items-center mb-2">
                 <img src="/assets/icon.png" style={{height: "30px", width: "30px"}} alt="afriscope icon" className="square bg-tertiary rounded-circle p-1 me-3" />

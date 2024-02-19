@@ -30,23 +30,22 @@ function Postform ( {token} ) {
             main.removeChild(main.firstElementChild)
         }
 
-        const formData = new FormData();
-        formData.append("image", post.featuredImage);
-        formData.append("title", post.title);
-        formData.append("intro", post.introText);
-        formData.append("tags", post.tags);
-        formData.append("body", post.textarea);
-        formData.append("category", post.category);
-        formData.append("featured", post.featured);
-        formData.append("approved", post.approved);
-        formData.append("author", token?.id)
-
         setSending(true)
 
         await axios
-        .post("http://localhost:3001/post/newpost", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
+        .postForm(process.env.REACT_APP_SERVER_URL + '/post/newpost', {
+                image: post.featuredImage,
+                title: post.title,
+                intro: post.introText,
+                tags: post.tags,
+                body: post.textarea,
+                category: post.category,
+                featured: post.featured,
+                approved: post.approved,
+                author: token?.id
+            }, {
+                headers: {
+                "Content-Type": "multipart/form-data",
             }
         })
         .then(()=>{

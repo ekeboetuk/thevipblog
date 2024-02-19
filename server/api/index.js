@@ -46,8 +46,9 @@ const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} }
 
 // Define routes
 app.get('/posts', async (req, res) => {
-  const {sort} = req.query
-  await posts.find({}).select('-body').sort(`${sort}`).populate('meta.author').populate('comments.user')
+  const total = await posts.countDocuments({})
+  const {sort, limit} = req.query
+  await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
@@ -221,7 +222,7 @@ app.get('/users', async(req, res) => {
 
 app.post('/user/login', async (req, res) => {
   let user = await users.findOne({email: req.body.email});
-  if (!user) return res.status(404).send("Email address doesn't exist! Sign up?")
+  if (!user) return res.status(404).send(`Email address doesn't exist! Sign up <i class="fas fa-circle-arrow-right fa-beat"></i>`)
   if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator.')
 
   const validPassword = await bcrypt.compare(req.body.password, user.pswdhash);
@@ -254,7 +255,7 @@ app.post("/user/newuser", async (req, res) => {
   })
   .catch((error) => {
     if(error.code === 11000) {
-      res.status(409).send(`User already exist with supplied email. Sign in?`)
+      res.status(409).send(`User already exist with supplied email.<br /> <i class="fas fa-circle-arrow-left fa-beat"></i> Sign in`)
     }else{
       res.status(500).send(`Failure signing up. Please try again.`)
     }

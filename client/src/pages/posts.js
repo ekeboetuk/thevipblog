@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PostcardTransparent } from '../components/cards';
@@ -7,7 +8,9 @@ import { Error } from '../components/errors';
 
 function Posts() {
     const params = useParams()
-    document.title = `Afriscope Blog - ${params.slug.charAt(0).toUpperCase()+params.slug.slice(1)} Category`
+    useEffect(()=> {
+        document.title = `Afriscope Blog - ${params.slug.charAt(0).toUpperCase()+params.slug.slice(1)} Category`
+    }, [params.slug])
 
     const {posts, error, isLoading} = usePosts('s?sort=-_id')
     let content;

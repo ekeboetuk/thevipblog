@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
+
 function About() {
-    document.title = "Afriscope Blog - About Us"
+    useEffect(()=>{
+        document.title = "Afriscope - About Us"
+    })
 
     return (
         <>

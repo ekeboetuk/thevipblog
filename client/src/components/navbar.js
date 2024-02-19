@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom';
 
+import { UserMenu} from './users';
+
 function Navbar() {
     const [searchterm, setSearchterm] = useState();
     const searchform = useRef();
@@ -10,12 +12,12 @@ function Navbar() {
     }
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-primary square border-top border-primary border-3">
-            <div className="container-md mx-auto">
-                <Link className="navbar-brand me-5 me-sm-0" to="/">
+        <nav className="navbar navbar-expand-lg border-top border-primary border-3 py-4">
+            <div className="container-fluid mx-auto px-5">
+                <Link className="navbar-brand mt-n3 me-5 me-sm-0" to="/">
                     <img
                         src="/assets/logo-white.png"
-                        width={100}
+                        width={120}
                         alt="Afriscope logo"
                     />
                 </Link>
@@ -33,7 +35,7 @@ function Navbar() {
                     </button>
                 </div>
                 <div className="navbar-collapse collapse" id="mainnavigation">
-                    <div className="navbar-nav flex-grow-1 justify-content-center ">
+                    <div className="navbar-nav flex-grow-1 justify-content-center">
                         <Link className="nav-link ps-0 pe-4" aria-current="page" to="/">Home</Link>
                         <Link className="nav-link ps-0 pe-4" to="/posts/lifestyles">Lifestyles</Link>
                         <Link className="nav-link ps-0 pe-4" to="/posts/sports">Sports</Link>
@@ -48,6 +50,7 @@ function Navbar() {
                             <button className="border-0 bg-transparent text-secondary" onClick={handleSearch} ><i className="fas fa-search position-absolute top-50 translate-middle ms-n4"></i></button>
                         </div>
                     </div>
+                    <UserMenu />
                 </div>
             </div>
         </nav>

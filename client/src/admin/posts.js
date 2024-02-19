@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
@@ -7,7 +7,9 @@ import { Error } from '../components/errors'
 import axios from 'axios';
 
 function Posts() {
-    document.title = "Afriscope Administrator - Manage Post"
+    useEffect(()=>{
+        document.title = "Afriscope Administrator - Manage Post"
+    })
 
     const [sort, setSort] = useState("-_id");
     const {posts, error, isLoading, mutate} = usePosts(`s?sort=${sort}`)
@@ -198,6 +200,7 @@ function Posts() {
                             <small className="fw-bold pe-2">Posts Per Page:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
                                 <select id="postsquantity" className="border-0" name="postsquantity" defaultValue={20}>
+                                    <option value={5}>5</option>
                                     <option value={20}>20</option>
                                     <option value={50}>50</option>
                                     <option value={100}>100</option>
@@ -213,7 +216,7 @@ function Posts() {
                                     <td className="border-0 p-3">
                                         <div className="post d-flex flex-column flex-md-row justify-content-between align-items-start position-relative">
                                             <div style={{
-                                                    backgroundImage: `url(data:image/jpeg;base64,${btoa(new Uint8Array(post.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`,
+                                                    backgroundImage:`url(data:image/jpeg;base64,${btoa(new Uint8Array(post.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`,
                                                     backgroundSize: "cover",
                                                     backgroundPosition: "center",
                                                     height: "142px",

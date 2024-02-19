@@ -14,7 +14,7 @@ export function Tags() {
 }
 
 export default function RecentPosts( {number} ) {
-    const {posts, isLoading} = usePosts('s?sort=-_id')
+    const {posts, isLoading} = usePosts(`s?sort=-_id`)
 
     if (isLoading) {
         return (
@@ -28,7 +28,7 @@ export default function RecentPosts( {number} ) {
             return (
                 <div className={`row row-cols-1 row-cols-md-${number} p-0 py-md-${number}`}>
                     {approved.slice(0, number).map((post) => (
-                        <div key={post._id} className={`col g-4 gx-md-${number} gy-md-0`}>
+                        <div key={post._id} className={`col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
                             <Postcard
                                 id={post._id}
                                 slug={post.slug}

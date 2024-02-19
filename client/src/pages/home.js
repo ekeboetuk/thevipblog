@@ -1,5 +1,6 @@
 //import { ScrollRestoration } from 'react-router-dom';
 
+import { useEffect } from 'react';
 import Carousel from '../components/carousel';
 import { Postcard } from '../components/cards';
 import { Error } from '../components/errors'
@@ -8,7 +9,9 @@ import { usePosts } from '../hooks/fetchers';
 
 
 function Home() {
-    document.title = "Afriscope - Your Favourite Blog - Homepage"
+    useEffect(()=>{
+        document.title = "Afriscope - Your Favourite Blog - Homepage"
+    })
 
     const {posts, error, isLoading} = usePosts('s?sort=-_id')
     let content

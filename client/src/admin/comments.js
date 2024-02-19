@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 import { usePosts } from '../hooks/fetchers';
@@ -6,7 +6,9 @@ import { Error } from '../components/errors'
 import axios from 'axios';
 
 function Comments() {
-    document.title = "Afriscope Administrator - Manage Comments"
+    useEffect(()=>{
+        document.title = "Afriscope Administrator - Manage Comments"
+    })
 
     const [sortby, setSortby] = useState("_id");
     const {posts, error, isLoading, mutate} = usePosts(`s?sortby=${sortby}`)

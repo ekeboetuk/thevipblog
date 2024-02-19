@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
+
 function Dashboard() {
-    document.title = "Afriscope Administrator - Dashboard"
+    useEffect(()=>{
+        document.title = "Afriscope Administrator - Dashboard"
+    })
 
     return (
         <div className="">

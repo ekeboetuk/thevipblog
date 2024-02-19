@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 
 import axios from 'axios';
 
@@ -9,7 +9,9 @@ import { Usercard } from '../components/cards';
 
 
 function Users() {
-    document.title = "Afriscope Administrator - Manage Users"
+    useEffect(()=>{
+        document.title = "Afriscope Administrator - Manage Users"
+    })
 
     const {users, error, isLoading, mutate} = useUsers()
     const [view, setView] = useState('List');

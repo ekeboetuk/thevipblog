@@ -1,11 +1,9 @@
 import Navbar from './navbar';
-import Social from './social';
 
 function Header( ) {
   return (
-    <div className="sticky-top">
+    <div id="header" className="sticky-top">
         <Navbar />
-        <Social />
     </div>
   );
 }
