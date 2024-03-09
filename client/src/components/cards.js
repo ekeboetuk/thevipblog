@@ -6,7 +6,7 @@ import moment from 'moment';
 import Meta from './meta';
 
 
-export const Postcard = ({id, slug, image, height, title, intro, comments, meta, category, created }) => {
+export const Postcard = ({id, slug, image, height, title, intro, comments, meta, category, created, showReadmore, showMeta, showEngagement }) => {
 
   const handleClick = () => {
     axios
@@ -17,43 +17,44 @@ export const Postcard = ({id, slug, image, height, title, intro, comments, meta,
     })
   }
 
-  const imageBuffer = btoa(new Uint8Array(image.data.data).reduce(function (data, byte) {
-    return data + String.fromCharCode(byte);
-  }, ''));
-
   return (
     <>
-      <div className="w-100 w-md-50 position-relative" style={{backgroundImage: `url(data:image/jpeg;base64,${imageBuffer})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: height}}>
-        {meta.featured && <span className="bg-warning px-2 py-1 text-white fs-8 fw-normal position-absolute start-0 top-0">Featured</span>}
+      <div className="w-100 w-md-50 position-relative" style={{backgroundImage: `url(${image})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: `${height}`}} >
+        {meta.featured && <span className="bg-danger m-2 px-3 py-1 text-white fw-bold position-absolute start-0 top-0 rounded-pill">Featured</span>}
+        <small className="text-white pe-4 py-2 fw-bold position-absolute end-0 bottom-0">{category?.toUpperCase()}</small>
       </div>
       <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
-        <div className="d-flex flex-column py-3 px-4 justify-content-between position-relative">
-            <div className="d-inline-flex align-items-center mb-2">
-                <img src="/assets/icon.png" style={{height: "30px", width: "30px"}} alt="afriscope icon" className="square bg-tertiary rounded-circle p-1 me-3" />
-                <div className="lh-sm">
-                    <div className="text-brand fw-bold fs-6">{category?.toUpperCase()}</div>
-                    <div className="d-flex flex-wrap">
+        <div className="d-flex flex-column py-4 px-4 justify-content-between position-relative">
+            <Link to={`/${slug.toLowerCase()}`} className="stretched-link" onClick={handleClick}>
+              <h3 className="lh-2 title text-black fw-bold text-body">{title.toUpperCase()}</h3>
+            </Link>
+            <div className="d-inline-flex align-items-center mb-3">
+                {showMeta && 
+                  <div className="lh-sm">
+                    <div className="d-flex flex-wrap text-brand">
                       <div>
-                        <small className="fas fa-user fs-8 me-1"></small>
-                        <small className="me-2 fs-8 flex-fill">{(meta.author.isActive && meta.author.name)||"Administrator"}</small>
+                        <small className="fas fa-user me-1"></small>
+                        <small className="me-2 flex-fill">{(meta.author.isActive && meta.author.name)||"Administrator"}</small>
                       </div>
                       <div>
-                        <small className="fas fa-calendar-days fs-8 me-1"></small>
-                        <small className="me-1 fs-8 fst-italic">{moment(created).format("YYYY-MM-DD h:mm")}</small>
+                        <small className="fas fa-calendar-days me-1"></small>
+                        <small className="me-1 fst-italic">{moment(created).format("YYYY-MM-DD h:mm")}</small>
                       </div>
                     </div>
                 </div>
+                }
             </div>
-            <Link className="title text-black fs-6 fw-bold text-body" to={`/post/${slug}`}>{title}</Link>
             <div className="mb-0">
                 <p className="text-justify lh-sm mb-1">{intro}</p>
-                <Link to={`/post/${slug.toLowerCase()}`} className="text-brand fw-bold stretched-link" onClick={handleClick}>Readmore
-                  <i className="fas fa-arrow-circle-right ms-2"></i>
-                </Link>
+                {showReadmore &&
+                  <Link to={`/post/${slug.toLowerCase()}`} className="text-brand fw-bold stretched-link" onClick={handleClick}>Readmore
+                    <i className="fas fa-arrow-circle-right ms-2"></i>
+                  </Link>
+                }
             </div>
         </div>
         <div className="bg-tertiary px-3">
-            <Meta id={id} views={meta.views} comments={comments} likes={meta.likes} />
+            {showEngagement && <Meta id={id} views={meta.views} comments={comments} likes={meta.likes} />}
         </div>
       </div>
     </>
@@ -74,17 +75,14 @@ export const PostcardTransparent = ({id, slug, image, height, title, intro, comm
     })
   }
 
-  const imageBuffer = btoa(new Uint8Array(image.data.data).reduce(function (data, byte) {
-    return data + String.fromCharCode(byte);
-  }, ''));
-
   return (
     <>
-      <div className="w-100 w-md-50 position-relative" style={{backgroundImage: `url(data:image/jpeg;base64,${imageBuffer})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: height}}>
-        {meta.featured && <span className="bg-warning px-2 py-1 text-white fs-8 fw-normal position-absolute start-0 top-0">Featured</span>}
-        <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-dark text-white overflow-hidden position-absolute bottom-0 opacity-75">
-          <div className="d-flex flex-column py-3 px-4 justify-content-between position-relative">
-              <Link className="title fs-5 fw-normal text-white lh-sm" to={`/post/${slug}`} onClick={updateViews}>{title}</Link>
+      <div className="w-100 w-md-50 position-relative overflow-hidden" style={{backgroundImage: `url(${image})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: height}}>
+        {meta.featured && <small className="bg-danger m-2 px-3 py-1 text-white fw-bold position-absolute start-0 top-0 rounded-pill">Featured</small>}
+        <div className="postintro d-flex flex-column w-100 w-md-50 justify-content-between bg-dark text-white">
+          <div className="d-flex flex-column py-3 px-4 justify-content-between">
+              <Link className="title fw-bolder text-white lh-sm pb-3" to={`/${slug}`} onClick={updateViews}><h2>{title.toUpperCase()}</h2></Link>
+              <p>{intro}</p>
           </div>
           <div className="bg-dark px-3">
               <Meta id={id} views={meta.views} comments={comments} likes={meta.likes} />
@@ -99,7 +97,7 @@ export const Usercard = ( {user, handleUserStatus} ) => {
   return (
       <div className="bg-light p-4 rounded-5">
           <img src="/assets/icon.png" style={{height: "100px", width: "100px"}} alt="Avatar" className="square bg-white rounded-circle p-3 me-3 mb-3" />
-          <div className="text-brand fw-bold fs-6">{user.name.toUpperCase()}</div>
+          <div className="text-brand fw-bold">{user.name.toUpperCase()}</div>
           <div className="d-flex">
               <div className="d-flex flex-column align-items-end fw-normal pe-2">
                   <small className="">E-mail:</small>
@@ -121,9 +119,9 @@ export const Usercard = ( {user, handleUserStatus} ) => {
 
 export const Widgetcard = ({ title, children }) => {
   return (
-      <div className="fw-normal  rounded mb-4 shadow-sm">
-        <h6 className="bg-primary text-white p-2 rounded-top fw-bold mb-0">{title}</h6>
-        {children}
+      <div className="fw-normal rounded mb-4 shadow-sm w-100">
+        <h4 className="bg-primary text-white p-4 rounded-top fw-bold mb-0">{title}</h4>
+          {children}
       </div>
   )
 }

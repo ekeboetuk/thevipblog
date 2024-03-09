@@ -216,21 +216,21 @@ function Posts() {
                                     <td className="border-0 p-3">
                                         <div className="post d-flex flex-column flex-md-row justify-content-between align-items-start position-relative">
                                             <div style={{
-                                                    backgroundImage:`url(data:image/jpeg;base64,${btoa(new Uint8Array(post.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`,
+                                                    backgroundImage:`url(${post.image})`,
                                                     backgroundSize: "cover",
                                                     backgroundPosition: "center",
                                                     height: "142px",
                                                     maxHeight: "142px"
                                                 }}
                                                 className="d-flex me-0 me-md-3 mb-3 mb-md-0 col-md-2 align-self-stretch rounded-6 border border-3 border-white">
-                                                <div type="button" className="align-self-start" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning fs-6`}></i></div>
+                                                <div type="button" className="align-self-start" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning`}></i></div>
                                             </div>
                                             <div className="d-flex flex-column flex-grow-1 me-md-3">
-                                                <Link to={`/post/${post.title}`} target="_blank" className="d-flex align-items-center text-black"><h6 className="title fw-bold pe-1">{post.title}</h6><i className="blank fa-solid fa-arrow-up-right-from-square fs-8"></i></Link>
-                                                <small className="mb-2 text-justify">{post.intro}</small>
-                                                <small className="ps-1"><i className="fas fa-bars-staggered pe-2"></i>{post.meta.category[0].toUpperCase()+post.meta.category.slice(1)}</small>
-                                                <small className="ps-1 fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name} &ensp;<i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</small>
-                                                <details className="ps-1">
+                                                <Link to={`/${post.slug}`} target="_blank" className="d-flex align-items-center text-black"><h4 className="title fw-bold pe-1">{post.title}</h4><i className="blank fa-solid fa-arrow-up-right-from-square"></i></Link>
+                                                <span className="mb-2 text-justify fs-5">{post.intro}</span>
+                                                <span className="ps-1 fs-5"><i className="fas fa-bars-staggered pe-2"></i>{post.meta.category[0].toUpperCase()+post.meta.category.slice(1)}</span>
+                                                <span className="ps-1 fs-5 fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name} &ensp;<i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</span>
+                                                <details className="ps-1 fs-5">
                                                     <summary><small> Comments <span className="badge rounded-pill badge-dark">{post.comments.length}</span></small></summary>
                                                     {post.comments.map((comment, postIndex) => (
                                                         <div key={postIndex} className="listing d-flex py-1 justify-content-between">
@@ -249,7 +249,7 @@ function Posts() {
                                                 </details>
                                             </div>
                                             <div className="actionbutton">
-                                                <span type="button" className="fa-solid fa-ellipsis-vertical fs-5 bg-transparent border-0 position-absolute top-0 end-0" onClick={(e)=>toggleActionmenu(e, index)}></span>
+                                                <span type="button" className="fa-solid fa-ellipsis-vertical bg-transparent border-0 position-absolute top-0 end-0" onClick={(e)=>toggleActionmenu(e, index)}></span>
                                                 {actionmenu[index] &&
                                                 <div className="d-flex flex-column position-absolute top-0 end-0 bg-tertiary actionmenu shadow-sm">
                                                     <button className="border-0 menuitem bg-tertiary"  onClick={()=>togglePublishPost(post._id, post.isApproved, index)}>{post.isApproved?'Unpublish':'Publish'}</button>

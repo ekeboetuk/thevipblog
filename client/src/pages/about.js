@@ -7,14 +7,64 @@ function About() {
 
     return (
         <>
-            <div className="container-fluid mx-auto text-center fw-bold fs-4 py-5 bg-tertiary">
-                <img src="/assets/icon.png" alt="afriscope icon" className="py-2" />
-                ABOUT
-            </div>
-            <div className="container-md py-5">
-                <div className="d-flex align-items-center">
+            <section className="container-md">
+                <h2>About Us</h2>
+                <p className="">Started as a bootcamp project for a set of aspiring developers and culminated into a full-fletched web application still under development to serve as a general purpose blog where you can get all kinds of information. Here to excite your interest as well as keep you informed, engaged and involved as you are welcomed to sign up to interact in the comment sections or write us a note to contribute as an Editor.</p>
+            </section>
+            <section className='container-fluid' style={{backgroundColor: 'rgba(116, 65, 93, 0.25)'}}>
+                <div className="container-md">
+                    <h2>Team Members</h2>
+                    <div className="row row-cols-1 row-cols-md-5 gy-4">
+                        <div className="photo-card col p-2">
+                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Cordinator'/>
+                            <div className="caption d-flex flex-column align-items-center p-2">
+                                <h4 className="text-uppercase">Ndifreke Eduo</h4>
+                                <em className="fst-italic">Cordinator</em>
+                            </div>
+                        </div>
+                        <div className="photo-card col p-2">
+                            <img src="media/photo-placeholder-female.jpeg" className="w-100" alt='Training Supervisor'/>
+                            <div className="caption d-flex flex-column align-items-center p-2">
+                                <h4 className="text-uppercase">Dunke</h4>
+                                <em className="fst-italic">QA Engineer</em>
+                            </div>
+                        </div>
+                        <div className="photo-card col p-2">
+                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Lead Developer'/>
+                            <div className="caption d-flex flex-column align-items-center p-2">
+                                <h4 className="text-uppercase">Ekebo Brown</h4>
+                                <em className="fst-italic">Lead Developer</em>
+                            </div>
+                        </div>
+                        <div className="photo-card col p-2">
+                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='UI/UX Designer'/>
+                            <div className="caption d-flex flex-column align-items-center p-2">
+                                <h4 className="text-uppercase">Ernest Eduo</h4>
+                                <em className="fst-italic">UI/UX Designer</em>
+                            </div>
+                        </div>
+                        <div className="photo-card col p-2">
+                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Developer'/>
+                            <div className="caption d-flex flex-column align-items-center p-2">
+                                <h4 className="text-uppercase">UbonAbasi Cookey</h4>
+                                <em className="fst-italic">Junior Developer</em>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+            <section className="container-md">
+                <h2>Editors</h2>
+                    <div className="row row-cols-2 row-cols-md-6 gy-4">
+                        <div className="col p-2">
+                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Developer'/>
+                            <div className="caption d-flex flex-column align-items-center p-2">
+                                <h5 className="text-uppercase">Goodnews Etim</h5>
+                                <em className="fst-italic">Chief Editor</em>
+                            </div>
+                        </div>
+                    </div>
+            </section>
         </>
     )
 }

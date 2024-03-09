@@ -20,7 +20,7 @@ function Meta({id, views, comments, likes}) {
           setLike(like - 1)
           setLiked(false)
           alert.classList.toggle('alert-success')
-          alert.innerHTML = '<i class="fa-solid fa-circle-check pe-2"></i>Likes update successful.'
+          alert.innerHTML = '<i class="fa-solid fa-circle-check pe-2"></i>Likes updated successfully.'
         })
       } else {
         await axios.patch(process.env.REACT_APP_SERVER_URL + '/post/likes', {
@@ -32,7 +32,7 @@ function Meta({id, views, comments, likes}) {
           setLike(like + 1)
           setLiked(true)
           alert.classList.toggle('alert-success')
-          alert.innerHTML = '<i class="fa-solid fa-circle-check pe-2"></i>Likes update successful.'
+          alert.innerHTML = '<i class="fa-solid fa-circle-check pe-2"></i>Likes updated successfully.'
         })
       }
     } catch(err) {
@@ -52,9 +52,9 @@ function Meta({id, views, comments, likes}) {
 
   return (
     <div className="d-flex justify-content-between py-2">
-      <span>{views} <i className="fa-solid fa-eye"></i></span>
+      <span title="Views">{views} <i className="fa-solid fa-eye"></i></span>
       <span>{comments.filter(comment => comment.approved).length} Comments</span>
-      <span type="button" className="d-flex align-items-center" onClick={updateLikes}>{like} <i className={`ps-1 fa-heart text-danger ${liked? "fa-solid": "fa-regular"}`}></i></span>
+      <span type="button" className="d-flex align-items-center" title="Likes" onClick={updateLikes}>{like} <i className={`ps-1 fa-heart text-danger ${liked? "fa-solid": "fa-regular"}`}></i></span>
     </div>
     );
 }

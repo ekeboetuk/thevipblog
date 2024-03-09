@@ -7,7 +7,8 @@ import moment from 'moment';
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
-import RecentPosts, { Tags } from '../components/recentpost';
+import RecentPosts from '../components/recentpost';
+import { Advertise, Subscribe } from '../components/widgets'
 
 function Post({ token }) {
     const [comment, setComment] = useState();
@@ -35,14 +36,14 @@ function Post({ token }) {
             }
         })
         .then(()=>{
-            message.innerHTML = '<span class="text-success">Comment successfully submitted. Will show up here after moderation!</span>';
+            message.innerHTML = '<span class="text-success pe-4 fs-5">Comment successfully submitted. Will show up here after moderation!</span>';
             setComment('');
             setSending(false)
             setTimeout(()=>{
                 message.innerHTML = "";
             }, 10000)
         },(error) => {
-            message.innerHTML = `<span class="text-danger">${error.response.data}</span>`;
+            message.innerHTML = `<span class="text-danger pe-4 fs-5">${error.response.data}</span>`;
             setSending(false)
             setTimeout(()=>{
                 message.innerHTML = "";
@@ -66,17 +67,17 @@ function Post({ token }) {
             content=
                 <>
                     <div className="d-flex align-items-center pb-3">
-                        <img src="/assets/icon.png" alt="afriscope icon" className="square bg-tertiary rounded-circle p-1 me-3" />
+                        <img src="/assets/icon.png" alt="afriscope icon" className="square bg-tertiary rounded-0 p-4 me-3" />
                         <div className="align-items-center">
-                            <div className="m-0 mb-2 lh-1 fs-2 fw-bold pe-4">{posts.title}</div>
+                            <h4 className="display-4 m-0 mb-2 lh-1 fw-bold">{posts.title.toUpperCase()}</h4>
                             <div className="d-flex flex-wrap justify-content-start me-4">
-                                <h6 className="text-brand me-3 fs-8"><i className="fas fa-list me-1"></i>{posts.meta.category.charAt(0).toUpperCase() + posts.meta.category.slice(1)}</h6>
-                                <h6 className="me-3 fs-8"><i className="fas fa-user me-1"></i>{(posts.meta.author.isActive && posts.meta.author?.name) || "Administrator"}</h6>
-                                <h6 className="fs-8"><i className="fas fa-calendar-days me-1"></i>{moment(posts.timestamp).format("YYYY-MM-DD h:mm")}</h6>
+                                <h5 className="text-brand me-3 fs-8"><i className="fas fa-list me-1"></i>{posts.meta.category.charAt(0).toUpperCase() + posts.meta.category.slice(1)}</h5>
+                                <h5 className="me-3 fs-8"><i className="fas fa-user me-1"></i>{(posts.meta.author.isActive && posts.meta.author?.name) || "Administrator"}</h5>
+                                <h5 className="fs-8"><i className="fas fa-calendar-days me-1"></i>{moment(posts.created).format("YYYY-MM-DD h:mm")}</h5>
                             </div>
                         </div>
                     </div>
-                    <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(data:image/jpeg;base64,${btoa(new Uint8Array(posts.image.data.data).reduce(function (data, byte) {return data + String.fromCharCode(byte);}, ''))})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
+                    <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(${posts.image})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
                     </div>
                     <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:posts.body.replace(/\s{1,}/gim, ' ')}} />}</div>
                     <div className="mt-2 bg-tertiary px-3">
@@ -103,9 +104,9 @@ function Post({ token }) {
                     {token?
                         <form id="commentform" name="commentform" className="postcomment mb-2 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
                             <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={comment} onChange={(e)=> setComment(e.target.value)} disabled={sending} required />
-                            <div className="d-flex flex-row">
-                                <span id="message" className="me-auto fw-bold"></span>
-                                <button type="submit" id="submit" className="btn btn-primary px-5 rounded-0 align-self-end" disabled={sending}>{sending ? <i className="fa-solid fa-circle-notch fa-spin"></i>:"Submit Comment"}</button>
+                            <div className="d-flex flex-column flex-md-row">
+                                <span id="message" className="me-auto "></span>
+                                <button type="submit" id="submit" className="btn-primary border-0 text-white py-2 px-5 text-nowrap rounded-0 align-selft-stretch align-self-md-start" disabled={sending}>{sending ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting</>:"Submit Comment"}</button>
                             </div>
                         </form>:
                         <div className="postcomment text-center mb-3 py-5 bg-light">
@@ -116,6 +117,8 @@ function Post({ token }) {
                     <ScrollRestoration getKey={(location, matches) => {
                         return location.pathname;
                     }}/>
+                    <h2 className="pt-5 text-uppercase">About The Author</h2>
+                    <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
                 </>
         }
     } else {
@@ -128,33 +131,37 @@ function Post({ token }) {
 
     return (
         <>
-            <div className={`container-md d-flex flex-column flex-md-row my-5 gap-4`}>
+            <section className={`container-md d-flex flex-column flex-md-row my-5 gap-4`}>
                 {isLoading ? <div className="col-12 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
-                <div className={`${isLoading && "opacity-25"} col-12 col-md-9`}>{content}</div>}
-                {content && <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-center align-items-md-start position-sticky" >
+                <div className={`${isLoading && "opacity-25"} col-12 col-md-9 pe-0 pe-md-5`}>
+                    {content}
+                </div>}
+                {content && <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >
+                        <Advertise />
                         <div>
-                            <span className="fs-6 fw-bold text-uppercase px-1">Trending</span>
+                            <h5 className="fw-bolder text-uppercase px-1 mb-2">Trending</h5>
                             <RecentPosts number={1} />
                         </div>
                         <div>
-                            <span className="fs-6 fw-bold text-uppercase px-1">Tags</span>
-                            {posts.meta.tags &&
+                            <h5 className="fw-bolder text-uppercase px-1">Tags</h5>
+                            {posts?.meta.tags !== undefined ?
                                 <>
                                     <div className="d-flex flex-wrap py-3">
-                                        {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-2 me-2 mb-2 bg-tertiary text-body fw-semibold">{tag}</Link>)}
+                                        {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
                                     </div>
-                                </>
+                                </>:""
                             }
                         </div>
+                        <Subscribe />
                     </div>
                 }
-            </div>
-            <div className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
+            </section>
+            <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
                 <div className="container-md py-5">
-                    <h6 className=" text-center text-uppercase text-white fw-bold mb-0 mx-md-3">Most Recent</h6>
-                    <RecentPosts number={3} />
+                    <h5 className=" text-center text-uppercase text-white fw-bold mb-5 mx-md-3">Related Posts</h5>
+                    <RecentPosts number={4} showMeta={true}/>
                 </div>
-            </div>
+            </section>
         </>
     )
 }

@@ -10,15 +10,15 @@ import cookieparser from 'cookie-parser';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-import multer from 'multer';
+//import multer from 'multer';
 
 // Create an Express app
 const app = express();
 
 // Middleware
 //app.use(morgan('tiny'));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({limit: '25mb', extended: false }));
+app.use(express.json({limit: '25mb'}));
 app.use(cors({
   origin: true,
   credentials: true,
@@ -32,7 +32,7 @@ import users from './models/users.js';
 
 //Constants
 const JWT_SECRET = "Afriscope Dev Blog";
-const storage = multer.diskStorage({
+/*const storage = multer.diskStorage({
   destination: (req, file, cb) => {
       cb(null, 'public/media/uploads')
   },
@@ -41,7 +41,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} });
+const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} });*/
 
 
 // Define routes
@@ -92,12 +92,9 @@ app.get('/post/:slug', async (req, res) => {
 })
 
 //Create new post
-app.post('/post/newpost', upload.single('image'), async (req, res, next) => {
+app.post('/post/newpost', async (req, res) => {
   const post = new posts({
-    image: {
-      data: fs.readFileSync(path.join(__dirname) + "/public/media/uploads/" + req.file.filename),
-      contentType: 'image/jpeg'
-    },
+    image: req.body.image,
     title: req.body.title,
     intro: req.body.intro,
     body: req.body.body.toString(),
@@ -108,12 +105,12 @@ app.post('/post/newpost', upload.single('image'), async (req, res, next) => {
       tags: req.body.tags
     },
     isApproved: req.body.approved
-  })
+    })
 
-  await post.save()
-  .then(()=>{
-    res.send();
-  })
+    await post.save()
+    .then(()=>{
+      res.send();
+    })
 })
 
 app.patch('/post/likes', async (req, res) => {
@@ -294,7 +291,7 @@ connect(db)
   });
 
 // Start the server
-const port = process.env.MONITOR_PORT || 3001;
+const port = process.env.MONITOR_PORT;
 try{
   app.listen(port, () => {
     console.debug(`Server is running on port ${port}`);

@@ -4,18 +4,18 @@
   --primary-color: #74415D;
   --secondary-color: #2F2B2B;
   --tertiary-color: #FAFAFA;
+  font-size: 67.5%;
 }
 
-body, td, pre, .content {
+body, pre, .table, .content {
   margin: 0;
   padding: 0;
-  font-family: 'Ubuntu', 'Hanuman', BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Montserrat', 'Ubuntu', 'Hanuman', BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
      'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-weight:lighter !important;
-  font-size: 14px;
+  font-size: 1.4rem;
 }
 
 code {
@@ -23,10 +23,32 @@ code {
     monospace;
 }
 
+@keyframes header-after {
+  from {width: 0%;}
+  to {width: 20%;}
+}
+
 
 /** Overwrites **/
 h1, h2, h3, h4, h5, h6 {
+  position: relative !important;
   margin-bottom: 0 !important;
+  font-weight: 700;
+}
+
+footer h1::after, footer h2::after, footer h3::after, footer h4::after, footer h5::after, footer h6::after {
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 20%;
+  height: 4px;
+  content: "";
+  background-color: var(--primary-color);
+  animation: 2s ease-in-out 0s 1 header-after;
+}
+
+section {
+  padding: 50px 20px !important;
 }
 
 .container-md {
@@ -37,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 768px !important;
 }
 
-.row {
+.row, .container-fluid, .container-md, .container-sm {
   --mdb-gutter-x: 0rem !important;
 }
 
@@ -53,6 +75,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--tertiary-color) !important;
 }
 
+.bg-brand {
+  background-color: var(--primary-color);
+}
+
 .border-primary {
     border-color:  var(--primary-color) !important;;
 }
@@ -66,17 +92,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn {
-  border-radius: 0 !important;
-}
-
-.btn:hover {
-  background-color: var(--tertiary-color) !important;
-  color: #000000 !important;
+  font-size: 0.8em;
+  padding-left: 30px !important;
+  padding-right: 30px !important;
+  width: 180px !important
 }
 
 .btn-primary {
   background-color: var(--primary-color) !important;
   box-shadow: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  color: #FAFAFA;
+  padding: 10px;
 }
 
 .btn-primary:hover {
@@ -91,21 +119,9 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--tertiary-color) !important;
 }
 
-button.btn {
-  width: 180px !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
-}
-
 button.btn, a.btn {
   box-shadow: none !important;
   /*border: solid 1px var(--primary-color) !important*/
-}
-
-button.btn:hover {
-  background-color: var(--secondary-color) !important;
-  color: #FFFFFF !important;
-
 }
 
 button:disabled {
@@ -113,18 +129,19 @@ button:disabled {
   background-color: #6c757d !important;
 }
 
+footer button:hover {
+  border: 1px solid var(--tertiary-color) !important;
+}
+
 .nav-link {
   color: #FFFFFF;
-  font-weight: 500;
+  font-weight: 700;
   text-transform: none;
 }
 
-.fs-7 {
-  font-size: 14px;
-}
-
-.fs-8 {
-  font-size: 12px;
+.nav-link:hover, .nav-link.active {
+  color: #9c9c9c !important;
+  background-color: #74415D !important;
 }
 
 .carousel, .carousel-item, .carousel-inner {
@@ -163,6 +180,7 @@ button:disabled {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="phone"],
 textarea,
 select,
 .tox-tinymce
@@ -171,6 +189,7 @@ select,
   border: 0 !important;
   border-bottom: 2px solid var(--primary-color) !important;
   border-radius: 0px !important;
+  padding: 10px !important;
 }
 
 select {
@@ -235,6 +254,23 @@ td, th {
   transition: width .2s linear !important;
 }
 
+section {
+  padding: 1.5rem 0;
+}
+
+section > h1, section > h2 {
+  border-left: 4px solid var(--primary-color);
+  padding: 0 0.5rem 1.25rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem !important;
+  animation: border-grow 2s ease-in-out 0s 1;
+}
+
+@keyframes border-grow {
+  from{border-left: 0%}
+  to{border-left: 100%}
+}
+
 ::placeholder, select:required:invalid {
   font-size: 12px !important;
   font-style: italic
@@ -266,11 +302,6 @@ div.listing:hover i[type="button"], div.post:hover span[type="button"], .text-bl
   display: flex;
 }
 
-form > div {
-  display: inline-flex;
-  position: relative;
-  margin-bottom: 1rem;
-}
 
 #search {
   transition: display 5s;
@@ -291,8 +322,8 @@ form > div {
 .actionmenu .menuitem {
   border-radius: 0px;
   padding: 8px 20px !important;
-  /*text-transform: uppercase;*/
-  font-size: 0.9rem;
+  /*text-transform: uppercase;
+  font-size: 0.9rem;*/
   text-align: left !important;
 }
 
@@ -301,26 +332,55 @@ form > div {
   color: #FFFFFF !important;
 }
 
-#footer {
+.photo-card:hover {
+  background-color: var(--primary-color);
+  color:#FAFAFA;
+  border-radius: 5px;
+}
+
+footer {
   background-color: #2F2B2B;
   opacity: 1;
   background-size: 5px 5px;
   background-image: repeating-linear-gradient(45deg, #000000 0, #000000 0.5px, #2F2B2B 0, #2F2B2B 50%);
-  padding-top: 40px;
-  padding-bottom: 100px;
+}
+
+.transition {
+  transition: transform 0.5s ease-in-out
+}
+
+.transition:hover {
+  transform: translate(0, -8px)
+}
+
+.postintro {
+  position: absolute;
+  bottom: 0;
+  opacity:  1;
+  overflow: hidden;
+  height: 17%;
+  animation: revealup 2s ease-out 0s 1 ;
+  transition: height 0.75s ease-in-out, opacity 1s linear;
+}
+
+.postintro:hover {
+  height: 70%;
+  opacity: 0.75;
+}
+
+@keyframes revealup {
+  from {transform: translate(0, 100%); opacity: 1;}
+  to {transform: translate(0, 0); opacity: 0.75}
 }
 
 /**Admin Area Only**/
-#header, #toolbar {
+#navbar, #toolbar {
   background-color: #74415D;
   opacity: 1;
   background-size: 5px 5px;
   background-image: repeating-linear-gradient(45deg, #000000 0, #000000 0.5px, #74415D 0, #74415D 50%);
 }
 
-#utilbar div {
-  font-size: 12px !important;
-}
 
 #utilbar th, #utilbar td {
   padding: 4px 4px !important

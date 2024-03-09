@@ -11,7 +11,7 @@ const options = {
         },
         slug: {
             get() {
-                return this.title.split(' ').join('-')
+                return this.title.split(' ').join('-').toLowerCase()
             }
         }
     },
@@ -29,8 +29,7 @@ const options = {
 
 const postschema = Schema({
     image: {
-        data: Buffer,
-        contentType: String
+        type: String
     },
     title: {
         type: String,
@@ -65,7 +64,7 @@ const postschema = Schema({
             type: String,
             default: "uncategorized",
             enum: {
-                values: ["uncategorized","sports","lifestyles","fashion","general"],
+                values: ["uncategorized","sports","lifestyles","fashion","technology"],
                 message: 'enum validator failed for path `{PATH}` with value `{VALUE}`',
             },
             required: true

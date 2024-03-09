@@ -13,7 +13,7 @@ export function Tags() {
     return [...tags]
 }
 
-export default function RecentPosts( {number} ) {
+export default function RecentPosts( {number, showMeta, showEngagement} ) {
     const {posts, isLoading} = usePosts(`s?sort=-_id`)
 
     if (isLoading) {
@@ -26,9 +26,9 @@ export default function RecentPosts( {number} ) {
             return <Error status="204" document="recent post" />
         }else{
             return (
-                <div className={`row row-cols-1 row-cols-md-${number} p-0 py-md-${number}`}>
+                <div className={`row row-cols-1 row-cols-md-${number}`}>
                     {approved.slice(0, number).map((post) => (
-                        <div key={post._id} className={`col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
+                        <div key={post._id} className={`transition col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
                             <Postcard
                                 id={post._id}
                                 slug={post.slug}
@@ -38,6 +38,8 @@ export default function RecentPosts( {number} ) {
                                 meta={post.meta}
                                 created={post.created}
                                 height="180px"
+                                showMeta={showMeta}
+                                showEngagement={showEngagement}
                             />
                         </div>
                     ))}
@@ -45,7 +47,7 @@ export default function RecentPosts( {number} ) {
             )}
     }else {
         return (
-            <div className="text-center py-4">
+            <div className="text-center py-5">
                 <h6 className="fst-italic text-danger fs-8">Error loading recent posts</h6>
             </div>
         )

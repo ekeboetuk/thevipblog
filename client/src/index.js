@@ -1,6 +1,6 @@
-import React, { StrictMode, createContext } from "react";
+import React, { StrictMode, createContext, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, BrowserRouter, Route, RouterProvider, Navigate, useSearchParams } from "react-router-dom";
 
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -23,7 +23,7 @@ import Dashboard from "./admin/dashboard";
 import Users from "./admin/users";
 import PostsBackend from "./admin/posts";
 import Comments from "./admin/comments";
-import Postform from "./components/postform";
+import { Postform } from "./components/forms";
 
 export const userContext = createContext()
 
@@ -39,20 +39,20 @@ function Afriscope() {
           </userContext.Provider>
         }>
           <Route index element={<Home />} />
-          <Route path="posts/:path?/:slug" element={<Posts />} />
-          <Route path="post/:slug" element={<Post token={token} />} />
+          <Route path="posts" element={<Posts />} />
+          <Route path=":slug" element={<Post token={token} />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
-          <Route path="signin" element={token ? <Navigate to={`/${token?.name.split(" ").join(".")}/profile`} /> : <Signin setToken = {setToken} />} />
-          <Route path="signup" element={token ? <Navigate to={`/${token?.name.split(" ").join(".")}/profile`} /> : <Signup />} />
-          <Route path={token ? `/${token?.name.split(" ").join(".")}/profile`:`/:user/profile`} element={!token ? <Navigate to="/signin" /> : <Profile token={token}/>} />
-          <Route path="post/newpost" element={<NewPost token={token}/>} />
+          <Route path="signin" element={token ? <Navigate to={`/profile?=${token?.name.split(" ").join(".")}`} /> : <Signin setToken = {setToken} />} />
+          <Route path="signup" element={token ? <Navigate to={`/profile?=${token?.name.split(" ").join(".")}`} /> : <Signup />} />
+          <Route path="profile" element={!token ? <Navigate to="/signin" /> : <Profile token={token}/>} />
+          <Route path="newpost" element={<NewPost token={token}/>} />
           <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
 
         <Route exact path="/administrator" element={
           <userContext.Provider value={{token: token, unsetToken: unsetToken }}>
-          {token ? (!token?.isAdmin ? <Navigate to={`../${token?.name.split(" ").join(".")}/profile`} /> : <Administrator />): <Navigate to="../signin" />}
+          {token ? (!token?.isAdmin ? <Navigate to={`../profile?=${token?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../signin" />}
           </userContext.Provider>
         }>
           <Route index element={<Dashboard />} />

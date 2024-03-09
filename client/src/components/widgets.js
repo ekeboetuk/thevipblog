@@ -1,6 +1,7 @@
 import { usePosts, useUsers } from '../hooks/fetchers';
 import RecentPosts from './recentpost'
 import { Widgetcard } from './cards'
+import { Subscription } from './forms';
 
 export const Statistics = () => {
     const {posts, isLoading} = usePosts('s?sort=-_id');
@@ -25,7 +26,7 @@ export const Statistics = () => {
 
     return (
         <Widgetcard title="Site Stats">
-            <table className="table table-striped placeholder-glow">
+            <table className="table table-striped placeholder-glow fs-4">
                 <tbody>
                     <tr>
                         <th scope="row">No. of Posts<i className="fas fa-caret-right"></i></th>
@@ -58,6 +59,25 @@ export const LatestPost = () => {
         <Widgetcard title="Latest Post">
             <div className="">
                 <RecentPosts number={1} />
+            </div>
+        </Widgetcard>
+    )
+}
+
+export const Advertise = () => {
+    return (
+        <Widgetcard title="Advertise Here">
+            <p className="p-4 fs-5">Sell you products here at an affordable rate</p>
+        </Widgetcard>
+    )
+}
+
+export const Subscribe = () => {
+    return (
+        <Widgetcard title="Newsletter Subscription">
+            <div className="p-4" style={{backgroundColor: 'rgba(116, 65, 93, 0.14)'}}>
+                <p className="fs-5">Kindly fill and submit the form below to subscirbe to our periodic newsletters. We promise not to be intrusive.</p>
+                <Subscription />
             </div>
         </Widgetcard>
     )

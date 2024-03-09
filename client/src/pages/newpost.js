@@ -1,31 +1,35 @@
 import React from 'react';
 
 import RecentPosts from '../components/recentpost'
-import Postform from '../components/postform';
+import { Postform } from '../components/forms';
 import { Error } from '../components/errors';
+import { Advertise, Subscribe } from '../components/widgets'
+
 
 function NewPost( {token} ) {
-
     return (
-            token && token?.type!== "Subscriber" ?
-            <>
-                {/**<div className="container-fluid mx-auto text-center fw-bold fs-5 py-4 bg-tertiary">
-                    <img src="/assets/icon.png" alt="afriscope icon" className="py-2" />
-                    <p>NEW POST</p>
-                </div>**/}
-                <div className="container-sm">
-                    <div className="bg-tertiary my-4 px-3 px-md-5 py-4 rounded-5">
-                        <Postform token={token}/>
-                    </div>
-                </div>
-                <div className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                    <div className="container-md py-5">
-                        <h6 className=" text-center text-uppercase text-white fw-bold mb-0 mx-md-3">Most Recent</h6>
-                        <RecentPosts number={3} />
-                    </div>
-                </div>
-            </>:
-            <Error status="401" token={token} />
+        <>
+            {token && token?.type!== "Subscriber" ?
+                <>
+                    <section className="container-md d-flex flex-column flex-md-row">
+                        <div className="bg-tertiary px-3 px-md-5 rounded-5" style={{maxWidth: '768px'}}>
+                            <Postform token={token}/>
+                        </div>
+                        <div className="align-self-start mx-0 mx-md-4 w-100 w-md-25">
+                            <Advertise />
+                            <Subscribe />
+                        </div>
+                    </section>
+                    <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
+                        <div className="container-md">
+                            <h4 className=" text-center text-uppercase text-white fw-bold mb-5 mx-md-3">Most Recent</h4>
+                            <RecentPosts number={3} showMeta={true}/>
+                        </div>
+                    </section>
+                </>:
+                <Error status="401" token={token} />
+            }
+        </>
     )
 }
 

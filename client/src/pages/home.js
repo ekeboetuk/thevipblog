@@ -23,7 +23,7 @@ function Home() {
         if(home.length === 0) {
             content = <Error status="204" document="Featured Post" />
         } else {
-            content =
+            content = 
                 home.map((post) => (
                 <div key={post._id} className="d-flex flex-column flex-md-row mb-5">
                     <Postcard
@@ -37,6 +37,9 @@ function Home() {
                     meta={post.meta}
                     created={post.created}
                     height="350px"
+                    showReadmore={false}
+                    showMeta={true}
+                    showEngagement={true}
                     />
                 </div>
             ))
@@ -48,8 +51,8 @@ function Home() {
     return (
         <>
             <Carousel />
-            <div className={`container-md py-5 position-relative`}>
-                {posts && <h4 className="text-center pb-4 fw-bold">FEATURED POSTS</h4>}
+            <section className={`container-md position-relative`}>
+                {/*posts && <h4 className="text-center pb-4 fw-bold">FEATURED POSTS</h4>*/}
                 {isLoading &&
                     <div className="text-center">
                         <img src="/assets/spinner_block.gif" className="my-5 py-5" width="60px" alt="loading" />
@@ -58,7 +61,7 @@ function Home() {
                 <div className={`${isLoading && "opacity-25"}`}>
                     {content}
                 </div>
-            </div>
+            </section>
         </>
 
     )

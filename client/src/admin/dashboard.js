@@ -6,9 +6,9 @@ function Dashboard() {
     })
 
     return (
-        <div className="">
+        <section className="">
             Dashboard
-        </div>
+        </section>
     )
 }
 

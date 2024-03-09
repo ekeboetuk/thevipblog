@@ -41,6 +41,9 @@ const userschema = Schema({
         type: String,
         required: true,
     },
+    about: {
+        type: String
+    },
     type: {
         type: String,
         enum: ["Administrator", "Author", "Editor",  "Contributor","Subscriber"],
