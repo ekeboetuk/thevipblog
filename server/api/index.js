@@ -10,7 +10,6 @@ import cookieparser from 'cookie-parser';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
-//import multer from 'multer';
 
 // Create an Express app
 const app = express();
@@ -32,21 +31,9 @@ import users from './models/users.js';
 
 //Constants
 const JWT_SECRET = "Afriscope Dev Blog";
-/*const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'public/media/uploads')
-  },
-  filename: (req, file, cb) => {
-      cb(null, file.fieldname + '-' + Date.now())
-  }
-});
-
-const upload = multer({ storage: storage, limits:{fieldSize: 25 * 1024 * 1024} });*/
-
 
 // Define routes
 app.get('/posts', async (req, res) => {
-  const total = await posts.countDocuments({})
   const {sort, limit} = req.query
   await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
@@ -81,8 +68,8 @@ await posts.find({isApproved: true, 'meta.category': req.params.slug})
 app.get('/post/:slug', async (req, res) => {
   const post = await posts.findOne({'title': req.params.slug.split('-').join(' ')}, {__v: 0 })
   .collation({locale: 'en', strength: 2})
-  .populate('meta.author', 'name isActive')
-  .populate('comments.user', 'name isActive')
+  .populate('meta.author', 'image name isActive')
+  .populate('comments.user', 'image name isActive')
   .then((post) => {
     res.send(post)
   })

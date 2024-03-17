@@ -8,12 +8,12 @@ function About() {
     return (
         <>
             <section className="container-md">
-                <h2>About Us</h2>
+                <h2 className="border-left">About Us</h2>
                 <p className="">Started as a bootcamp project for a set of aspiring developers and culminated into a full-fletched web application still under development to serve as a general purpose blog where you can get all kinds of information. Here to excite your interest as well as keep you informed, engaged and involved as you are welcomed to sign up to interact in the comment sections or write us a note to contribute as an Editor.</p>
             </section>
             <section className='container-fluid' style={{backgroundColor: 'rgba(116, 65, 93, 0.25)'}}>
-                <div className="container-md">
-                    <h2>Team Members</h2>
+                <div className="container-md" style={{padding: "0 20px"}}>
+                    <h2 className="border-left">Team Members</h2>
                     <div className="row row-cols-1 row-cols-md-5 gy-4">
                         <div className="photo-card col p-2">
                             <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Cordinator'/>
@@ -54,7 +54,7 @@ function About() {
                 </div>
             </section>
             <section className="container-md">
-                <h2>Editors</h2>
+                <h2 className="border-left">Editors</h2>
                     <div className="row row-cols-2 row-cols-md-6 gy-4">
                         <div className="col p-2">
                             <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Developer'/>

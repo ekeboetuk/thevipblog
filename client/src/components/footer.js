@@ -5,7 +5,7 @@ import { Subscription } from "./forms";
 function Footer() {
     return (
         <footer className="container-fluid mx-auto bg-secondary text-white">
-            <section className="row px-5">
+            <section className="row px-4">
                 <div className="d-flex flex-column col-12 col-md-5 pe-0 pe-md-5 mb-5">
                     <Link to="/">
                         <img

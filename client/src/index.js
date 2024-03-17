@@ -1,6 +1,6 @@
-import React, { StrictMode, createContext, useState } from "react";
+import React, { StrictMode, createContext } from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, createRoutesFromElements, BrowserRouter, Route, RouterProvider, Navigate, useSearchParams } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from "react-router-dom";
 
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";

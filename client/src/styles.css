@@ -23,11 +23,6 @@ code {
     monospace;
 }
 
-@keyframes header-after {
-  from {width: 0%;}
-  to {width: 20%;}
-}
-
 
 /** Overwrites **/
 h1, h2, h3, h4, h5, h6 {
@@ -45,6 +40,11 @@ footer h1::after, footer h2::after, footer h3::after, footer h4::after, footer h
   content: "";
   background-color: var(--primary-color);
   animation: 2s ease-in-out 0s 1 header-after;
+}
+
+@keyframes header-after {
+  from {width: 0%;}
+  to {width: 20%;}
 }
 
 section {
@@ -131,6 +131,10 @@ button:disabled {
 
 footer button:hover {
   border: 1px solid var(--tertiary-color) !important;
+}
+
+a {
+  overflow: hidden;
 }
 
 .nav-link {
@@ -258,12 +262,12 @@ section {
   padding: 1.5rem 0;
 }
 
-section > h1, section > h2 {
-  border-left: 4px solid var(--primary-color);
-  padding: 0 0.5rem 1.25rem;
-  text-transform: uppercase;
+.border-left {
   margin-bottom: 1rem !important;
-  animation: border-grow 2s ease-in-out 0s 1;
+  padding: 0 0.5rem 1.25rem !important;
+  text-transform: uppercase;
+  border-left: 4px solid var(--primary-color);
+  animation: border-grow 0.5s ease-in-out 0s 1;
 }
 
 @keyframes border-grow {
@@ -356,19 +360,36 @@ footer {
 .postintro {
   position: absolute;
   bottom: 0;
+  padding: 20px 15px 20px;
+  max-height: 50%;
   opacity:  1;
   overflow: hidden;
-  height: 17%;
-  animation: revealup 2s ease-out 0s 1 ;
-  transition: height 0.75s ease-in-out, opacity 1s linear;
+  transition: padding-bottom 0.5s ease-in-out, opacity 1s linear;
 }
 
-.postintro:hover {
-  height: 70%;
+.postintro .intro {
+  font-weight: 700;
+  margin-left: 5px;
+  padding-left: 10px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.postcontent .meta {
+  display: none;
+}
+
+.postcontent:hover .postintro{
   opacity: 0.75;
+  padding-bottom: 40px;
 }
 
-@keyframes revealup {
+.postcontent:hover .meta {
+  display: block;
+  opacity: 0.75;
+  animation: revealuptransparent 1s ease-in-out 0s alternate ;
+}
+
+@keyframes revealuptransparent {
   from {transform: translate(0, 100%); opacity: 1;}
   to {transform: translate(0, 0); opacity: 0.75}
 }

@@ -37,8 +37,9 @@ function Home() {
                     meta={post.meta}
                     created={post.created}
                     height="350px"
-                    showReadmore={false}
+                    showCategory={true}
                     showMeta={true}
+                    showReadmore={false}
                     showEngagement={true}
                     />
                 </div>

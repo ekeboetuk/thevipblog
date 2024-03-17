@@ -26,6 +26,9 @@ const options = {
 }
 
 const userschema = Schema({
+    image: {
+        type: String,
+    },
     name: {
         type: String,
         required: true

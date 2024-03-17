@@ -30,8 +30,8 @@ export function Navbar() {
 
   return (
       <nav className="navbar navbar-expand-lg border-bottom border-primary border-3 py-0">
-          <div className="container-fluid mx-auto px-0 px-md-5 py-4 py-md-0">
-              <NavLink className="navbar-brand me-5 me-sm-0 ps-4 ps-md-0" to="/">
+          <div className="container-fluid mx-auto px-4 py-4 py-md-0">
+              <NavLink className="navbar-brand me-5 me-sm-0" to="/">
                   <img
                       src="/assets/logo-white.png"
                       width={120}
@@ -40,7 +40,7 @@ export function Navbar() {
               </NavLink>
               <div className="d-flex justify-content-end align-items-center">
                   <button
-                      className="navbar-toggler pe-4 pe-md-0 ms-2 text-white"
+                      className="navbar-toggler ms-2 text-white"
                       type="button"
                       data-mdb-toggle="collapse"
                       data-mdb-target="#mainnavigation"

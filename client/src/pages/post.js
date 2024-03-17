@@ -67,7 +67,7 @@ function Post({ token }) {
             content=
                 <>
                     <div className="d-flex align-items-center pb-3">
-                        <img src="/assets/icon.png" alt="afriscope icon" className="square bg-tertiary rounded-0 p-4 me-3" />
+                        <img src={`${posts.meta.author.image||'/assets/icon.png'}`} width={90} alt="afriscope icon" className="square bg-tertiary me-3 rounded align-self-start" />
                         <div className="align-items-center">
                             <h4 className="display-4 m-0 mb-2 lh-1 fw-bold">{posts.title.toUpperCase()}</h4>
                             <div className="d-flex flex-wrap justify-content-start me-4">
@@ -89,7 +89,7 @@ function Post({ token }) {
                             comment.approved &&
                             <tr key={index} id="comments" className="d-flex">
                                 <td className="avatar flex-shrink-0 p-2 border-0">
-                                    <img src="/assets/icon.png" className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
+                                    <img src={`${comment.user.image||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
                                 </td>
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
                                     <div className="fw-bold p-0">{token?.name === comment.user?.name ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
@@ -139,7 +139,7 @@ function Post({ token }) {
                 {content && <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >
                         <Advertise />
                         <div>
-                            <h5 className="fw-bolder text-uppercase px-1 mb-2">Trending</h5>
+                            <h5 className="fw-bolder text-uppercase px-1 mb-3">Trending</h5>
                             <RecentPosts number={1} />
                         </div>
                         <div>

@@ -56,8 +56,9 @@ export const Statistics = () => {
 
 export const LatestPost = () => {
     return (
-        <Widgetcard title="Latest Post">
+        <Widgetcard>
             <div className="">
+                <h4 className="mb-3 text-uppercase fw-bolder">Latest Post</h4>
                 <RecentPosts number={1} />
             </div>
         </Widgetcard>

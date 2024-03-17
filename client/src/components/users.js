@@ -182,7 +182,7 @@ export function Signin( {setToken} ) {
 export function UserMenu( ) {
 	const [usermenu, showUsermenu] = useState(false)
 	const {token, unsetToken} = useContext(userContext)
-	//const navigate = useNavigate()
+	const navigate = useNavigate()
 
     function handleClick () {
         showUsermenu(!usermenu)
@@ -193,6 +193,7 @@ export function UserMenu( ) {
 
 	function handleLogout() {
 		document.cookie = "SessionToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
+        navigate(0)
 		unsetToken();
 	}
 
@@ -210,7 +211,6 @@ export function UserMenu( ) {
 								<Link to={`/profile?q=${token.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
 								{token?.type !== 'Subscriber' &&
 									<>
-										<Link to={`/posts?user=${token?.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-edit me-2"></li>My Posts</Link>
 										<Link className="menuitem link-dark" to="/newpost"><i className="bx bx-notepad me-2"></i>Write Post</Link>
 									</>
 								}
