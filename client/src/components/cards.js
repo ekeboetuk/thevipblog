@@ -51,16 +51,16 @@ export const Postcard = ({
                         </span>
                     )}
                     <small className="text-white pe-4 py-2 fw-bold position-absolute end-0 bottom-0">
-                        {category?.toUpperCase()}
+                        {meta.category?.toUpperCase()}
                     </small>
                 </div>
             )}
             <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
                 <div className="d-flex flex-column py-4 px-4 justify-content-between position-relative">
                     <Link
-                        to={`/${slug.toLowerCase()}`}
+                        to={`/${meta.category}/${slug.toLowerCase()}`}
                         className="stretched-link"
-                        onClick={handleClick}
+                        onClick={handleClick} state={{id: id}}
                     >
                         <h3 className="lh-2 title text-black fw-bold text-body">
                             {title.toUpperCase()}
@@ -101,9 +101,9 @@ export const Postcard = ({
                         )}
                         {showReadmore && (
                             <Link
-                                to={`/post/${slug.toLowerCase()}`}
+                                to={`/${meta.category}/${slug.toLowerCase()}`}
                                 className="text-brand fw-bold stretched-link"
-                                onClick={handleClick}
+                                onClick={handleClick} state={{id: id}}
                             >
                                 Readmore
                                 <i className="fas fa-arrow-circle-right ms-2"></i>
@@ -176,8 +176,8 @@ export const PostcardTransparent = ({
                 <div className="postcontent d-flex flex-column w-100 w-md-50 justify-content-between text-white">
                       <div className="postintro d-flex flex-column bg-dark justify-content-between w-100">
                           <Link
-                              to={`/${slug}`}
-                              onClick={updateViews}
+                              to={`/${meta.category}/${slug}`}
+                              onClick={updateViews} state={{id: id}}
                           >
                               <h3 className="title fw-bolder text-white lh-sm">{title.toUpperCase()}</h3>
                               {showIntro && <p className="intro text-white fs-5 mb-0">{intro}</p>}

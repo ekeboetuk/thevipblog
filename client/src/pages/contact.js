@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 
 import { Contact } from '../components/forms'
+import { GoogleMap } from '../components/maps';
 
 function ContactUs() {
     useEffect(()=>{
-        document.title = "Afriscope - Contact Us"
+        document.title = "Afriscope Blog - Contact Us"
     })
 
     return (
@@ -25,6 +26,9 @@ function ContactUs() {
                     </div>
                 </div>
             </section>
+            <div className="container-fluid">
+                <GoogleMap />
+            </div>
         </>
     )
 }

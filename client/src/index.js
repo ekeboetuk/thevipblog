@@ -16,7 +16,7 @@ import Contact from "./pages/contact";
 import NewPost from "./pages/newpost";
 import { Error } from "./components/errors";
 import Administrator from "./pages/administrator";
-import { Signin, Signup, Profile } from "./components/users";
+import { Login, Register, Profile } from "./components/users";
 import { useToken } from "./hooks/authentication";
 
 import Dashboard from "./admin/dashboard";
@@ -39,20 +39,20 @@ function Afriscope() {
           </userContext.Provider>
         }>
           <Route index element={<Home />} />
-          <Route path="posts" element={<Posts />} />
-          <Route path=":slug" element={<Post token={token} />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="signin" element={token ? <Navigate to={`/profile?=${token?.name.split(" ").join(".")}`} /> : <Signin setToken = {setToken} />} />
-          <Route path="signup" element={token ? <Navigate to={`/profile?=${token?.name.split(" ").join(".")}`} /> : <Signup />} />
-          <Route path="profile" element={!token ? <Navigate to="/signin" /> : <Profile token={token}/>} />
+          <Route path=":path" element={<Posts />} />
+          <Route path=":path/:slug" element={<Post token={token} />} />
+          <Route path="about-us" element={<About />} />
+          <Route path="contact-us" element={<Contact />} />
+          <Route path="login" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Login setToken = {setToken} />} />
+          <Route path="register" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Register />} />
+          <Route path="profile" element={!token ? <Navigate to="/login" /> : <Profile token={token} />} />
           <Route path="newpost" element={<NewPost token={token}/>} />
           <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
 
         <Route exact path="/administrator" element={
           <userContext.Provider value={{token: token, unsetToken: unsetToken }}>
-          {token ? (!token?.isAdmin ? <Navigate to={`../profile?=${token?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../signin" />}
+          {token ? (!token?.isAdmin ? <Navigate to={`../profile?=${token?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../login" />}
           </userContext.Provider>
         }>
           <Route index element={<Dashboard />} />

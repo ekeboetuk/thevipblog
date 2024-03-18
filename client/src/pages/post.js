@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { Link, useParams, ScrollRestoration } from 'react-router-dom';
+import { Link, useParams, useLocation, ScrollRestoration } from 'react-router-dom';
 
 import axios from 'axios';
 import moment from 'moment';
@@ -14,7 +14,8 @@ function Post({ token }) {
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false)
     const params = useParams();
-    const {posts, error, isLoading} = usePosts(`/${params.slug}`);
+    const { state } = useLocation()
+    const {posts, error, isLoading} = usePosts(`/${state.id}`);
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -63,7 +64,8 @@ function Post({ token }) {
             content = <Error status="500" />
             document.title = "Afriscope Blog - Internal Server Error"
         } else {
-            document.title = `Afriscope Blog - ${posts.title}`
+            let title = posts.title.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
+            document.title = `Afriscope Blog - ${title}`
             content=
                 <>
                     <div className="d-flex align-items-center pb-3">
@@ -92,7 +94,7 @@ function Post({ token }) {
                                     <img src={`${comment.user.image||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
                                 </td>
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
-                                    <div className="fw-bold p-0">{token?.name === comment.user?.name ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
+                                    <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
                                     <div className="d-flex justify-content-between p-0" contentEditable={comment.user?.name === token?.name ?"true":"false"} suppressContentEditableWarning>
                                         {comment.content}
                                     </div>
@@ -117,8 +119,7 @@ function Post({ token }) {
                     <ScrollRestoration getKey={(location, matches) => {
                         return location.pathname;
                     }}/>
-                    <h2 className="pt-5 text-uppercase">About The Author</h2>
-                    <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
+                    <h4 className="pt-5 text-uppercase">{`More From ${posts.meta.author.name}`}</h4>
                 </>
         }
     } else {
@@ -153,6 +154,10 @@ function Post({ token }) {
                             }
                         </div>
                         <Subscribe />
+                        <div>
+                            <h4 className="text-uppercase">About The Author</h4>
+                            <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
+                        </div>
                     </div>
                 }
             </section>

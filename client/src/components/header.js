@@ -54,12 +54,12 @@ export function Navbar() {
               <div className="navbar-collapse collapse" id="mainnavigation">
                   <div className="navbar-nav flex-grow-1 justify-content-center mb-4 mb-md-0">
                       <NavLink className="nav-link px-3 py-2 py-md-4" to="/">Home</NavLink>
-                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/posts?category=lifestyles">Lifestyles</NavLink>
-                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/posts?category=sports">Sports</NavLink>
-                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/posts?category=fashion">Fashion</NavLink>
-                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/posts?category=technology">Technology</NavLink>
-                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/about">About</NavLink>
-                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/contact">Contact</NavLink>
+                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/lifestyles">Lifestyles</NavLink>
+                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/sports">Sports</NavLink>
+                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/fashion">Fashion</NavLink>
+                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/technology">Technology</NavLink>
+                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/about-us">About</NavLink>
+                      <NavLink className="nav-link px-3 py-2 py-md-4" to="/contact-us">Contact</NavLink>
                   </div>
                   <div id="search" className="d-flex align-self-bottom position-relative justify-content-end px-4 pe-md-0">
                       <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-pill ps-3 pe-5 py-1 fs-7 text-black-50" value={searchterm} onChange={e=>setSearchterm(e.target.value)} placeholder='Search posts'/>

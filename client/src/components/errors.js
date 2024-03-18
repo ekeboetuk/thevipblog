@@ -38,7 +38,7 @@ export const Error = ({ status, document, image, token }) => {
     }
 
     return (
-        <section className="container-md mx-auto text-center align-items-center">
+        <section className="container-md mx-auto mb-auto text-center align-items-center" style={{textTransform:"capitalize"}}>
             <img src={error[status].image.source} width={error[status].image.width} className="pb-3" alt="error" />
             {status !== "204" && <h6 className="fw-semibold">{error[status].description.toUpperCase()}</h6>}
             <p className="mb-0">{error[status].message}{status === "500" && <Link className="text-black fw-semibold" onClick={()=>window.location.reload()}> Please retry</Link>}</p>

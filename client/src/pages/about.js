@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 function About() {
     useEffect(()=>{
-        document.title = "Afriscope - About Us"
+        document.title = "Afriscope Blog - About Us"
     })
 
     return (

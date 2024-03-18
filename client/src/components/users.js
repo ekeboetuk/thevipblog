@@ -6,7 +6,7 @@ import { userContext } from '../index';
 import axios from "axios";
 
 
-export function Signup() {
+export function Register() {
     document.title = "Afriscope Blog - Sign Up"
 
     const [state, setState] = useState({password:''})
@@ -26,7 +26,7 @@ export function Signup() {
           }
         }
 
-        const handleSignup = async(e) => {
+        const handleRegister = async(e) => {
             e.preventDefault()
             setSending(true)
             message.classList.remove('text-success', 'text-danger')
@@ -70,7 +70,7 @@ export function Signup() {
                 <div id="formarea" className="col-12 col-md-8 bg-tertiary text-center text-brand px-5 pb-5 rounded-end display-relative">
                     <img src="/media/login-avatar-white.webp" width={80} className="bg-primary display-absolute top-0 end-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
                     <h4 className="fw-bold mb-5">Complete The Form To Continue</h4>
-                    <form onSubmit={handleSignup} className="d-flex flex-column px-0 px-md-5 mx-0 mx-md-5">
+                    <form onSubmit={handleRegister} className="d-flex flex-column px-0 px-md-5 mx-0 mx-md-5">
                         <input
                             type="text"
                             id="names"
@@ -92,7 +92,7 @@ export function Signup() {
     )
 }
 
-export function Signin( {setToken} ) {
+export function Login( {setToken} ) {
     document.title = "Afriscope Blog - Sign In"
 
     const [state, setState] = useState({
@@ -219,7 +219,7 @@ export function UserMenu( ) {
 							</div>}
 					</div>
 				</> :
-				<Link className="btn text-white border border-primary rounded-pill" to="/signin" role="button">
+				<Link className="btn text-white border border-primary rounded-pill" to="/login" role="button">
 					<i className="fas fa-right-to-bracket me-2"></i>
 					Sign In
 				</Link>
@@ -229,9 +229,13 @@ export function UserMenu( ) {
 }
 
 export function Profile({ token }) {
+    let navigate = useNavigate()
+    let username = token.name.toLowerCase().replace(" ",".")
+
     useEffect(()=> {
         document.title = `Afriscope Blog - My Profile`
-    }, [])
+        navigate(`?=${username}`,{replace: true})
+    }, [navigate, username])
 
     return (
         <>

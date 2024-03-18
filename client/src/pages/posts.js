@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { usePosts } from '../hooks/fetchers';
 
@@ -8,15 +8,11 @@ import { Advertise, Subscribe } from '../components/widgets'
 import { Error } from '../components/errors';
 
 function Posts() {
-    const [search] = useSearchParams();
-    const path = document.location.search.split('=')[0].replace('?','')
-    const searchparam = search.get(path)
-    const searchparams = searchparam.split('.')
-    const title = (searchparams[0].charAt(0).toUpperCase()+searchparams[0].slice(1)) + " " + (searchparams[1]?(searchparams[1]?.charAt(0).toUpperCase()+searchparams[1]?.slice(1)):"")
+    const path = useParams().path
 
     useEffect(()=> {
-        document.title = `Afriscope Blog - ${title}`
-    }, [title])
+        document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
+    }, [path])
 
     const {posts, error, isLoading} = usePosts(`s?sort=-_id`)
     let content;
@@ -25,17 +21,13 @@ function Posts() {
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
-            <section className="text-center">
+            <section className="text-center mb-auto">
                 <img src="/assets/spinner_block.gif" width="60px" alt="loading" />
             </section>
     } else if(posts) {
-        if(path === "category"){
-            filter = posts.filter((post) => post.meta.category === searchparam && post.isApproved)
-        }else if(path === "user"){
-            filter = posts.filter((post) => post.meta.author.name.split(' ').join('.').toLowerCase() === searchparam && post.isApproved)
-        }
+        filter = posts.filter((post) => post.meta.category === path && post.isApproved)
         filter.length === 0?
-        content = <Error status="204" document={`Post Under ${title} Category`} />:
+        content = <Error status="204" document={`Post Under ${path} Category`} />:
         content =
             <>
                 <section>
@@ -103,7 +95,7 @@ function Posts() {
                     </div>
                 </section>
                 <section className="container-fluid mx-auto" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
-                    <h2 className="container-md border-left">{`Featured In ${searchparam}`}</h2>
+                    <h2 className="container-md border-left">{`Featured In ${path}`}</h2>
                     <div className="container-md d-flex flex-column flex-md-row">
                         <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
                             {filter.map((post) => (

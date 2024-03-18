@@ -9,6 +9,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@tinymce/tinymce-react": "^4.3.0",
+    "@vis.gl/react-google-maps": "^0.7.1",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.2",
     "form-data": "^4.0.0",
