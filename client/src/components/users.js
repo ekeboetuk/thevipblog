@@ -243,7 +243,15 @@ export function Profile({ token }) {
     return (
         <>
             <section className="container-md mx-auto my-5 rounded-6">
-                <h4>Welcome, <strong>{token?.name}!</strong></h4>
+                <div className="d-flex flex-column
+                flex-md-row justify-content-center
+                align-items-center">
+                    <img
+                    src="/media/photo-placeholder-male.jpeg"
+                    width={200} className="border border-2
+                    rounded-circle me-md-5 mb-5" alt="profile" />
+                    <h4>Welcome, <strong>{token?.name} </strong><i className="fa-solid fa-edit"></i></h4>
+                </div>
             </section>
         </>
     )
