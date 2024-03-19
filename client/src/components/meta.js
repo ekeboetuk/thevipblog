@@ -51,10 +51,10 @@ function Meta({id, views, comments, likes}) {
 
 
   return (
-    <div className="d-flex justify-content-between py-2">
-      <span title="Views">{views} <i className="fa-solid fa-eye"></i></span>
-      <span>{comments.filter(comment => comment.approved).length} Comments</span>
-      <span type="button" className="d-flex align-items-center" title="Likes" onClick={updateLikes}>{like} <i className={`ps-1 fa-heart text-danger ${liked? "fa-solid": "fa-regular"}`}></i></span>
+    <div className="d-inline-flex gap-4 py-2">
+      <span title="Views"><i className="fa-solid fa-book-open-reader"></i> {views} </span>
+      <span><i className="fa-solid fa-comments"></i> {comments.filter(comment => comment.approved).length}</span>
+      <span type="button" className="d-flex align-items-center" title="Likes" onClick={updateLikes}><i className={`pe-1 fa-solid fa-thumbs-up ${liked? "text-danger": ""}`}></i>{like}</span>
     </div>
     );
 }

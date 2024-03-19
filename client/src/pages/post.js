@@ -14,8 +14,7 @@ function Post({ token }) {
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false)
     const params = useParams();
-    const { state } = useLocation()
-    const {posts, error, isLoading} = usePosts(`/${state.id}`);
+    const {posts, error, isLoading} = usePosts(`/${params.slug}`);
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -52,11 +51,11 @@ function Post({ token }) {
         })
     }
 
-    let content;
+    let content, tags, author
 
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-    } else if(posts) {
+    }else if(posts) {
         if(posts.length === 0 || !posts.isApproved){
             content = <Error status="404" document="Post" />
             document.title = "Afriscope Blog - Not Found"
@@ -121,50 +120,51 @@ function Post({ token }) {
                     }}/>
                     <h4 className="pt-5 text-uppercase">{`More From ${posts.meta.author.name}`}</h4>
                 </>
+            tags =
+                <div>
+                    <h5 className="fw-bolder text-uppercase px-1 pb-4">Tags</h5>
+                    {posts.meta.tags !== undefined ?
+                        <>
+                            <div className="d-flex flex-wrap mb-3">
+                                {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
+                            </div>
+                        </>:"No Tags"
+                    }
+                </div>
+            author =
+                <div>
+                    <h4 className="text-uppercase">About The Author</h4>
+                    <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
+                </div>
         }
-    } else {
-        if(error) {
-            content = <Error status="500" />
-        }else{
-            content = <Error status="404" document="Post" />
-        }
+    }else if(error) {
+        content = <Error status="500" />
     }
 
     return (
         <>
             <section className={`container-md d-flex flex-column flex-md-row my-5 gap-4`}>
-                {isLoading ? <div className="col-12 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
+                {isLoading ? <div className="col-12 col-md-9 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
                 <div className={`${isLoading && "opacity-25"} col-12 col-md-9 pe-0 pe-md-5`}>
                     {content}
                 </div>}
-                {content && <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >
-                        <Advertise />
+                <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >
+                    <Advertise />
+                    {posts &&
                         <div>
                             <h5 className="fw-bolder text-uppercase px-1 mb-3">Trending</h5>
                             <RecentPosts number={1} />
                         </div>
-                        <div>
-                            <h5 className="fw-bolder text-uppercase px-1">Tags</h5>
-                            {posts?.meta.tags !== undefined ?
-                                <>
-                                    <div className="d-flex flex-wrap py-3">
-                                        {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
-                                    </div>
-                                </>:""
-                            }
-                        </div>
-                        <Subscribe />
-                        <div>
-                            <h4 className="text-uppercase">About The Author</h4>
-                            <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
-                        </div>
-                    </div>
-                }
+                    }
+                    {tags}
+                    <Subscribe />
+                    {author}
+                </div>
             </section>
             <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
                 <div className="container-md py-5">
                     <h5 className=" text-center text-uppercase text-white fw-bold mb-5 mx-md-3">Related Posts</h5>
-                    <RecentPosts number={4} showMeta={true}/>
+                    <RecentPosts number={4} showMeta={false} query={{path:"meta.$.author.$.id", slug:posts?.meta?.author?.id}}/>
                 </div>
             </section>
         </>

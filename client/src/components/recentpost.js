@@ -13,7 +13,7 @@ export function Tags() {
     return [...tags]
 }
 
-export default function RecentPosts( {number, showMeta, showEngagement} ) {
+export default function RecentPosts( {number, showMeta, showEngagement, query} ) {
     const {posts, isLoading} = usePosts(`s?sort=-_id`)
 
     if (isLoading) {
@@ -21,13 +21,19 @@ export default function RecentPosts( {number, showMeta, showEngagement} ) {
             <p className="py-3 fs-italic fw-bold text-white text-center"><i className="fa-solid fa-circle-notch fa-spin me-2"></i>Loading Recent</p>
         )
     }else if(posts){
-        const approved = posts.filter((post) => post.isApproved)
-        if(approved.length === 0) {
+        let filter
+        let approved = posts.filter((post) => post.isApproved)
+        if (query) {
+            filter = approved?.filter((post) => post.meta.author.id === query.slug)
+        }else{
+            filter = approved
+        }
+        if(filter.length === 0) {
             return <Error status="204" document="recent post" />
         }else{
             return (
                 <div className={`row row-cols-1 row-cols-md-${number}`}>
-                    {approved.slice(0, number).map((post) => (
+                    {filter.slice(0, number).map((post) => (
                         <div key={post._id} className={`transition col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
                             <Postcard
                                 id={post._id}

@@ -56,10 +56,10 @@ export const Postcard = ({
                 </div>
             )}
             <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
-                <div className="d-flex flex-column py-4 px-4 justify-content-between position-relative">
+                <div className="d-flex flex-column py-4 px-4 flex-fill justify-content-start">
                     <Link
                         to={`/${meta.category}/${slug.toLowerCase()}`}
-                        className="stretched-link"
+                        className=""
                         onClick={handleClick} state={{id: id}}
                     >
                         <h3 className="lh-2 title text-black fw-bold text-body">
@@ -95,21 +95,23 @@ export const Postcard = ({
                             </div>
                         )}
                     </div>
-                    <div className="mb-0">
                         {intro && (
+                        <div className="mb-0">
                             <p className="text-justify lh-sm mt-3 mb-1">{intro}</p>
+                        </div>
                         )}
                         {showReadmore && (
+                        <div className="mb-0">
                             <Link
                                 to={`/${meta.category}/${slug.toLowerCase()}`}
-                                className="text-brand fw-bold stretched-link"
+                                className="text-brand fw-bold"
                                 onClick={handleClick} state={{id: id}}
                             >
                                 Readmore
                                 <i className="fas fa-arrow-circle-right ms-2"></i>
                             </Link>
+                        </div>
                         )}
-                    </div>
                 </div>
                 <div className="bg-tertiary px-3">
                     {showEngagement && (

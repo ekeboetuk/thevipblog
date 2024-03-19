@@ -226,7 +226,7 @@ function Posts() {
                                                 <div type="button" className="align-self-start" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning`}></i></div>
                                             </div>
                                             <div className="d-flex flex-column flex-grow-1 me-md-3">
-                                                <Link to={`/${post.slug}`} target="_blank" className="d-flex align-items-center text-black"><h4 className="title fw-bold pe-1">{post.title}</h4><i className="blank fa-solid fa-arrow-up-right-from-square"></i></Link>
+                                                <Link to={`/${post.meta.category}/${post.slug}`} target="_blank" className="d-flex align-items-center text-black"><h4 className="title fw-bold pe-1">{post.title}</h4><i className="blank fa-solid fa-arrow-up-right-from-square"></i></Link>
                                                 <span className="mb-2 text-justify fs-5">{post.intro}</span>
                                                 <span className="ps-1 fs-5"><i className="fas fa-bars-staggered pe-2"></i>{post.meta.category[0].toUpperCase()+post.meta.category.slice(1)}</span>
                                                 <span className="ps-1 fs-5 fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name} &ensp;<i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</span>

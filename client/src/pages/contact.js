@@ -21,7 +21,7 @@ function ContactUs() {
                         </div>
                     </div>
                     <div className="col-12 col-md-6 p-3
-                    p-md-5 bg-tertiary">
+                    p-md-5 mb-5 bg-tertiary">
                         <Contact />
                     </div>
                 </div>

@@ -202,8 +202,11 @@ export function UserMenu( ) {
 			{token ?
 				<>
 					<div className="position-relative d-flex justify-content-end" onClick={handleClick}>
-						<button className={`btn border border-primary rounded-pill d-flex flex-fill text-white justify-content-between fw-bold`} style={{fontSize: '70%', fontWeight: '800'}}>
-							Hi, {token?.name.split(" ")[0]}
+						<button className={`btn border border-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-3`} style={{fontSize: '70%', fontWeight: '800'}}>
+							<div>
+                                <img src="/assets/icon-white.webp" className="pe-2 rounded-circle" height={20} alt="icon"/>
+                                Hi, {token?.name.split(" ")[0]}
+                            </div>
 							<i className="fas fa-circle-chevron-down fa-lg lh-1"></i>
 						</button>
 						{usermenu &&
@@ -233,8 +236,8 @@ export function Profile({ token }) {
     let username = token.name.toLowerCase().replace(" ",".")
 
     useEffect(()=> {
-        document.title = `Afriscope Blog - My Profile`
-        navigate(`?=${username}`,{replace: true})
+        document.title = `Afriscope Blog - Your Profile`
+        navigate(`?q=${username}`,{replace: true})
     }, [navigate, username])
 
     return (

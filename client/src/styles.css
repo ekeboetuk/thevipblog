@@ -93,9 +93,9 @@ section {
 
 .btn {
   font-size: 0.8em;
-  padding-left: 30px !important;
-  padding-right: 30px !important;
-  width: 180px !important
+  /*padding-left: 30px !important;
+  padding-right: 30px !important;*/
+  width: 180px !important;
 }
 
 .btn-primary {
@@ -254,6 +254,13 @@ td, th {
 
 
 /**Custom**/
+#page-title {
+  position: absolute;
+  top: 50%;
+  left: 14%;
+  transform: translateY(-50%) !important;
+}
+
 #contentarea, #utilbar {
   transition: width .2s linear !important;
 }
@@ -443,6 +450,12 @@ footer {
 
   #adminnavigation a{
     color: #FFFFFF !important;
+  }
+
+  #page-title {
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    text-align: center;
   }
 
 }

@@ -5,19 +5,24 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 
 function Layout() {
-    let title
+    const slug = useParams().slug
     const path = useParams().path
+    let title
     if(!path) {
         title = document.location.pathname.replace('/','')
     }else{
-        title = path.charAt(0).toUpperCase() + path.slice(1)
+        if(slug){
+            title = null
+        }else{
+            title = path.charAt(0).toUpperCase() + path.slice(1)
+        }
     }
 
     return (
         <>
             <Header
-                title={title.replace('-',' ')}
-                background={`/media/${title.toLowerCase()}-banner.jpeg`}
+                title={title && title.replace('-',' ')}
+                background={`/media/${title && title.toLowerCase()}-banner.jpeg`}
             />
             <main>
                 <ErrorBoundary>
