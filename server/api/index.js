@@ -15,7 +15,7 @@ import jwt from 'jsonwebtoken';
 const app = express();
 
 // Middleware
-//app.use(morgan('tiny'));
+app.use(morgan('tiny'));
 app.use(express.urlencoded({limit: '25mb', extended: false }));
 app.use(express.json({limit: '25mb'}));
 app.use(cors({
@@ -44,15 +44,6 @@ app.get('/posts', async (req, res) => {
   })
 })
 
-app.get('/posts/published', async (req, res) => {
-  await posts.find({isApproved:true}).select('-body').sort('-created').populate('meta.author').populate('comments.user')
-  .then((posts) => {
-    res.send(posts);
-  })
-  .catch(() => {
-    res.send();
-  })
-})
 
 //Filter post using param(category) and by approval status
 app.get('/posts/:slug', async (req, res) => {
@@ -65,9 +56,8 @@ await posts.find({isApproved: true, 'meta.category': req.params.slug})
 .catch(() => res.send())
 })
 
-app.get('/post/:slug', async (req, res) => {
-  const post = await posts.findOne({'title': req.params.slug.split('-').join(' ')}, {__v: 0 })
-  .collation({locale: 'en', strength: 2})
+app.get('/post/:id', async (req, res) => {
+  await posts.findById({'_id': req.params.id}, {__v: 0 })
   .populate('meta.author', 'image name isActive')
   .populate('comments.user', 'image name isActive')
   .then((post) => {
@@ -197,10 +187,13 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
 })
 
 
-app.get('/users', async(req, res) => {
-  await users.find().select(['-pswdhash', '-__v'])
+app.get('/users/:id', async(req, res) => {
+  await users.findById({"_id":req.params.id}).select(['-pswdhash', '-__v'])
   .then((users)=>{
     res.send(users)
+  })
+  .catch(()=>{
+    res.status(400).send("There was an error processing your request")
   })
 })
 

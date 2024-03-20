@@ -9,14 +9,16 @@ export default function Header({title, background} ) {
       <div id="navbar" className="sticky-top">
         <Navbar />
       </div>
-      {title &&
+      {["Sports","Lifestyles","Fashion","Technology","about us","contact us","profile","write post"].includes(title) &&
         <div className="container-fluid mx-auto fw-bold px-0 position-relative" style={{backgroundImage: `url(${background?background:'/media/about-banner-1.jpeg'})`, backgroundSize: 'cover', backgroundPosition: 'center center'}}>
           <div className="bg-primary opacity-50" style={{padding: '80px 0px'}}>
           </div>
-          <div id="page-title">
-            <h4 className="display-4 fw-semibold text-white text-uppercase">{title && title}</h4>
-            <small className="text-white" style={{textTransform:"capitalize"}}><NavLink className="text-white" to="/">home </NavLink><i className="fa-solid fa-angles-right"></i> {title}</small>
-          </div>
+          {!["profile","login","register"].includes(title) &&
+            <div id="page-title">
+              <h4 className="display-4 fw-semibold text-white text-uppercase">{title && title}</h4>
+              <small className="text-white" style={{textTransform:"capitalize"}}><NavLink className="text-white" to="/">home </NavLink><i className="fa-solid fa-angles-right"></i> {title}</small>
+            </div>
+          }
         </div>
       }
     </>

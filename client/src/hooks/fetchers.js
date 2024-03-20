@@ -19,9 +19,9 @@ export function usePosts(apiendpoint) {
     }
 }
 
-export function useUsers() {
+export function useUsers(apiendpoint) {
     const fetcher = (url) => axios(url).then(response =>  response.data)
-    const {data, error, isLoading, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/users`, fetcher)
+    const {data, error, isLoading, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/user${apiendpoint}`, fetcher)
 
     return {
         users: data,

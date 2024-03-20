@@ -9,7 +9,7 @@ function Layout() {
     const path = useParams().path
     let title
     if(!path) {
-        title = document.location.pathname.replace('/','')
+        title= document.location.pathname.replace('/','')
     }else{
         if(slug){
             title = null

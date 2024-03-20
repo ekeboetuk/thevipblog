@@ -11,10 +11,11 @@ import RecentPosts from '../components/recentpost';
 import { Advertise, Subscribe } from '../components/widgets'
 
 function Post({ token }) {
+    const { state } = useLocation()
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false)
     const params = useParams();
-    const {posts, error, isLoading} = usePosts(`/${params.slug}`);
+    const {posts, error, isLoading} = usePosts(`/${state?.id}`);
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -55,8 +56,9 @@ function Post({ token }) {
 
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+
     }else if(posts) {
-        if(posts.length === 0 || !posts.isApproved){
+        if(posts.length === 0 || !posts.isApproved){ 
             content = <Error status="404" document="Post" />
             document.title = "Afriscope Blog - Not Found"
         }else if (!posts._id){
@@ -144,8 +146,8 @@ function Post({ token }) {
     return (
         <>
             <section className={`container-md d-flex flex-column flex-md-row my-5 gap-4`}>
-                {isLoading ? <div className="col-12 col-md-9 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
-                <div className={`${isLoading && "opacity-25"} col-12 col-md-9 pe-0 pe-md-5`}>
+                {isLoading ? <div id="loading" className="col-12 col-md-9 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
+                <div id="post" className={`${isLoading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
                     {content}
                 </div>}
                 <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >

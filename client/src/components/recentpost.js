@@ -28,7 +28,7 @@ export default function RecentPosts( {number, showMeta, showEngagement, query} )
         }else{
             filter = approved
         }
-        if(filter.length === 0) {
+        if(filter === null) {
             return <Error status="204" document="recent post" />
         }else{
             return (

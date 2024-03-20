@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { userContext } from '../index';
+import { useUsers } from '../hooks/fetchers'
 
 import axios from "axios";
 
@@ -65,7 +66,7 @@ export function Register() {
                 <div className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center bg-primary text-center text-white p-5 rounded-start" style={{backgroundImage: "url('/assets/icon-faded.png')", backgroundSize:"contain", backgroundRepeat:"no-repeat", backgroundPosition: "center"}}>
                     <h3 className="text-bold">Hello!</h3>
                     <p>Do you have an account?</p>
-                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/signin">Sign In</Link>
+                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/login">Sign In</Link>
                 </div>
                 <div id="formarea" className="col-12 col-md-8 bg-tertiary text-center text-brand px-5 pb-5 rounded-end display-relative">
                     <img src="/media/login-avatar-white.webp" width={80} className="bg-primary display-absolute top-0 end-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
@@ -172,7 +173,7 @@ export function Login( {setToken} ) {
                 <div className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center bg-primary text-center align-middle text-white p-5 rounded-start" style={{backgroundImage: "url('/assets/icon-faded.png')", backgroundSize:"contain", backgroundRepeat:"no-repeat", backgroundPosition: "center"}}>
                     <h3 className="text-bold">Welcome Back!</h3>
                     <p>Don't have an account?</p>
-                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/signup">Sign Up</Link>
+                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/register">Sign Up</Link>
                 </div>
             </div>
         </section>
@@ -182,7 +183,6 @@ export function Login( {setToken} ) {
 export function UserMenu( ) {
 	const [usermenu, showUsermenu] = useState(false)
 	const {token, unsetToken} = useContext(userContext)
-	const navigate = useNavigate()
 
     function handleClick () {
         showUsermenu(!usermenu)
@@ -193,7 +193,6 @@ export function UserMenu( ) {
 
 	function handleLogout() {
 		document.cookie = "SessionToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT;"
-        navigate(0)
 		unsetToken();
 	}
 
@@ -214,7 +213,7 @@ export function UserMenu( ) {
 								<Link to={`/profile?q=${token.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
 								{token?.type !== 'Subscriber' &&
 									<>
-										<Link className="menuitem link-dark" to="/newpost"><i className="bx bx-notepad me-2"></i>Write Post</Link>
+										<Link className="menuitem link-dark" to="/write-post"><i className="bx bx-notepad me-2"></i>Write Post</Link>
 									</>
 								}
 								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fas fa-gear me-2"></li>Administrator</Link>}
@@ -232,25 +231,58 @@ export function UserMenu( ) {
 }
 
 export function Profile({ token }) {
+    let username = token.name.toLowerCase().replace(" ","."), image
+    const {users, isLoading} = useUsers(`s/${token.id}`)
+    const [preview, setPreview] = useState()
     let navigate = useNavigate()
-    let username = token.name.toLowerCase().replace(" ",".")
 
     useEffect(()=> {
         document.title = `Afriscope Blog - Your Profile`
         navigate(`?q=${username}`,{replace: true})
     }, [navigate, username])
 
+    if(users) {
+        image = users.image
+    }else{
+        image = '/media/photo-placeholder-male.jpeg'
+    }
+
+    function previewFile(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener(
+          "load",
+          () => {
+            // convert image file to base64 string
+            setPreview(reader.result);
+          },
+          false,
+        );
+        if (file) {
+          reader.readAsDataURL(file);
+          //document.getElementById("file").textContent = ""
+        }
+      }
+
     return (
         <>
-            <section className="container-md mx-auto my-5 rounded-6">
-                <div className="d-flex flex-column
-                flex-md-row justify-content-center
-                align-items-center">
-                    <img
-                    src="/media/photo-placeholder-male.jpeg"
-                    width={200} className="border border-2
-                    rounded-circle me-md-5 mb-5" alt="profile" />
-                    <h4>Welcome, <strong>{token?.name} </strong><i className="fa-solid fa-edit"></i></h4>
+            <section className="container-md mx-auto my-5 rounded-6 position-relative">
+                <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
+                    <div id="profileimagearea"
+                        className="border border-2 rounded-circle position-relative"
+                        style={{width: "200px", height: "200px", backgroundImage:`url(${preview||image})`, backgroundPosition: "center", backgroundSize:"cover"}}
+                        >
+                        <div className="overlay rounded-circle bg-brand">
+                            <input type="file" id="profile-picture" name="profile-picture" onChange={previewFile} hidden />
+                            <label htmlFor="profile-picture" className="d-flex flex-column justify-content-center align-items-center">
+                                <i className="fa-solid fa-camera text-white" role="button" style={{fontSize:"5rem"}}></i>
+                            </label>
+                            &nbsp;
+                        </div>
+                        {isLoading && <div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>}
+                    </div>
+                    <h4 className="py-4">Welcome, <strong>{token?.name} </strong><i className="fa-solid fa-edit"></i></h4>
                 </div>
             </section>
         </>
