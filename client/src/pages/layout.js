@@ -19,12 +19,12 @@ function Layout() {
     }
 
     return (
-        <>
+        <div className="d-flex flex-column">
             <Header
                 title={title && title.replace('-',' ')}
                 background={`/media/${title && title.toLowerCase()}-banner.jpeg`}
             />
-            <main>
+            <main className="mb-auto">
                 <ErrorBoundary>
                     <Outlet />
                 </ErrorBoundary>
@@ -35,7 +35,7 @@ function Layout() {
                 id="alert"
                 role="alert"
             ></div>
-        </>
+        </div>
     );
 }
 

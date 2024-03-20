@@ -15,7 +15,7 @@ function Post({ token }) {
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false)
     const params = useParams();
-    const {posts, error, isLoading} = usePosts(`/${state?.id}`);
+    const {posts, error, isLoading} = usePosts(`/${params.slug}?id=${state?.id}`);
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();

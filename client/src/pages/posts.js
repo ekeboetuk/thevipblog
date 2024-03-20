@@ -4,19 +4,19 @@ import { useParams } from 'react-router-dom';
 import { usePosts } from '../hooks/fetchers';
 
 import { Postcard, PostcardTransparent } from '../components/cards';
-import { Advertise, Subscribe } from '../components/widgets'
+import Sidebar from '../components/widgets'
+import RecentPosts from '../components/recentpost';
 import { Error } from '../components/errors';
 
 function Posts() {
     const path = useParams().path
+    const {posts, error, isLoading} = usePosts(`s?sort=-_id`)
+    let content;
+    let filter;
 
     useEffect(()=> {
         document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
     }, [path])
-
-    const {posts, error, isLoading} = usePosts(`s?sort=-_id`)
-    let content;
-    let filter;
 
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
@@ -116,8 +116,8 @@ function Posts() {
                             ))}
                         </div>
                         <div className="col-12 col-md-3">
-                            <Advertise />
-                            <Subscribe />
+                            <Sidebar advertise={true} subscribe={true} latest={true} />
+                            <RecentPosts title="Trending" number={1} />
                         </div>
                     </div>
                 </section>
@@ -128,7 +128,7 @@ function Posts() {
 
     return (
         <>
-                {content}
+            {content}
         </>
     )
 }

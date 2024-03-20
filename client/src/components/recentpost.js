@@ -13,7 +13,7 @@ export function Tags() {
     return [...tags]
 }
 
-export default function RecentPosts( {number, showMeta, showEngagement, query} ) {
+export default function RecentPosts( {title, number, showMeta, showEngagement, query} ) {
     const {posts, isLoading} = usePosts(`s?sort=-_id`)
 
     if (isLoading) {
@@ -32,28 +32,31 @@ export default function RecentPosts( {number, showMeta, showEngagement, query} )
             return <Error status="204" document="recent post" />
         }else{
             return (
-                <div className={`row row-cols-1 row-cols-md-${number}`}>
-                    {filter.slice(0, number).map((post) => (
-                        <div key={post._id} className={`transition col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
-                            <Postcard
-                                id={post._id}
-                                slug={post.slug}
-                                image={post.image}
-                                title={post.title}
-                                comments={post.comments}
-                                meta={post.meta}
-                                created={post.created}
-                                height="180px"
-                                showMeta={showMeta}
-                                showEngagement={showEngagement}
-                            />
-                        </div>
-                    ))}
-                </div>
+                <>
+                    <h4 className="text-uppercase mb-2">{title}</h4>
+                    <div className={`row row-cols-1 row-cols-md-${number} mb-5`}>
+                        {filter.slice(0, number).map((post) => (
+                            <div key={post._id} className={`transition col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
+                                <Postcard
+                                    id={post._id}
+                                    slug={post.slug}
+                                    image={post.image}
+                                    title={post.title}
+                                    comments={post.comments}
+                                    meta={post.meta}
+                                    created={post.created}
+                                    height="180px"
+                                    showMeta={showMeta}
+                                    showEngagement={showEngagement}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
     }else {
         return (
-            <div className="text-center py-5">
+            <div className="text-center py-5 mb-5">
                 <h6 className="fst-italic text-danger fs-8">Error loading recent posts</h6>
             </div>
         )

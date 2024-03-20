@@ -15,7 +15,7 @@ import jwt from 'jsonwebtoken';
 const app = express();
 
 // Middleware
-app.use(morgan('tiny'));
+//app.use(morgan('tiny'));
 app.use(express.urlencoded({limit: '25mb', extended: false }));
 app.use(express.json({limit: '25mb'}));
 app.use(cors({
@@ -56,8 +56,9 @@ await posts.find({isApproved: true, 'meta.category': req.params.slug})
 .catch(() => res.send())
 })
 
-app.get('/post/:id', async (req, res) => {
-  await posts.findById({'_id': req.params.id}, {__v: 0 })
+app.get('/post/:slug', async (req, res) => {
+  const post = await posts.findOne({$or:[{'_id':req.query.id},{'slug': req.params.slug}]}, {__v: 0 })
+  .collation({locale: 'en_US', strength: 2})
   .populate('meta.author', 'image name isActive')
   .populate('comments.user', 'image name isActive')
   .then((post) => {
@@ -246,7 +247,6 @@ app.patch('/user', async (req, res) => {
   });
 })
 
-
 app.delete('/user/:userId', async(req, res) => {
   const userId = req.params.userId
   await users.findByIdAndDelete(userId)
@@ -257,6 +257,17 @@ app.delete('/user/:userId', async(req, res) => {
     console.log(error)
     res.send()
   })
+})
+
+app.post('/user/profile', async (req, res) => {
+  const user = await users.findById(req.query.id).select(["-pswdhash", "-__v"])
+  if(user){
+    user.image = req.body.picture
+    await user.save()
+    return res.send(user)
+  }
+    console.log(error.json)
+    res.status(400).send("There Was An Error")
 })
 
 

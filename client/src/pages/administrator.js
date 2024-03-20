@@ -4,7 +4,8 @@ import Toolbar from '../admin/toolbar';
 import Navigation from '../admin/navigation';
 
 import { ErrorBoundary } from '../components/errors';
-import { Statistics, RecentUser, LatestPost, Trending } from '../components/widgets';
+import { Statistics, RecentUser, Trending } from '../components/widgets';
+import RecentPosts from "../components/recentpost";
 
 function Administrator() {
     const toggleUtilbar = () => {
@@ -42,9 +43,9 @@ function Administrator() {
                         <Outlet />
                         <div type="button" className="toggler d-none d-md-flex align-items-center h-100 position-fixed top-0 end-0" onClick={toggleUtilbar}><i id="toggler" className="bx bxs-right-arrow text-brand"></i></div>
                     </div>
-                    <div id="utilbar" className="col-12 col-md-3 ps-2 pe-3 py-3">
+                    <div id="utilbar" className="col-12 col-md-3 px-4 py-3">
                         <Statistics />
-                        <LatestPost />
+                        <RecentPosts number={1} />
                         <Trending />
                         <RecentUser />
                     </div>

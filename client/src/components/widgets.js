@@ -1,7 +1,18 @@
 import { usePosts, useUsers } from '../hooks/fetchers';
-import RecentPosts from './recentpost'
 import { Widgetcard } from './cards'
 import { Subscription } from './forms';
+
+export default function Sidebar({statistics, advertise, subscribe, trending, recentuser}){
+    return (
+        <>
+            {statistics && <Statistics />}
+            {advertise && <Advertise />}
+            {subscribe && <Subscribe />}
+            {trending && <Trending />}
+            {recentuser && <RecentUser />}
+        </>
+    )
+};
 
 export const Statistics = () => {
     const {posts, isLoading} = usePosts('s?sort=-_id');
@@ -50,17 +61,6 @@ export const Statistics = () => {
                     </tr>
                 </tbody>
             </table>
-        </Widgetcard>
-    )
-}
-
-export const LatestPost = () => {
-    return (
-        <Widgetcard>
-            <div className="">
-                <h4 className="mb-3 text-uppercase fw-bolder">Latest Post</h4>
-                <RecentPosts number={1} />
-            </div>
         </Widgetcard>
     )
 }

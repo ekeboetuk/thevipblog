@@ -200,8 +200,8 @@ export function UserMenu( ) {
 		<>
 			{token ?
 				<>
-					<div className="position-relative d-flex justify-content-end" onClick={handleClick}>
-						<button className={`btn border border-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-3`} style={{fontSize: '70%', fontWeight: '800'}}>
+					<div id="user" className="position-relative d-flex justify-content-end" onClick={handleClick}>
+						<button className={`btn border border-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-3`} style={{fontSize: '70%', fontWeight: '800'}} data-mdb-ripple-duration="2s">
 							<div>
                                 <img src="/assets/icon-white.webp" className="pe-2 rounded-circle" height={20} alt="icon"/>
                                 Hi, {token?.name.split(" ")[0]}
@@ -231,9 +231,12 @@ export function UserMenu( ) {
 }
 
 export function Profile({ token }) {
-    let username = token.name.toLowerCase().replace(" ","."), image
+    let username = token.name.toLowerCase().replace(" ","."), picture
     const {users, isLoading} = useUsers(`s/${token.id}`)
-    const [preview, setPreview] = useState()
+    const [state, setState] = useState({picture: ""})
+    const [upload, setUpload] = useState(false)
+    const [edit, setEdit] = useState(false)
+    const [sending, setSending] = useState(false)
     let navigate = useNavigate()
 
     useEffect(()=> {
@@ -241,49 +244,85 @@ export function Profile({ token }) {
         navigate(`?q=${username}`,{replace: true})
     }, [navigate, username])
 
-    if(users) {
-        image = users.image
+    if(users&&users.image) {
+        picture = users.image
     }else{
-        image = '/media/photo-placeholder-male.jpeg'
+        picture = '/media/photo-placeholder-male.jpeg'
     }
 
-    function previewFile(e) {
+    const previewFile = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
 
         reader.addEventListener(
           "load",
           () => {
-            // convert image file to base64 string
-            setPreview(reader.result);
+            setUpload(true)
+            setState({...state, picture: reader.result});
           },
           false,
         );
         if (file) {
           reader.readAsDataURL(file);
-          //document.getElementById("file").textContent = ""
         }
       }
 
+    const updateProfile = async(e) => {
+        e.preventDefault()
+        setSending(true)
+        const elem = document.getElementById("update")
+        const msg = document.createElement("div")
+        msg.classList.add("text-success")
+
+        await axios.post(process.env.REACT_APP_SERVER_URL+`/user/profile?id=${token.id}`, state)
+        .then((response)=>{
+            msg.appendChild(document.createTextNode("Successful"))
+            elem.insertAdjacentElement("afterend", msg)
+            setState({...state, picture:response.data.image})
+            setUpload(false)
+            setSending(false)
+            setTimeout(()=>{
+                setEdit(false)
+                msg.remove()
+            },5000)
+        })
+        .catch(()=>{
+            msg.appendChild(document.createTextNode("Error Updating Data. Please Try Again!"))
+            elem.insertAdjacentElement("afterend", msg)
+            setState({...state, picture: users.image})
+            setSending(false)
+            setTimeout(()=>{
+                msg.remove()
+            },5000)
+        })
+    }
+
     return (
         <>
-            <section className="container-md mx-auto my-5 rounded-6 position-relative">
+            <section className="container-md mx-auto my-5 rounded-6 position-relative text-center">
                 <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
                     <div id="profileimagearea"
                         className="border border-2 rounded-circle position-relative"
-                        style={{width: "200px", height: "200px", backgroundImage:`url(${preview||image})`, backgroundPosition: "center", backgroundSize:"cover"}}
+                        style={{width: "200px", height: "200px", backgroundImage:`url(${state.picture||picture})`, backgroundPosition: "center", backgroundSize:"cover"}}
                         >
-                        <div className="overlay rounded-circle bg-brand">
-                            <input type="file" id="profile-picture" name="profile-picture" onChange={previewFile} hidden />
+                        <div className={`${edit&&!sending?"overlay":"d-none"} rounded-circle bg-brand`}>
+                            <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
                             <label htmlFor="profile-picture" className="d-flex flex-column justify-content-center align-items-center">
                                 <i className="fa-solid fa-camera text-white" role="button" style={{fontSize:"5rem"}}></i>
                             </label>
                             &nbsp;
                         </div>
-                        {isLoading && <div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>}
+                        {isLoading||sending?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
                     </div>
-                    <h4 className="py-4">Welcome, <strong>{token?.name} </strong><i className="fa-solid fa-edit"></i></h4>
                 </div>
+                <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{token?.name} </strong>{!sending && <i className="fa-solid fa-pen-to-square" role="button" onClick={()=>setEdit(!edit)}></i>}</h4>
+                {edit &&
+                    <button id="update" className="btn btn-primary px-4 px-2 rounded-pill"
+                        onClick={updateProfile}
+                        disabled={sending||!upload}>
+                        {sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:<><i className="fa-solid fa-floppy-disk pe-2"></i>Save Profile</>}
+                    </button>
+                }
             </section>
         </>
     )

@@ -13,7 +13,7 @@ import Posts from "./pages/posts";
 import Post from "./pages/post";
 import About from "./pages/about";
 import Contact from "./pages/contact";
-import NewPost from "./pages/newpost";
+import WritePost from "./pages/writepost";
 import { Error } from "./components/errors";
 import Administrator from "./pages/administrator";
 import { Login, Register, Profile } from "./components/users";
@@ -46,7 +46,7 @@ function Afriscope() {
           <Route path="login" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Login setToken = {setToken} />} />
           <Route path="register" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Register />} />
           <Route path="profile" element={!token ? <Navigate to="/login" /> : <Profile token={token} />} />
-          <Route path="write-post" element={<NewPost token={token}/>} />
+          <Route path="write-post" element={<WritePost token={token}/>} />
           <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
 

@@ -3,10 +3,10 @@ import React from 'react';
 import RecentPosts from '../components/recentpost'
 import { Postform } from '../components/forms';
 import { Error } from '../components/errors';
-import { Advertise, Subscribe } from '../components/widgets'
+import Sidebar from '../components/widgets'
 
 
-function NewPost( {token} ) {
+function WritePost( {token} ) {
     return (
         <>
             {token && token?.type!== "Subscriber" ?
@@ -16,8 +16,7 @@ function NewPost( {token} ) {
                             <Postform token={token}/>
                         </div>
                         <div className="align-self-start mx-0 mx-md-4 w-100 w-md-25">
-                            <Advertise />
-                            <Subscribe />
+                            <Sidebar advertise={true} subscribe={true} />
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
@@ -33,4 +32,4 @@ function NewPost( {token} ) {
     )
 }
 
-export default NewPost;
+export default WritePost;
