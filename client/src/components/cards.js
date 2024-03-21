@@ -245,7 +245,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
 
 export const Widgetcard = ({ title, children }) => {
     return (
-        <div className="fw-normal rounded mb-4 shadow-sm w-100 mb-5">
+        <div className="fw-normal rounded shadow-sm w-100">
             {title && <h4 className="bg-primary text-white p-4 rounded-top fw-bold mb-0">
                 {title}
             </h4>}

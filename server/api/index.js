@@ -4,6 +4,7 @@ import path from 'path';
 const __dirname = path.resolve();
 
 import express from 'express';
+import { ObjectId } from 'mongodb'
 import { connect } from 'mongoose';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
@@ -57,7 +58,7 @@ await posts.find({isApproved: true, 'meta.category': req.params.slug})
 })
 
 app.get('/post/:slug', async (req, res) => {
-  const post = await posts.findOne({$or:[{'_id':req.query.id},{'slug': req.params.slug}]}, {__v: 0 })
+  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
   .collation({locale: 'en_US', strength: 2})
   .populate('meta.author', 'image name isActive')
   .populate('comments.user', 'image name isActive')
@@ -188,10 +189,14 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
 })
 
 
-app.get('/users/:id', async(req, res) => {
-  await users.findById({"_id":req.params.id}).select(['-pswdhash', '-__v'])
+app.get('/users/:id?', async(req, res) => {
+  await users.find({}).select(['-pswdhash', '-__v'])
   .then((users)=>{
-    res.send(users)
+    if(req.params.id){
+      let user = users.filter(user => user.id === req.params.id)
+      return res.send(user[0])
+    }
+    return res.send(users)
   })
   .catch(()=>{
     res.status(400).send("There was an error processing your request")
@@ -213,7 +218,7 @@ app.post('/user/login', async (req, res) => {
   }
 
   const authtoken = jwt.sign(data, JWT_SECRET)
-  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, type: user.type, isAdmin: user.isAdmin});
+  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.image, type: user.type, isAdmin: user.isAdmin});
 })
 
 app.post("/user/newuser", async (req, res) => {

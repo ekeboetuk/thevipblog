@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 
 import { usePosts } from '../hooks/fetchers';
 
@@ -14,17 +14,44 @@ function Posts() {
     let content;
     let filter;
 
-    useEffect(()=> {
-        document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
-    }, [path])
+    if(!["lifestyles","sports","fashion","technology"].includes(path)){
+        document.title = `Afriscope Blog - Not Found`;
+        return <Error status="404" document="Page" />
+    }
 
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
-            <section className="text-center mb-auto">
-                <img src="/assets/spinner_block.gif" width="60px" alt="loading" />
+            <section className="container-md d-flex">
+                <SkeletonTheme width="100%" borderRadius="0rem">
+                    <Skeleton width="40%" height="30px" />
+                </SkeletonTheme>
+                <div className="col-12 col-md-9 pe-md-5 align-self-start">
+                    <SkeletonTheme borderRadius="0rem">
+                        <Skeleton width="100%" height="400px"/>
+                        <Skeleton width="80%" height="25px" />
+                        <Skeleton count={3.2} width="100%" height="20px"/>
+                    </SkeletonTheme>
+                </div>
+                <div className="col-12 col-md-3">
+                    <SkeletonTheme borderRadius="0rem" containerClassName="mb-5">
+                        <div className="block">
+                            <Skeleton width="100%" height="200px"/>
+                            <Skeleton count={2.7} width="100%" height="20px" />
+                        </div>
+                    </SkeletonTheme>
+                    <SkeletonTheme borderRadius="0rem" containerClassName="bg-tertiary pb-3">
+                        <Skeleton  count ={2.7} width="100%" height="15px"/>
+                        <Skeleton width="40%" height="10px" />
+                    </SkeletonTheme>
+                    <SkeletonTheme borderRadius="0rem" containerClassName="bg-tertiary pb-3">
+                        <Skeleton  count ={2.7} width="100%" height="15px"/>
+                        <Skeleton width="40%" height="10px" />
+                    </SkeletonTheme>
+                </div>
             </section>
     } else if(posts) {
+        document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
         filter = posts.filter((post) => post.meta.category === path && post.isApproved)
         filter.length === 0?
         content = <Error status="204" document={`Post Under ${path} Category`} />:
@@ -123,6 +150,7 @@ function Posts() {
                 </section>
             </>
     } else if(error || error === undefined) {
+        document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
         content = <Error status="500" />
     }
 

@@ -67,7 +67,7 @@ export function Navbar() {
                       <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
                   </div>
                   <div id="search" className="d-flex align-self-bottom position-relative justify-content-end px-4 pe-md-0">
-                      <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 py-3 fs-7 text-black-50" value={searchterm} onChange={e=>setSearchterm(e.target.value)} placeholder='Search posts'/>
+                      <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 py-3 fs-7 text-black-50" value={searchterm} onChange={e=>setSearchterm(e.target.value)} placeholder='Search' disabled/>
                       <button className="border-0 bg-transparent text-secondary position-absolute top-50 translate-middle ms-n4" onClick={handleSearch} ><i className="fas fa-search"></i></button>
                   </div>
                   <div className="pt-2 pt-md-0 justify-content-end px-4 pe-md-0">

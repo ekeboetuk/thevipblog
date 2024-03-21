@@ -13,7 +13,7 @@ function Users() {
         document.title = "Afriscope Administrator - Manage Users"
     })
 
-    const {users, error, isLoading, mutate} = useUsers()
+    const {users, error, isLoading, mutate} = useUsers('s')
     const [view, setView] = useState('List');
 	const {token} = useContext(userContext)
 

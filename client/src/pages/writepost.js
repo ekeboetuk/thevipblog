@@ -12,7 +12,7 @@ function WritePost( {token} ) {
             {token && token?.type!== "Subscriber" ?
                 <>
                     <section className="container-md d-flex flex-column flex-md-row">
-                        <div className="bg-tertiary px-3 px-md-5 rounded-5" style={{maxWidth: '768px'}}>
+                        <div className="bg-tertiary px-3 px-md-5 py-2 rounded-5 align-self-start" style={{maxWidth: '768px'}}>
                             <Postform token={token}/>
                         </div>
                         <div className="align-self-start mx-0 mx-md-4 w-100 w-md-25">

@@ -36,7 +36,7 @@ export default function RecentPosts( {title, number, showMeta, showEngagement, q
                     <h4 className="text-uppercase mb-2">{title}</h4>
                     <div className={`row row-cols-1 row-cols-md-${number} mb-5`}>
                         {filter.slice(0, number).map((post) => (
-                            <div key={post._id} className={`transition col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
+                            <div key={post._id} className={`notch-upward col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}
                                     slug={post.slug}

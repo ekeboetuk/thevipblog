@@ -59,7 +59,7 @@ function Comments() {
     const handleDeleteComment = async (postId, postIndex, commentId) => {
         setOperation(true)
         mutate(
-            [...posts, {...posts[postIndex], comments: posts[postIndex].comments.filter(comment => !comment.commentId)
+            [...posts, {...posts[postIndex], comments: posts[postIndex].comments.filter(comment => comment.commentId !== commentId)
             }],
             await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}/${commentId}`)
         )

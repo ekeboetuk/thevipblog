@@ -66,7 +66,7 @@ export function Register() {
                 <div className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center bg-primary text-center text-white p-5 rounded-start" style={{backgroundImage: "url('/assets/icon-faded.png')", backgroundSize:"contain", backgroundRepeat:"no-repeat", backgroundPosition: "center"}}>
                     <h3 className="text-bold">Hello!</h3>
                     <p>Do you have an account?</p>
-                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/login">Sign In</Link>
+                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/login">Login</Link>
                 </div>
                 <div id="formarea" className="col-12 col-md-8 bg-tertiary text-center text-brand px-5 pb-5 rounded-end display-relative">
                     <img src="/media/login-avatar-white.webp" width={80} className="bg-primary display-absolute top-0 end-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
@@ -84,7 +84,7 @@ export function Register() {
                                 onChange ={handleChange} placeholder="E-mail"/>
                         <input type="password" id="password" name="password" className="w-100 mb-4" value={state.password??""}
                                 onChange ={handleChange} placeholder="Password"/>
-                        <button type="submit" id="submit" className="btn-primary" disabled={!state.names || !state.email || state.password.length < 5}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Sign Up"}</button>
+                        <button type="submit" id="submit" className="btn-primary" disabled={!state.names || !state.email || state.password.length < 5}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
                         <p id="message" className="d-none mt-3 fw-bold" style={{height:"20px"}}>&nbsp;</p>
                     </form>
                 </div>
@@ -166,14 +166,14 @@ export function Login( {setToken} ) {
                             <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setState({...state, remember_me: !state.remember_me})} checked={state.remember_me} />
                             <label htmlFor="remember_me">Remember Me</label>
                         </div>
-                        <button type="submit" className="btn-primary"  disabled={!state.email || state.password.length < 5 || sending}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Sign In"}</button>
+                        <button type="submit" className="btn-primary"  disabled={!state.email || state.password.length < 5 || sending}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
                         <p id="message" className="d-none mt-3 mb-5 fw-bold" style={{height:"20px"}}>&nbsp;</p>
                     </form>
                 </div>
                 <div className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center bg-primary text-center align-middle text-white p-5 rounded-start" style={{backgroundImage: "url('/assets/icon-faded.png')", backgroundSize:"contain", backgroundRepeat:"no-repeat", backgroundPosition: "center"}}>
                     <h3 className="text-bold">Welcome Back!</h3>
                     <p>Don't have an account?</p>
-                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/register">Sign Up</Link>
+                    <Link type="button" className="btn btn-outline-light py-3 px-5" to="/register">Register</Link>
                 </div>
             </div>
         </section>
@@ -203,7 +203,7 @@ export function UserMenu( ) {
 					<div id="user" className="position-relative d-flex justify-content-end" onClick={handleClick}>
 						<button className={`btn border border-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-3`} style={{fontSize: '70%', fontWeight: '800'}} data-mdb-ripple-duration="2s">
 							<div>
-                                <img src="/assets/icon-white.webp" className="pe-2 rounded-circle" height={20} alt="icon"/>
+                                <img src={`${token.avatar || "/assets/icon-white.webp"}`} className="pe-2 rounded-circle" height={30} alt="icon"/>
                                 Hi, {token?.name.split(" ")[0]}
                             </div>
 							<i className="fas fa-circle-chevron-down fa-lg lh-1"></i>
@@ -213,17 +213,17 @@ export function UserMenu( ) {
 								<Link to={`/profile?q=${token.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
 								{token?.type !== 'Subscriber' &&
 									<>
-										<Link className="menuitem link-dark" to="/write-post"><i className="bx bx-notepad me-2"></i>Write Post</Link>
+										<Link className="menuitem link-dark" to="/write-post"><i className="fa-solid fa-user-pen me-2"></i>Write Post</Link>
 									</>
 								}
-								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fas fa-gear me-2"></li>Administrator</Link>}
-								<Link className="menuitem link-dark" onClick={handleLogout}><li className="fas fa-unlock me-2"></li>Sign Out</Link>
+								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fa-solid fa-user-tie me-2"></li>Administrator</Link>}
+								<Link className="menuitem link-dark" onClick={handleLogout}><li className="fa-solid fa-user-lock me-2"></li>Sign Out</Link>
 							</div>}
 					</div>
 				</> :
 				<Link className="btn text-white border border-primary rounded-pill" to="/login" role="button">
 					<i className="fas fa-right-to-bracket me-2"></i>
-					Sign In
+					Login
 				</Link>
 			}
 		</>
@@ -299,7 +299,7 @@ export function Profile({ token }) {
 
     return (
         <>
-            <section className="container-md mx-auto my-5 rounded-6 position-relative text-center">
+            <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
                 <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
                     <div id="profileimagearea"
                         className="border border-2 rounded-circle position-relative"
@@ -317,7 +317,7 @@ export function Profile({ token }) {
                 </div>
                 <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{token?.name} </strong>{!sending && <i className="fa-solid fa-pen-to-square" role="button" onClick={()=>setEdit(!edit)}></i>}</h4>
                 {edit &&
-                    <button id="update" className="btn btn-primary px-4 px-2 rounded-pill"
+                    <button id="update" className={`btn btn-primary px-4 px-2 rounded-pill`}
                         onClick={updateProfile}
                         disabled={sending||!upload}>
                         {sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:<><i className="fa-solid fa-floppy-disk pe-2"></i>Save Profile</>}

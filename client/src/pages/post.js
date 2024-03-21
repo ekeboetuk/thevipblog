@@ -3,6 +3,8 @@ import { Link, useParams, useLocation, ScrollRestoration } from 'react-router-do
 
 import axios from 'axios';
 import moment from 'moment';
+import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
+import DOMPurify from 'isomorphic-dompurify';
 
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
@@ -82,7 +84,7 @@ function Post({ token }) {
                     </div>
                     <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(${posts.image})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
                     </div>
-                    <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:posts.body.replace(/\s{1,}/gim, ' ')}} />}</div>
+                    <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
                     <div className="mt-2 bg-tertiary px-3">
                         <Meta id={posts._id} views={posts.meta.views} comments={posts.comments} likes={posts.meta.likes} />
                     </div>
@@ -114,25 +116,20 @@ function Post({ token }) {
                         </form>:
                         <div className="postcomment text-center mb-3 py-5 bg-light">
                             <p>Kindly login to contribute</p>
-                            <Link to="/signin" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Sign In</Link>
+                            <Link to="/login" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Login</Link>
                         </div>
                     }
                     <ScrollRestoration getKey={(location, matches) => {
                         return location.pathname;
                     }}/>
-                    <h4 className="pt-5 text-uppercase">{`More From ${posts.meta.author.name}`}</h4>
                 </>
             tags =
-                <div>
-                    <h5 className="fw-bolder text-uppercase px-1 pb-4">Tags</h5>
-                    {posts.meta.tags !== undefined ?
+                    posts.meta.tags !== undefined ?
                         <>
                             <div className="d-flex flex-wrap mb-3">
                                 {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
                             </div>
                         </>:"No Tags"
-                    }
-                </div>
             author =
                 <div>
                     <h4 className="text-uppercase">About The Author</h4>
@@ -145,23 +142,72 @@ function Post({ token }) {
 
     return (
         <>
-            <section className={`container-md d-flex flex-column flex-md-row my-5 gap-4`}>
-                {isLoading ? <div id="loading" className="col-12 col-md-9 d-flex justify-content-center"><img src="/assets/spinner_block.gif" height="60px" width="60px" alt="loading" /></div>:
-                <div id="post" className={`${isLoading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
-                    {content}
-                </div>}
+            <section className={`container-md d-flex flex-column flex-md-row`}>
+                {isLoading ?
+                    <div id="loading" className="col-12 col-md-9 d-flex flex-column flex-fill justify-content-start align-self-start pe-md-5">
+                        <SkeletonTheme borderRadius="1rem">
+                            <div className="d-inline-flex">
+                                <Skeleton width="80px" height="100px" containerClassName="pe-3 pb-3"/>
+                                <div className="flex-fill" >
+                                    <Skeleton count={2.8} width="80%" height="25px" />
+                                    <Skeleton count={0.8} width="80%" height="15px" />
+                                </div>
+                            </div>
+                            <Skeleton height="300px" />
+                            <Skeleton count={10.2} />
+                        </SkeletonTheme>
+                    </div>:
+                    <div id="post" className={`${isLoading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
+                        {content}
+                        <div className="d-flex flex-column align-items-center position-fixed top-50 start-0 fs-1 ms-2 rounded">
+                            <Link to="#" className="text-brand"><i className="fa-brands fa-facebook-f pt-3 pb-2"></i></Link>
+                            <Link to="#" className="text-brand"><i className="fa-brands fa-twitter py-2"></i></Link>
+                            <Link to="#" className="text-brand"><i className="fa-brands fa-instagram pt-2 pb-3"></i></Link>
+                        </div>
+                    </div>
+                }
                 <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >
                     <Advertise />
-                    {posts &&
-                        <div>
-                            <h5 className="fw-bolder text-uppercase px-1 mb-3">Trending</h5>
+                    <div className="w-100">
+                        <h5 className="fw-bolder text-uppercase px-1 mb-3">Trending</h5>
+                        {isLoading?
+                            <SkeletonTheme borderRadius="1rem">
+                                <Skeleton height="150px" />
+                                <Skeleton />
+                                <Skeleton />
+                                <Skeleton />
+                            </SkeletonTheme>:
                             <RecentPosts number={1} />
-                        </div>
-                    }
-                    {tags}
-                    <Subscribe />
+                        }
+                    </div>
+                    <div className="w-100">
+                        <h5 className="fw-bolder text-uppercase px-1 pb-3">Tags</h5>
+                        {isLoading?
+                            <SkeletonTheme borderRadius="1rem">
+                                <Skeleton inline={true} width="20%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="60%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="40%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="50%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="80%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="10%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="100%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="50%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="45%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="25%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="70%" containerClassName="pe-2" />
+                                <Skeleton inline={true} width="80%" containerClassName="" />
+                            </SkeletonTheme>:
+                            tags
+                        }
+                    </div>
                     {author}
+                    <div className="" style={{position: "sticky", top: "60px"}}>
+                        <Subscribe />
+                    </div>
                 </div>
+            </section>
+            <section className="container-md">
+                {posts && <h4 className="text-uppercase">{`More From ${posts.meta?.author.name}`}</h4>}
             </section>
             <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
                 <div className="container-md py-5">

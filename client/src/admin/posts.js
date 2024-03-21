@@ -11,8 +11,8 @@ function Posts() {
         document.title = "Afriscope Administrator - Manage Post"
     })
 
-    const [sort, setSort] = useState("-_id");
-    const {posts, error, isLoading, mutate} = usePosts(`s?sort=${sort}`)
+    const [query, setQuery] = useState({sort: "-_id", limit: 20});
+    const {posts, error, isLoading, mutate} = usePosts(`s?sort=${query.sort}&limit=${query.limit}`)
     const [search, setSearch] = useState("");
     const [actionmenu, setActionmenu] = useState({})
     const [operation, setOperation] = useState();
@@ -21,11 +21,16 @@ function Posts() {
     const navwidth = document.getElementById("adminnavigation")
     const alert = document.getElementById('alert')
 
-    const handlePostsort = (e) => {
-        setSort(e.target.value)
+    const handleSort = (e) => {
+        setQuery({...query, sort: e.target.value})
         mutate(posts.sort((a, b)=>{
             return (a.meta.category).localeCompare((b.meta.category))
         }))
+    }
+
+    const handleLimit = (e) => {
+        setQuery({...query, limit: e.target.value})
+        mutate(posts.slice(e.target.value))
     }
 
     const handleSearch = (e) => {
@@ -133,7 +138,6 @@ function Posts() {
     }
 
     const toggleFeatured = async(index, postId, featured) => {
-        //setOperation(true)
         mutate(await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
                 id: postId,
                 property: "meta.featured",
@@ -148,7 +152,6 @@ function Posts() {
                 alert.innerHTML = `<i class="fa-regular fa-circle-check pe-2"></i>Error updating post (${err.message})`
             })
         )
-        //setOperation(false)
         setTimeout(()=>{
             if(alert.classList.contains('alert-danger')){
                 alert.classList.remove('alert-danger')
@@ -185,7 +188,7 @@ function Posts() {
                         <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">Sort By:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
-                                <select id="postssort" className="border-0" name="postssort" value={sort} onChange={(e)=>handlePostsort(e)}>
+                                <select id="sort" className="border-0 pt-0 pb-0" name="sort" value={query.sort} onChange={(e)=>handleSort(e)}>
                                     <option value="-_id">Created</option>
                                     <option value="updatedAt">Updated</option>
                                     <option value="-meta.category">Category</option>
@@ -199,7 +202,8 @@ function Posts() {
                         <div className="d-flex flex-wrap align-items-center mb-2">
                             <small className="fw-bold pe-2">Posts Per Page:</small>
                             <div className="bg-light p-2 rounded-pill px-4">
-                                <select id="postsquantity" className="border-0" name="postsquantity" defaultValue={20}>
+                                <select id="limit" className="border-0 pt-0 pb-0" name="limit" value={query.limit} onChange={(e) => handleLimit(e)}>
+                                    <option value={2}>2</option>
                                     <option value={5}>5</option>
                                     <option value={20}>20</option>
                                     <option value={50}>50</option>
@@ -226,7 +230,7 @@ function Posts() {
                                                 <div type="button" className="align-self-start" onClick={()=>toggleFeatured(index, post._id, post.meta.featured)}><i className={`${post.meta.featured?"fa-solid fa-star":"fa-regular fa-star"} p-2 text-warning`}></i></div>
                                             </div>
                                             <div className="d-flex flex-column flex-grow-1 me-md-3">
-                                                <Link to={`/${post.meta.category}/${post.slug}`} target="_blank" className="d-flex align-items-center text-black"><h4 className="title fw-bold pe-1">{post.title}</h4><i className="blank fa-solid fa-arrow-up-right-from-square"></i></Link>
+                                                <Link to={`/${post.meta.category}/${post.slug}`} target="_blank" className="d-flex align-items-center text-black"><h5 className="title fw-bold pe-1">{post.title.toUpperCase()}</h5><i className="blank fa-solid fa-arrow-up-right-from-square"></i></Link>
                                                 <span className="mb-2 text-justify fs-5">{post.intro}</span>
                                                 <span className="ps-1 fs-5"><i className="fas fa-bars-staggered pe-2"></i>{post.meta.category[0].toUpperCase()+post.meta.category.slice(1)}</span>
                                                 <span className="ps-1 fs-5 fw-bold"><i className="fas fa-user-circle pe-2"></i>{post.meta.author.name} &ensp;<i className="fas fa-envelope pe-2"></i>{post.meta.author.email}</span>

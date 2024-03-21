@@ -269,7 +269,7 @@ td, th {
 }
 
 #contentarea, #utilbar {
-  transition: width .2s linear !important;
+  transition: width 0.2s linear !important;
 }
 
 section {
@@ -330,11 +330,6 @@ div.listing:hover i[type="button"], div.post:hover span[type="button"], .text-bl
   display: flex;
 }
 
-
-#search {
-  transition: display 5s;
-}
-
 .toggler:hover {
   background-color: var(--tertiary-color);
 }
@@ -371,14 +366,6 @@ footer {
   opacity: 1;
   background-size: 5px 5px;
   background-image: repeating-linear-gradient(45deg, #000000 0, #000000 0.5px, #2F2B2B 0, #2F2B2B 50%);
-}
-
-.transition {
-  transition: transform 0.5s ease-in-out
-}
-
-.transition:hover {
-  transform: translate(0, -8px)
 }
 
 .postintro {
@@ -457,6 +444,24 @@ footer {
 #comments:nth-child(even) {
   background-color: var(--tertiary-color) !important;
 }
+
+/* Global Animations Classes */
+.notch-upward {
+  transition: transform 0.5s ease-in-out
+}
+
+.notch-upward:hover {
+  transform: translate(0, -8px)
+}
+
+.notch-forward {
+  transition: transform 0.5s ease-in-out
+}
+
+.notch-forward:hover {
+  transform: translate(8px, 0)
+}
+
 
 /* Media queries */
 @media only screen and (max-width: 767px) {

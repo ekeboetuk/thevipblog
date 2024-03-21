@@ -48,33 +48,33 @@ function Footer() {
                 <div className="col-12 col-md-2 mb-5 mb-md-0 px-0 px-md-1">
                     <h4 className="mb-4 ">Navigation</h4>
                     <div className="d-flex flex-column">
-                        <div className="d-flex flex-row align-items-center pb-2">
+                        <div className="d-flex flex-row align-items-center pb-2 notch-forward">
                             <i className="fas fa-circle-chevron-right pe-2"></i>
                             <Link className="text-white" to="/">
                                 Home Page
                             </Link>
                         </div>
-                        <div className="d-flex flex-row align-items-center pb-2">
+                        <div className="d-flex flex-row align-items-center pb-2 notch-forward">
                             <i className="fas fa-circle-chevron-right pe-2"></i>
-                            <Link className="text-white" to="/faq">
+                            <Link className="text-white" to="/#">
                                 FAQs
                             </Link>
                         </div>
-                        <div className="d-flex flex-row align-items-center pb-2">
+                        <div className="d-flex flex-row align-items-center pb-2 notch-forward">
                             <i className="fas fa-circle-chevron-right pe-2"></i>
                             <Link className="text-white" to="/#">
                                 What We Do
                             </Link>
                         </div>
-                        <div className="d-flex flex-row align-items-center pb-2">
+                        <div className="d-flex flex-row align-items-center pb-2 notch-forward">
                             <i className="fas fa-circle-chevron-right pe-2"></i>
-                            <Link className="text-white" to="/about">
+                            <Link className="text-white" to="/about-us">
                                 About Us
                             </Link>
                         </div>
-                        <div className="d-flex flex-row align-items-center pb-2">
+                        <div className="d-flex flex-row align-items-center pb-2 notch-forward">
                             <i className="fa-solid fa-circle-chevron-right pe-2"></i>
-                            <Link className="text-white" to="/contact">
+                            <Link className="text-white" to="/contact-us">
                                 Contact Us
                             </Link>
                         </div>
