@@ -12,7 +12,7 @@ function Posts() {
     })
 
     const [query, setQuery] = useState({sort: "-_id", limit: 20});
-    const {posts, error, isLoading, mutate} = usePosts(`s?sort=${query.sort}&limit=${query.limit}`)
+    const {posts, error, isLoading, mutate} = usePosts(`?sort=${query.sort}&limit=${query.limit}`)
     const [search, setSearch] = useState("");
     const [actionmenu, setActionmenu] = useState({})
     const [operation, setOperation] = useState();

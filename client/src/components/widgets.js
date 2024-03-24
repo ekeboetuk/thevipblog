@@ -15,7 +15,7 @@ export default function Sidebar({statistics, advertise, subscribe, trending, rec
 };
 
 export const Statistics = () => {
-    const {posts, isLoading} = usePosts('s?sort=-_id');
+    const {posts, isLoading} = usePosts('?sort=-_id');
     const {users} = useUsers('s');
     const stats = {
         totalposts: 0,

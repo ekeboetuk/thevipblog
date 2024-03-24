@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { usePosts } from '../hooks/fetchers';
 import { Postcard } from './cards';
 import { Error } from './errors'
@@ -13,8 +14,8 @@ export function Tags() {
     return [...tags]
 }
 
-export default function RecentPosts( {title, number, showMeta, showEngagement, query} ) {
-    const {posts, isLoading} = usePosts(`s?sort=-_id`)
+function RecentPosts( {title, count, showMeta, showEngagement, query} ) {
+    const {posts, isLoading} = usePosts(`?sort=-_id`)
 
     if (isLoading) {
         return (
@@ -34,9 +35,9 @@ export default function RecentPosts( {title, number, showMeta, showEngagement, q
             return (
                 <>
                     <h4 className="text-uppercase mb-2">{title}</h4>
-                    <div className={`row row-cols-1 row-cols-md-${number} mb-5`}>
-                        {filter.slice(0, number).map((post) => (
-                            <div key={post._id} className={`notch-upward col g-4 gx-md-${number} gy-md-0 d-flex flex-column`}>
+                    <div className={`row row-cols-1 row-cols-md-${count} mb-5`}>
+                        {filter.slice(0, count).map((post) => (
+                            <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}
                                     slug={post.slug}
@@ -62,3 +63,5 @@ export default function RecentPosts( {title, number, showMeta, showEngagement, q
         )
     }
 }
+
+export default memo(RecentPosts)

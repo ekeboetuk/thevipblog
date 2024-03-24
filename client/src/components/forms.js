@@ -43,7 +43,7 @@ export const Postform = ( {token} ) => {
         setSending(true)
 
         await axios
-        .post(process.env.REACT_APP_SERVER_URL + '/post/newpost', {
+        .post(process.env.REACT_APP_SERVER_URL + '/writepost', {
                 image: post.featuredImage,
                 title: post.title,
                 intro: post.introText,

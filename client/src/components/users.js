@@ -187,7 +187,7 @@ export function UserMenu( ) {
     function handleClick () {
         showUsermenu(!usermenu)
         document.addEventListener('click', e => {
-            if (e.target.nodeName !== 'BUTTON') showUsermenu(false);
+            if (e.target.nodeName !== 'BUTTON' && e.target.nodeName !== 'IMG' && e.target.nodeName !== 'I') showUsermenu(false);
           });
     }
 
@@ -200,28 +200,25 @@ export function UserMenu( ) {
 		<>
 			{token ?
 				<>
-					<div id="user" className="position-relative d-flex justify-content-end" onClick={handleClick}>
-						<button className={`btn border border-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-3`} style={{fontSize: '70%', fontWeight: '800'}} data-mdb-ripple-duration="2s">
-							<div>
-                                <img src={`${token.avatar || "/assets/icon-white.webp"}`} className="pe-2 rounded-circle" height={30} alt="icon"/>
-                                Hi, {token?.name.split(" ")[0]}
-                            </div>
-							<i className="fas fa-circle-chevron-down fa-lg lh-1"></i>
+					<div id="user" className="d-flex justify-content-end" onClick={handleClick}>
+						<button className={`border border-primary bg-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-1`} style={{fontSize: '70%', fontWeight: '800'}} data-mdb-ripple-duration="2s">
+                            <img src={`${token.avatar || "/assets/icon-white.webp"}`} role="button" className="pe-2 rounded-circle" height={30} alt="icon"/>
+							<i role="button" className="fas fa-circle-chevron-down fa-lg lh-1"></i>
 						</button>
 						{usermenu &&
-							<div id="usermenu" className="d-flex flex-column position-absolute top-100 start-0 w-100 bg-tertiary actionmenu">
-								<Link to={`/profile?q=${token.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-user me-2"></li>My Profile</Link>
+							<div id="usermenu" className="d-flex flex-column position-absolute top-100 end-0 bg-tertiary actionmenu shadow-sm">
+								<Link to={`/profile?q=${token.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-address-card me-2"></li>My Profile</Link>
 								{token?.type !== 'Subscriber' &&
 									<>
-										<Link className="menuitem link-dark" to="/write-post"><i className="fa-solid fa-user-pen me-2"></i>Write Post</Link>
+										<Link className="menuitem link-dark" to="/write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
 									</>
 								}
-								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fa-solid fa-user-tie me-2"></li>Administrator</Link>}
-								<Link className="menuitem link-dark" onClick={handleLogout}><li className="fa-solid fa-user-lock me-2"></li>Sign Out</Link>
+								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fa-solid fa-toolbox me-2"></li>Administrator</Link>}
+								<Link className="menuitem link-dark" onClick={handleLogout}><li className="fa-solid fa-lock-open me-2"></li>Sign Out</Link>
 							</div>}
 					</div>
 				</> :
-				<Link className="btn text-white border border-primary rounded-pill" to="/login" role="button">
+				<Link className="btn text-white border border-primary rounded-pill pt-3" to="/login" role="button">
 					<i className="fas fa-right-to-bracket me-2"></i>
 					Login
 				</Link>

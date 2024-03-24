@@ -17,7 +17,7 @@ function Post({ token }) {
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false)
     const params = useParams();
-    const {posts, error, isLoading} = usePosts(`/${params.slug}?id=${state?.id}`);
+    const {posts, error, isLoading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -54,12 +54,9 @@ function Post({ token }) {
         })
     }
 
-    let content, tags, author
+    let content, tags, author, related
 
-    if(isLoading) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-
-    }else if(posts) {
+    if(posts) {
         if(posts.length === 0 || !posts.isApproved){ 
             content = <Error status="404" document="Post" />
             document.title = "Afriscope Blog - Not Found"
@@ -85,8 +82,8 @@ function Post({ token }) {
                     <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(${posts.image})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
                     </div>
                     <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
-                    <div className="mt-2 bg-tertiary px-3">
-                        <Meta id={posts._id} views={posts.meta.views} comments={posts.comments} likes={posts.meta.likes} />
+                    <div id="comments" className="mt-2 bg-tertiary px-3">
+                        <Meta slug={posts.slug} id={posts._id} meta={posts.meta} comments={posts.comments} />
                     </div>
                     <table className="table table-striped mb-0">
                         <tbody className="position-relative">
@@ -107,14 +104,14 @@ function Post({ token }) {
                         </tbody>
                     </table>
                     {token?
-                        <form id="commentform" name="commentform" className="postcomment mb-2 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
+                        <form id="commentform" name="commentform" className="postcomment mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
                             <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={comment} onChange={(e)=> setComment(e.target.value)} disabled={sending} required />
                             <div className="d-flex flex-column flex-md-row">
                                 <span id="message" className="me-auto "></span>
                                 <button type="submit" id="submit" className="btn-primary border-0 text-white py-2 px-5 text-nowrap rounded-0 align-selft-stretch align-self-md-start" disabled={sending}>{sending ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting</>:"Submit Comment"}</button>
                             </div>
                         </form>:
-                        <div className="postcomment text-center mb-3 py-5 bg-light">
+                        <div className="postcomment text-center mb-5 py-5 bg-light">
                             <p>Kindly login to contribute</p>
                             <Link to="/login" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Login</Link>
                         </div>
@@ -131,23 +128,25 @@ function Post({ token }) {
                             </div>
                         </>:"No Tags"
             author =
-                <div>
+                <div className="mb-5">
                     <h4 className="text-uppercase">About The Author</h4>
                     <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
                 </div>
         }
-    }else if(error) {
-        content = <Error status="500" />
+    }else if(error){
+        document.title = `Afriscope Blog - ${error.response.statusText}`
+        content = <Error status={error.response.status} document="Post" />
+        related = "You Are All Caught Up"
     }
 
     return (
         <>
             <section className={`container-md d-flex flex-column flex-md-row`}>
                 {isLoading ?
-                    <div id="loading" className="col-12 col-md-9 d-flex flex-column flex-fill justify-content-start align-self-start pe-md-5">
-                        <SkeletonTheme borderRadius="1rem">
+                    <div id="loading" className="col-12 col-md-9 d-flex flex-column flex-fill justify-content-start align-self-start pe-md-5 mb-5">
+                        <SkeletonTheme>
                             <div className="d-inline-flex">
-                                <Skeleton width="80px" height="100px" containerClassName="pe-3 pb-3"/>
+                                <Skeleton width="80px" height="100px" containerClassName="pe-3" />
                                 <div className="flex-fill" >
                                     <Skeleton count={2.8} width="80%" height="25px" />
                                     <Skeleton count={0.8} width="80%" height="15px" />
@@ -166,24 +165,20 @@ function Post({ token }) {
                         </div>
                     </div>
                 }
-                <div className="col-12 col-md-3 d-flex flex-column gap-5 align-items-start" >
+                <div className="col-12 col-md-3 d-flex flex-column align-items-start" >
                     <Advertise />
-                    <div className="w-100">
-                        <h5 className="fw-bolder text-uppercase px-1 mb-3">Trending</h5>
+                        <h5 className="fw-bolder text-uppercase">Trending</h5>
                         {isLoading?
-                            <SkeletonTheme borderRadius="1rem">
-                                <Skeleton height="150px" />
-                                <Skeleton />
-                                <Skeleton />
-                                <Skeleton />
-                            </SkeletonTheme>:
-                            <RecentPosts number={1} />
+                         <div className="w-100 mb-5">
+                            <Skeleton height="150px" />
+                            <Skeleton count={3} />
+                          </div>:
+                          <RecentPosts count={1} />
                         }
-                    </div>
-                    <div className="w-100">
-                        <h5 className="fw-bolder text-uppercase px-1 pb-3">Tags</h5>
+                    <div className="w-100 mb-5">
+                        <h5 className="fw-bolder text-uppercase mb-4">Tags</h5>
                         {isLoading?
-                            <SkeletonTheme borderRadius="1rem">
+                            <SkeletonTheme>
                                 <Skeleton inline={true} width="20%" containerClassName="pe-2" />
                                 <Skeleton inline={true} width="60%" containerClassName="pe-2" />
                                 <Skeleton inline={true} width="40%" containerClassName="pe-2" />
@@ -201,7 +196,7 @@ function Post({ token }) {
                         }
                     </div>
                     {author}
-                    <div className="" style={{position: "sticky", top: "60px"}}>
+                    <div className="" style={{position: "sticky", top: "60px", marginBottom: "0"}}>
                         <Subscribe />
                     </div>
                 </div>
@@ -212,7 +207,7 @@ function Post({ token }) {
             <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
                 <div className="container-md py-5">
                     <h5 className=" text-center text-uppercase text-white fw-bold mb-5 mx-md-3">Related Posts</h5>
-                    <RecentPosts number={4} showMeta={false} query={{path:"meta.$.author.$.id", slug:posts?.meta?.author?.id}}/>
+                    {typeof related !== "string"?<RecentPosts count={4} showMeta={false} />:<div className="text-center text-white">{related}</div>}
                 </div>
             </section>
         </>

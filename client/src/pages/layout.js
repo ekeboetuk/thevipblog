@@ -6,7 +6,7 @@ import Footer from "../components/footer";
 
 function Layout() {
     const slug = useParams().slug
-    const path = useParams().path
+    const path = useParams().category
     let title
     if(!path) {
         title= document.location.pathname.replace('/','')

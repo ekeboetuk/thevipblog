@@ -40,8 +40,8 @@ function Afriscope() {
           </userContext.Provider>
         }>
           <Route index element={<Home />} />
-          <Route path=":path" element={<Posts />} />
-          <Route path=":path/:slug" element={<Post token={token} />} />
+          <Route path=":category" element={<Posts />} />
+          <Route path=":category/:slug" element={<Post token={token} />} />
           <Route path="about-us" element={<About />} />
           <Route path="contact-us" element={<Contact />} />
           <Route path="login" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Login setToken = {setToken} />} />

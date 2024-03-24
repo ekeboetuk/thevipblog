@@ -9,52 +9,60 @@ import RecentPosts from '../components/recentpost';
 import { Error } from '../components/errors';
 
 function Posts() {
-    const path = useParams().path
-    const {posts, error, isLoading} = usePosts(`s?sort=-_id`)
+    const category = useParams().category
+    const {posts, error, isLoading} = usePosts(`?sort=-_id`)
     let content;
     let filter;
 
-    if(!["lifestyles","sports","fashion","technology"].includes(path)){
+    if(!["lifestyles","sports","fashion","technology"].includes(category)){
         document.title = `Afriscope Blog - Not Found`;
-        return <Error status="404" document="Page" />
+        return(
+            <section className="container-md mx-auto">
+                <Error status="404" document="Page" />
+                <h4 className="text-center text-uppercase">You Might Be Interested In</h4>
+                <RecentPosts count={4}/>
+            </section>
+        )
     }
 
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
-            <section className="container-md d-flex">
-                <SkeletonTheme width="100%" borderRadius="0rem">
-                    <Skeleton width="40%" height="30px" />
-                </SkeletonTheme>
+            <div className="container-md row mx-auto p-4 my-5">
+                <Skeleton width="40%" height="30px" containerClassName="w-100" />
                 <div className="col-12 col-md-9 pe-md-5 align-self-start">
-                    <SkeletonTheme borderRadius="0rem">
-                        <Skeleton width="100%" height="400px"/>
-                        <Skeleton width="80%" height="25px" />
-                        <Skeleton count={3.2} width="100%" height="20px"/>
+                    <SkeletonTheme baseColor="#FAFAFA">
+                        <Skeleton width="100%"
+                        height="400px"/>
+                        <div className="p-3 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "2.5rem"}}>
+                            <Skeleton width="80%" height="20px" />
+                            <Skeleton count={3.2} width="100%" height="20px"/>
+                        </div>
                     </SkeletonTheme>
                 </div>
                 <div className="col-12 col-md-3">
-                    <SkeletonTheme borderRadius="0rem" containerClassName="mb-5">
-                        <div className="block">
-                            <Skeleton width="100%" height="200px"/>
-                            <Skeleton count={2.7} width="100%" height="20px" />
+                    <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
+                        <Skeleton width="100%"
+                            height="200px"/>
+                        <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
+                            <Skeleton count={2.7} width="100%" height="15px" />
                         </div>
                     </SkeletonTheme>
-                    <SkeletonTheme borderRadius="0rem" containerClassName="bg-tertiary pb-3">
+                    <div className="bg-tertiary p-3 mb-3">
                         <Skeleton  count ={2.7} width="100%" height="15px"/>
-                        <Skeleton width="40%" height="10px" />
-                    </SkeletonTheme>
-                    <SkeletonTheme borderRadius="0rem" containerClassName="bg-tertiary pb-3">
+                        <Skeleton width="40%" height="15px" />
+                    </div>
+                    <div className="bg-tertiary p-3 mb-3 lh-2">
                         <Skeleton  count ={2.7} width="100%" height="15px"/>
-                        <Skeleton width="40%" height="10px" />
-                    </SkeletonTheme>
+                        <Skeleton width="40%" height="15px" />
+                    </div>
                 </div>
-            </section>
+            </div>
     } else if(posts) {
-        document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
-        filter = posts.filter((post) => post.meta.category === path && post.isApproved)
+        document.title = `Afriscope Blog - ${category[0].toLocaleUpperCase()+category.slice(1)}`
+        filter = posts.filter((post) => post.meta.category === category && post.isApproved)
         filter.length === 0?
-        content = <Error status="204" document={`Post Under ${path} Category`} />:
+        content = <Error status="204" document={`Post Under ${category} Category`} />:
         content =
             <>
                 <section>
@@ -122,7 +130,7 @@ function Posts() {
                     </div>
                 </section>
                 <section className="container-fluid mx-auto" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
-                    <h2 className="container-md border-left">{`Featured In ${path}`}</h2>
+                    <h2 className="container-md border-left">{`Featured In ${category}`}</h2>
                     <div className="container-md d-flex flex-column flex-md-row">
                         <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
                             {filter.map((post) => (
@@ -144,13 +152,13 @@ function Posts() {
                         </div>
                         <div className="col-12 col-md-3">
                             <Sidebar advertise={true} subscribe={true} latest={true} />
-                            <RecentPosts title="Trending" number={1} />
+                            <RecentPosts title="Trending" count={1} />
                         </div>
                     </div>
                 </section>
             </>
     } else if(error || error === undefined) {
-        document.title = `Afriscope Blog - ${path[0].toLocaleUpperCase()+path.slice(1)}`
+        document.title = `Afriscope Blog - ${category[0].toLocaleUpperCase()+category.slice(1)}`
         content = <Error status="500" />
     }
 

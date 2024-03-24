@@ -58,11 +58,11 @@ export const Postcard = ({
             <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
                 <div className="d-flex flex-column py-4 px-4 flex-fill justify-content-start">
                     <Link
-                        to={`/${meta.category}/${slug.toLowerCase()}`}
+                        to={`/${meta.category}/${slug}`}
                         className=""
                         onClick={handleClick} state={{id: id}}
                     >
-                        <h3 className="lh-2 title text-black fw-bold text-body">
+                        <h3 className="lh-2 fw-bolder text-body">
                             {title.toUpperCase()}
                         </h3>
                     </Link>
@@ -97,13 +97,13 @@ export const Postcard = ({
                     </div>
                         {intro && (
                         <div className="mb-0">
-                            <p className="text-justify lh-sm mt-3 mb-1">{intro}</p>
+                            <p className="intro text-justify lh-sm mt-3 mb-1">{intro}</p>
                         </div>
                         )}
                         {showReadmore && (
                         <div className="mb-0">
                             <Link
-                                to={`/${meta.category}/${slug.toLowerCase()}`}
+                                to={`/${meta.category}/${slug}`}
                                 className="text-brand fw-bold"
                                 onClick={handleClick} state={{id: id}}
                             >
@@ -117,9 +117,9 @@ export const Postcard = ({
                     {showEngagement && (
                         <Meta
                             id={id}
-                            views={meta.views}
+                            slug={slug}
+                            meta={meta}
                             comments={comments}
-                            likes={meta.likes}
                         />
                     )}
                 </div>
@@ -188,9 +188,9 @@ export const PostcardTransparent = ({
                         {showMeta && <div className={`${showMeta && 'meta'} bg-dark position-absolute bottom-0 w-100 start-0 px-4`}>
                             <Meta
                                 id={id}
-                                views={meta.views}
+                                slug={slug}
+                                meta={meta}
                                 comments={comments}
-                                likes={meta.likes}
                             />
                         </div>}
                 </div>
@@ -245,7 +245,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
 
 export const Widgetcard = ({ title, children }) => {
     return (
-        <div className="fw-normal rounded shadow-sm w-100">
+        <div className="fw-normal rounded shadow-sm w-100 mb-5">
             {title && <h4 className="bg-primary text-white p-4 rounded-top fw-bold mb-0">
                 {title}
             </h4>}

@@ -34,7 +34,7 @@ import users from './models/users.js';
 const JWT_SECRET = "Afriscope Dev Blog";
 
 // Define routes
-app.get('/posts', async (req, res) => {
+app.get('/', async (req, res) => {
   const {sort, limit} = req.query
   await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
@@ -46,32 +46,36 @@ app.get('/posts', async (req, res) => {
 })
 
 
-//Filter post using param(category) and by approval status
-app.get('/posts/:slug', async (req, res) => {
-await posts.find({isApproved: true, 'meta.category': req.params.slug})
-.select("-_id -__v")
-.populate('meta.author', 'name')
-.then(posts => {
-  res.send(posts)
-})
-.catch(() => res.send())
+//Filter post by category
+app.get('/:category', async (req, res) => {
+  await posts.find({'meta.category': req.params.category})
+  .select("-_id -__v -body")
+  .populate('meta.author', 'name')
+  .then(posts => {
+    res.send(posts)
+  })
+  .catch(() => res.send())
 })
 
-app.get('/post/:slug', async (req, res) => {
+app.get('/:category/:slug', async (req, res) => {
   await posts.findOne({$or:[{'_id': new ObjectId(req.query.id.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
   .collation({locale: 'en_US', strength: 2})
   .populate('meta.author', 'image name isActive')
   .populate('comments.user', 'image name isActive')
   .then((post) => {
-    res.send(post)
+    if(post === null) {
+      throw ({code: 404, message: "Post Doesn't Exist"})
+    }else{
+      res.send(post)
+    }
   })
   .catch((error) => {
-    res.send(error)
+    res.status(error.code).send()
   })
 })
 
 //Create new post
-app.post('/post/newpost', async (req, res) => {
+app.post('/writepost', async (req, res) => {
   const post = new posts({
     image: req.body.image,
     title: req.body.title,

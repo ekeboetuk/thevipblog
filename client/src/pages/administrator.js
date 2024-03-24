@@ -45,7 +45,7 @@ function Administrator() {
                     </div>
                     <div id="utilbar" className="col-12 col-md-3 px-4 py-3">
                         <Statistics />
-                        <RecentPosts number={1} />
+                        <RecentPosts count={1} />
                         <Trending />
                         <RecentUser />
                     </div>
