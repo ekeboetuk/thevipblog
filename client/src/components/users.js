@@ -202,7 +202,7 @@ export function UserMenu( ) {
 				<>
 					<div id="user" className="d-flex justify-content-end" onClick={handleClick}>
 						<button className={`border border-primary bg-primary rounded-pill d-flex flex-fill text-white justify-content-between align-items-center fw-bold px-1`} style={{fontSize: '70%', fontWeight: '800'}} data-mdb-ripple-duration="2s">
-                            <img src={`${token.avatar || "/assets/icon-white.webp"}`} role="button" className="pe-2 rounded-circle" height={30} alt="icon"/>
+                            <img src={`${token.avatar || "/assets/icon-white.webp"}`} role="button" className="me-2 rounded-circle" height={30} width={30} alt="icon" style={{objectFit: "cover"}}/>
 							<i role="button" className="fas fa-circle-chevron-down fa-lg lh-1"></i>
 						</button>
 						{usermenu &&

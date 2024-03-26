@@ -12,6 +12,7 @@ export const Postform = ( {token} ) => {
 
     const initialstate = {
         title: "",
+        metaDescription: "",
         featured: false,
         approved: false,
         featuredImage: null,
@@ -46,6 +47,7 @@ export const Postform = ( {token} ) => {
         .post(process.env.REACT_APP_SERVER_URL + '/writepost', {
                 image: post.featuredImage,
                 title: post.title,
+                metaDescription: post.metaDescription,
                 intro: post.introText,
                 tags: post.tags,
                 body: post.textarea,
@@ -98,6 +100,20 @@ export const Postform = ( {token} ) => {
                     </select>
                 </div>
                 <div className="mb-3 d-block">
+                    <label htmlFor="metadescription" className="pe-2 fw-bold">Meta Desciption</label>
+                    <textarea
+                        id="introtext"
+                        className="w-100 p-2"
+                        rows={2}
+                        minLength={40}
+                        maxLength={150}
+                        value={post.metaDescription}
+                        onChange={(e)=>setPost({...post, metaDescription: e.target.value})}
+                        placeholder="Meta description"
+                    />
+                    <small className="fs-8">Meta description of not less than 40 or more than 150 character ({150 - post.metaDescription.length} remaining)</small>
+                </div>
+                <div className="mb-3 d-block">
                     <label htmlFor="introtext" className="pe-2 fw-bold">Introduction</label>
                     <textarea
                         id="introtext"
@@ -132,13 +148,13 @@ export const Postform = ( {token} ) => {
                             menubar: false,
                             toolbar_sticky: true,
                             toolbar_sticky_offset: 50,
-                            toolbar_mode: 'sliding',
+                            toolbar_mode: 'wrap',
                             body_id : 'content',
                             browser_spellcheck : true,
 
                             plugins: 'code image link lists',
-                            toolbar: 'undo redo |  fontsize lineheight | bullist numlist | bold italic underline forecolor backcolor | link image code hr | alignleft aligncenter alignright alignjustify indent outdent',
-                            font_family_formats: 'Montserrat=montserrat',
+                            toolbar: 'undo redo | fontfamily fontsize lineheight | bullist numlist | bold italic underline forecolor backcolor | link image code hr | alignleft aligncenter alignright alignjustify indent outdent',
+                            font_family_formats:"Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Montserrat=montserrat; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva",
                             font_size_formats: "8pt 9pt 10pt 11pt 12pt 14pt 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
                             indentation: '20pt',
 
@@ -148,22 +164,22 @@ export const Postform = ( {token} ) => {
                             content_css: 'default',
 
                             file_picker_callback: (cb, value, meta) => {
-                            const input = document.createElement('input');
-                            input.setAttribute('type', 'file');
-                            input.setAttribute('accept', 'image/*');
+                                const input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
 
-                            input.addEventListener('change', (e) => {
-                            const file = e.target.files[0];
+                                input.addEventListener('change', (e) => {
+                                const file = e.target.files[0];
 
-                            const reader = new FileReader();
-                            reader.addEventListener('load', () => {
-                                const id = 'blobid' + (new Date()).getTime();
-                                const blobCache =  tinymce.activeEditor.editorUpload.blobCache;
-                                const base64 = reader.result.split(',')[1];
-                                const blobInfo = blobCache.create(id, file, base64);
-                                blobCache.add(blobInfo);
+                                const reader = new FileReader();
+                                reader.addEventListener('load', () => {
+                                    const id = 'blobid' + (new Date()).getTime();
+                                    const blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                                    const base64 = reader.result.split(',')[1];
+                                    const blobInfo = blobCache.create(id, file, base64);
+                                    blobCache.add(blobInfo);
 
-                                cb(blobInfo.blobUri(), { title: file.name });
+                                    cb(blobInfo.blobUri(), { title: file.name });
                             });
                                 reader.readAsDataURL(file);
                                 });

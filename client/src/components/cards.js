@@ -19,7 +19,8 @@ export const Postcard = ({
     created,
     showMeta,
     showReadmore,
-    showEngagement
+    showEngagement,
+    font
 }) => {
     const handleClick = () => {
         axios.patch(
@@ -42,7 +43,7 @@ export const Postcard = ({
                         backgroundImage: `url(${image})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
-                        minHeight: `${height}`
+                        height: `${height}`
                     }}
                 >
                     {meta.featured && (
@@ -56,15 +57,15 @@ export const Postcard = ({
                 </div>
             )}
             <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
-                <div className="d-flex flex-column py-4 px-4 flex-fill justify-content-start">
+                <div className="d-flex flex-column py-4 px-4 flex-fill justify-content-center">
                     <Link
                         to={`/${meta.category}/${slug}`}
                         className=""
                         onClick={handleClick} state={{id: id}}
                     >
-                        <h3 className="lh-2 fw-bolder text-body">
+                        <h2 className="lh-1 fw-bolder text-body" style={{fontSize: font||"2rem"}}>
                             {title.toUpperCase()}
-                        </h3>
+                        </h2>
                     </Link>
                     <div className="d-inline-flex align-items-center">
                         {showCategory && (

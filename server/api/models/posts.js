@@ -60,6 +60,9 @@ const postschema = Schema({
         votes: Number
     }],
     meta: {
+        description: {
+            type: String,
+        },
         category: {
             type: String,
             default: "uncategorized",
@@ -75,6 +78,10 @@ const postschema = Schema({
             required: true
         },
         featured: {
+            type: Boolean,
+            default: false
+        },
+        editorsPick: {
             type: Boolean,
             default: false
         },

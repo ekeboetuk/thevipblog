@@ -1,5 +1,5 @@
 import 'dotenv/config.js';
-import fs from 'fs';
+import fs, { readSync } from 'fs';
 import path from 'path';
 const __dirname = path.resolve();
 
@@ -35,9 +35,14 @@ const JWT_SECRET = "Afriscope Dev Blog";
 
 // Define routes
 app.get('/', async (req, res) => {
-  const {sort, limit} = req.query
+  const {sort, postId, authorId, limit} = req.query
   await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
+    let filterByAuthor
+    if(authorId) {
+      filterByAuthor = posts.filter((post)=> post.meta.author.id === authorId)
+      return res.send(filterByAuthor)
+    }
     res.send(posts);
   })
   .catch(() => {
@@ -47,6 +52,20 @@ app.get('/', async (req, res) => {
 
 
 //Filter post by category
+app.get('/users/:id?', async(req, res) => {
+  await users.find({}).select(['-pswdhash', '-__v'])
+  .then((users)=>{
+    if(req.params.id){
+      let user = users.filter(user => user.id === req.params.id)
+      return res.send(user[0])
+    }
+    return res.send(users)
+  })
+  .catch(()=>{
+    res.status(400).send("There was an error processing your request")
+  })
+})
+
 app.get('/:category', async (req, res) => {
   await posts.find({'meta.category': req.params.category})
   .select("-_id -__v -body")
@@ -58,7 +77,7 @@ app.get('/:category', async (req, res) => {
 })
 
 app.get('/:category/:slug', async (req, res) => {
-  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
+  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
   .collation({locale: 'en_US', strength: 2})
   .populate('meta.author', 'image name isActive')
   .populate('comments.user', 'image name isActive')
@@ -82,6 +101,7 @@ app.post('/writepost', async (req, res) => {
     intro: req.body.intro,
     body: req.body.body.toString(),
     meta: {
+      description: req.body.metaDescription,
       category: req.body.category,
       author: req.body.author,
       featured: req.body.featured,
@@ -193,7 +213,7 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
 })
 
 
-app.get('/users/:id?', async(req, res) => {
+/*app.get('/users/:id?', async(req, res) => {
   await users.find({}).select(['-pswdhash', '-__v'])
   .then((users)=>{
     if(req.params.id){
@@ -205,7 +225,7 @@ app.get('/users/:id?', async(req, res) => {
   .catch(()=>{
     res.status(400).send("There was an error processing your request")
   })
-})
+})*/
 
 app.post('/user/login', async (req, res) => {
   let user = await users.findOne({email: req.body.email});

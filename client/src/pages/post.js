@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { Link, useParams, useLocation, ScrollRestoration } from 'react-router-dom';
 
 import axios from 'axios';
@@ -11,13 +11,24 @@ import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
 import RecentPosts from '../components/recentpost';
 import { Advertise, Subscribe } from '../components/widgets'
+import { Postcard } from '../components/cards';
 
 function Post({ token }) {
     const { state } = useLocation()
     const [comment, setComment] = useState();
-    const [sending, setSending] = useState(false)
+    const [sending, setSending] = useState(false);
+    const [authorsPosts, setAuthorsPosts] = useState(null);
     const params = useParams();
     const {posts, error, isLoading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
+
+    useEffect(()=>{
+        (async function(){
+            await axios.get(process.env.REACT_APP_SERVER_URL + `/?sort=-_id&postId=${posts?.id}&authorId=${posts?.meta.author.id}`)
+            .then((response) => {
+                setAuthorsPosts(response.data)
+            })
+        })()
+    },[posts?.id, posts?.meta.author.id])
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
@@ -79,7 +90,15 @@ function Post({ token }) {
                             </div>
                         </div>
                     </div>
-                    <div className="w-100 overflow-hidden"  style={{backgroundImage: `url(${posts.image})`, backgroundSize: "cover", backgroundPosition: "center", minHeight: "300px", maxHeight:"300px" }}>
+                    {posts.meta.description &&
+                        <div className="my-4">
+                            <h4 className="border-left">Meta Description</h4>
+                            <p style={{fontWeight: 800}}>{posts.meta.description}</p>
+                        </div>
+                    }
+                    <img src={posts.image} style={{width: "100%", height: "400px", objectFit: "cover"}} className="shadow" alt={posts.meta.description}/>
+                    <div className="my-4">
+                        <p style={{fontSize: "1.7rem", fontWeight: 800}}>{posts.intro}</p>
                     </div>
                     <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
                     <div id="comments" className="mt-2 bg-tertiary px-3">
@@ -134,6 +153,7 @@ function Post({ token }) {
                 </div>
         }
     }else if(error){
+        console.log(error)
         document.title = `Afriscope Blog - ${error.response.statusText}`
         content = <Error status={error.response.status} document="Post" />
         related = "You Are All Caught Up"
@@ -202,7 +222,38 @@ function Post({ token }) {
                 </div>
             </section>
             <section className="container-md">
-                {posts && <h4 className="text-uppercase">{`More From ${posts.meta?.author.name}`}</h4>}
+                {posts &&
+                    <>
+                        <h4 className="text-uppercase mb-4">{`More From ${posts.meta?.author.name.split(" ")[0]}`}</h4>
+                        {authorsPosts === null?
+                            <div className="fst-italic"><i className="fa-solid fa-rotate-right fa-spin"></i>Loading</div>:
+                            authorsPosts?.length !== 0 ?
+                                <div className="col-12 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
+                            {authorsPosts.slice(0,6).map((post) =>
+                                <div key={post._id} className="col d-flex flex-row pe-md-3 pb-5 align-self-start transition">
+                                    <Postcard
+                                        id={post._id}
+                                        slug={post.slug}
+                                        image={post.image}
+                                        height="100px"
+                                        title={post.title}
+                                        comments={post.comments}
+                                        meta={post.meta}
+                                        category={post.meta.category}
+                                        created={post.created}
+                                        showCategory={true}
+                                        showMeta={false}
+                                        showReadmore={false}
+                                        showEngagement={false}
+                                        font="1.2rem"
+                                    />
+                                </div>
+                            )}
+                                </div>:
+                                <p className="container-md">Nothing To See Here Today!</p>
+                        }
+                    </>
+                }
             </section>
             <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
                 <div className="container-md py-5">
