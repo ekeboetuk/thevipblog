@@ -34,7 +34,7 @@ function RecentPosts( {title, count, showMeta, showEngagement, query} ) {
         }else{
             return (
                 <>
-                    <h4 className="text-uppercase mb-2">{title}</h4>
+                    {title && <h4 className="text-uppercase mb-2">{title}</h4>}
                     <div className={`row row-cols-1 row-cols-md-${count} mb-5`}>
                         {filter.slice(0, count).map((post) => (
                             <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>

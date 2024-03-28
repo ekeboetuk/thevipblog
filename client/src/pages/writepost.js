@@ -1,10 +1,9 @@
 import React from 'react';
 
-import RecentPosts from '../components/recentpost'
+import { PostsCarousel } from '../components/carousels';
 import { Postform } from '../components/forms';
 import { Error } from '../components/errors';
 import Sidebar from '../components/widgets'
-
 
 function WritePost( {token} ) {
     return (
@@ -20,10 +19,7 @@ function WritePost( {token} ) {
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                        <div className="container-md">
-                            <h4 className=" text-center text-uppercase text-white fw-bold mb-5 mx-md-3">Most Recent</h4>
-                            <RecentPosts count={3} showMeta={true}/>
-                        </div>
+                        <PostsCarousel count={3} limit={4} title="Most Recent" />
                     </section>
                 </>:
                 <Error status="401" token={token} />

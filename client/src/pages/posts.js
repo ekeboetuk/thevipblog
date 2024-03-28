@@ -28,11 +28,13 @@ function Posts() {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
             <div className="container-md row mx-auto p-4 my-5">
-                <Skeleton width="40%" height="30px" containerClassName="w-100" />
+                <div className="d-flex gap-2">
+                    <Skeleton width="5px" height="30px" baseColor="#EBEBEB"/>
+                    <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
+                </div>
                 <div className="col-12 col-md-9 pe-md-5 align-self-start">
                     <SkeletonTheme baseColor="#FAFAFA">
-                        <Skeleton width="100%"
-                        height="400px"/>
+                        <Skeleton width="100%" height="400px"/>
                         <div className="p-3 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "2.5rem"}}>
                             <Skeleton width="80%" height="20px" />
                             <Skeleton count={3.2} width="100%" height="20px"/>
@@ -41,8 +43,7 @@ function Posts() {
                 </div>
                 <div className="col-12 col-md-3">
                     <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
-                        <Skeleton width="100%"
-                            height="200px"/>
+                        <Skeleton width="100%" height="200px"/>
                         <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
                             <Skeleton count={2.7} width="100%" height="15px" />
                         </div>
@@ -137,7 +138,7 @@ function Posts() {
                                 </div>
                             </div>
                         </div>:
-                        <p className='container-md'>You are all caught up</p>
+                        <p className='container-md'>You are all caught up here. Enjoy other selections.</p>
                     }
                 </section>
                 <section className="container-fluid mx-auto" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
@@ -183,11 +184,12 @@ function Posts() {
                                             meta={post.meta}
                                             category={post.meta.category}
                                             created={post.created}
-                                            showCategory={true}
+                                            showCategory={false}
                                             showMeta={false}
+                                            showFeatured={false}
                                             showReadmore={false}
                                             showEngagement={false}
-                                            font="1.2rem"
+                                            font="1.4rem"
                                         />
                                     </div>
                                 ))}

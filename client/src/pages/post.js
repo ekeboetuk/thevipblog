@@ -9,7 +9,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
-import RecentPosts from '../components/recentpost';
+import { PostsCarousel } from '../components/carousels';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Postcard } from '../components/cards';
 
@@ -153,10 +153,9 @@ function Post({ token }) {
                 </div>
         }
     }else if(error){
-        console.log(error)
-        document.title = `Afriscope Blog - ${error.response.statusText}`
-        content = <Error status={error.response.status} document="Post" />
-        related = "You Are All Caught Up"
+        document.title = `Afriscope Blog - ${error.message}`
+        content = <Error status={500} document="Post" />
+        related = "Something Terrible Happened. Please Try Again."
     }
 
     return (
@@ -187,14 +186,16 @@ function Post({ token }) {
                 }
                 <div className="col-12 col-md-3 d-flex flex-column align-items-start" >
                     <Advertise />
-                        <h5 className="fw-bolder text-uppercase">Trending</h5>
+                        <div className="w-100 mb-5">
+                        <h5 className="fw-bolder text-uppercase mb-4">Trending</h5>
                         {isLoading?
-                         <div className="w-100 mb-5">
+                         <>
                             <Skeleton height="150px" />
                             <Skeleton count={3} />
-                          </div>:
-                          <RecentPosts count={1} />
+                          </>:
+                          <PostsCarousel count={1} limit={1} />
                         }
+                    </div>
                     <div className="w-100 mb-5">
                         <h5 className="fw-bolder text-uppercase mb-4">Tags</h5>
                         {isLoading?
@@ -241,7 +242,7 @@ function Post({ token }) {
                                         meta={post.meta}
                                         category={post.meta.category}
                                         created={post.created}
-                                        showCategory={true}
+                                        showCategory={false}
                                         showMeta={false}
                                         showReadmore={false}
                                         showEngagement={false}
@@ -250,16 +251,13 @@ function Post({ token }) {
                                 </div>
                             )}
                                 </div>:
-                                <p className="container-md">Nothing To See Here Today!</p>
+                                <p className="container-md">Just starting.</p>
                         }
                     </>
                 }
             </section>
             <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                <div className="container-md py-5">
-                    <h5 className=" text-center text-uppercase text-white fw-bold mb-5 mx-md-3">Related Posts</h5>
-                    {typeof related !== "string"?<RecentPosts count={4} showMeta={false} />:<div className="text-center text-white">{related}</div>}
-                </div>
+                {typeof related !== "string"?<PostsCarousel count={3} limit={4} title="Related Posts" showMeta={false} />:<div className="text-center text-white">{related}</div>}
             </section>
         </>
     )

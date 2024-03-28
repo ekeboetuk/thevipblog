@@ -1,7 +1,7 @@
 //import { ScrollRestoration } from 'react-router-dom';
 
 import { useEffect } from 'react';
-import Carousel from '../components/carousel';
+import { Carousel } from '../components/carousels';
 import { Postcard } from '../components/cards';
 import { Error } from '../components/errors'
 
@@ -35,6 +35,7 @@ function Home() {
                     comments={post.comments}
                     category={post.meta.category}
                     meta={post.meta}
+                    showFeatured={true}
                     created={post.created}
                     height="350px"
                     showCategory={true}

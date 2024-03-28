@@ -18,6 +18,7 @@ export const Postcard = ({
     showCategory,
     created,
     showMeta,
+    showFeatured,
     showReadmore,
     showEngagement,
     font
@@ -46,7 +47,7 @@ export const Postcard = ({
                         height: `${height}`
                     }}
                 >
-                    {meta.featured && (
+                    {meta.featured && showFeatured && (
                         <span className="bg-danger m-2 px-3 py-1 text-white fw-bold position-absolute start-0 top-0 rounded-pill">
                             Featured
                         </span>
