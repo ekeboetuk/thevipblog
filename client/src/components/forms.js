@@ -90,7 +90,7 @@ export const Postform = ( {token} ) => {
                 </div>
                 <div className="col-12 col-md-5 ms-md-2 d-block mb-3 justify-content-end align-self-start">
                     <label htmlFor="category" className="pe-2 fw-bold">Category</label>
-                    <select className="w-100 p-2 bg-white" id="category" name="category" value={post.category} onChange={(e) => setPost({...post, category: e.target.value})} disabled={sending} required>
+                    <select className="w-100 px-2 bg-white" id="category" name="category" value={post.category} onChange={(e) => setPost({...post, category: e.target.value})} disabled={sending} required>
                         <option value="" disabled>Choose a Category</option>
                         <option value="uncategorized">Uncategorized</option>
                         <option value="lifestyles">Lifestyles</option>
@@ -102,7 +102,7 @@ export const Postform = ( {token} ) => {
                 <div className="mb-3 d-block">
                     <label htmlFor="metadescription" className="pe-2 fw-bold">Meta Desciption</label>
                     <textarea
-                        id="introtext"
+                        id="metadescription"
                         className="w-100 p-2"
                         rows={2}
                         minLength={40}
@@ -256,7 +256,7 @@ export const Contact = () => {
             <input type="text" name="subject" id="subject" className="col-12" value={subject} onChange={(e)=>setSubject(e.target.value)} placeholder="Subject*" required />
             <textarea name="message" value={message} onChange={(e)=>setMessage(e.target.value)} placeholder="Kindly type in the details of your request here*" required/>
             <div className="d-flex align-items-center">
-                <input type="checkbox" name="subscribe" checked={subscribe} onChange={(e)=>setSubscribe(e.target.checked)}/>
+                <input type="checkbox" id="subscribe" name="subscribe" checked={subscribe} onChange={(e)=>setSubscribe(e.target.checked)}/>
                 <label htmlFor="subscribe" className="ps-2">Subscribe to our periodic newsletter?</label>
             </div>
             <button type="submit" className="btn-primary" disabled={sending}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>

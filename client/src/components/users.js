@@ -218,7 +218,7 @@ export function UserMenu( ) {
 							</div>}
 					</div>
 				</> :
-				<Link className="btn text-white border border-primary rounded-pill pt-3" to="/login" role="button">
+				<Link className="text-white border border-primary rounded-pill p-3" to="/login" role="button">
 					<i className="fas fa-right-to-bracket me-2"></i>
 					Login
 				</Link>

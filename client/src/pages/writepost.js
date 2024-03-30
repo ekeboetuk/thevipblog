@@ -14,12 +14,12 @@ function WritePost( {token} ) {
                         <div className="bg-tertiary px-3 px-md-5 py-2 rounded-5 align-self-start" style={{maxWidth: '768px'}}>
                             <Postform token={token}/>
                         </div>
-                        <div className="align-self-start mx-0 mx-md-4 w-100 w-md-25">
+                        <div className="align-self-start ps-md-4 w-100 w-md-25">
                             <Sidebar advertise={true} subscribe={true} />
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                        <PostsCarousel count={3} limit={4} title="Most Recent" />
+                        <PostsCarousel count={3} limit={4} title="Most Recent" autoPlay={true} />
                     </section>
                 </>:
                 <Error status="401" token={token} />

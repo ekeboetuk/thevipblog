@@ -148,6 +148,10 @@ a {
   background-color: #74415D !important;
 }
 
+#carousel {
+  transition: transform 3s ease-in-out;
+}
+
 .carousel, .carousel-item, .carousel-inner {
   max-height: 350px !important;
 }
@@ -279,10 +283,6 @@ td, th {
 
 #contentarea, #utilbar {
   transition: width 0.2s linear !important;
-}
-
-section {
-  padding: 1.5rem 0;
 }
 
 .overlay {

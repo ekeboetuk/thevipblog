@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { usePosts } from "../hooks/fetchers"
 
 import { Postcard } from "./cards"
@@ -46,30 +46,48 @@ export const Carousel = () => {
     )
 }
 
-export const PostsCarousel = ({title, count, limit, direction, autoplay, showMeta, showEngagement}) => {
-    const {posts, isLoading} = usePosts(`/?sort=-_id&limit=${limit||4}`)
+export const PostsCarousel = ({title, count = 3, limit = 4, scrollDirection = "ltr", scrollCount = 1, autoPlay, delay = 8, showMeta, showEngagement}) => {
+    const {posts, isLoading} = usePosts(`/?sort=-_id&limit=${limit}`)
     const [scrollindex, setScrollindex] = useState(0)
+    let postWidth, containerWidth, carousel, carouselWidth, overflowCount, autoscroll
+
+    if(posts?.length > 0 && document.getElementsByClassName("postcard")[0]){
+        postWidth = document.getElementsByClassName("postcard")[0].getBoundingClientRect().width
+        containerWidth = postWidth * limit
+        carousel = document.getElementById("carousel")
+        carouselWidth = carousel.getBoundingClientRect().width
+        overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
+    }
+
+    if(autoPlay && overflowCount > 0){
+        if(posts?.length > 0 && document.getElementById("carousel")){
+            autoscroll = setTimeout(()=>{
+                if(scrollindex === overflowCount){
+                    carousel.style.transform = `translateX(0px)`
+                    return setScrollindex(0)
+                }else{
+                    carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
+                    return setScrollindex(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
+                }
+            }, delay*1000)
+        }
+      }
 
     const handleClick = (navigation) => {
-        let postWidth = document.getElementsByClassName("postcard")[0].getBoundingClientRect().width
-        let containerWidth = postWidth * limit
-        let carousel = document.getElementById("carousel")
-        let carouselWidth = carousel.getBoundingClientRect().width
-        let overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
-        
+        clearTimeout(autoscroll)
         if(navigation === "left" ){
         	if(scrollindex <= 0){
 		        return
 	        }else{
-	          carousel.style.transform = `translateX(-${postWidth*(scrollindex-1)}px)`
-	          setScrollindex(scrollindex-1)
+	          carousel.style.transform = `translateX(-${postWidth*(scrollindex-(scrollindex>scrollCount?scrollCount:scrollindex||1))}px)`
+	          setScrollindex(scrollindex-(scrollindex>scrollCount?scrollCount:scrollindex||1))
 	        }
         }else{
 	        if(scrollindex === overflowCount){
 		        return
 	        }else{
-	          carousel.style.transform = `translateX(-${postWidth*(scrollindex+1)}px)`
-	          setScrollindex(scrollindex+1)
+	          carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
+	          setScrollindex(scrollindex +(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
 	        }
         }
     }
@@ -78,14 +96,14 @@ export const PostsCarousel = ({title, count, limit, direction, autoplay, showMet
         <div className="container-md overflow-hidden position-relative">
             {title && <h4 className="text-center text-uppercase text-white mb-5">{title}</h4>}
             <div className="position-relative overflow-hidden">
-                {posts?.length > 0 && count > 1 &&
+                {posts?.length > 0 && overflowCount > 0 &&
                     <>
-                        <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
+                        {scrollindex > 0 && <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
                             <i className="fa-solid fa-circle-arrow-left fa-2xl text-white"></i>
-                        </div>
-                        <div className="position-absolute top-50 end-0 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: "1"}}>
+                        </div>}
+                        {scrollindex < overflowCount && <div className="position-absolute top-50 end-0 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: "1"}}>
                             <i className="fa-solid fa-circle-arrow-right fa-2xl text-white"></i>
-                        </div>
+                        </div>}
                     </>
                 }
                 {isLoading?
@@ -93,9 +111,9 @@ export const PostsCarousel = ({title, count, limit, direction, autoplay, showMet
                         <i className="fa-solid fa-arrow-rotate-right fa-spin"></i>
                         &nbsp; Loading
                     </div>:
-                    <div id="carousel" className={`row row-cols-1 row-cols-md-${count} flex-nowrap`}>
+                    <div id="carousel" className={`row row-cols-1 row-cols-md-${count||3} flex-nowrap`}>
                         {posts && posts.slice(0, 20).map((post) => (
-                            <div key={post._id} className={`postcard notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
+                            <div key={post._id} className={`postcard notch-upward col g-4 gx-md-${count||3} gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}
                                     slug={post.slug}
@@ -107,6 +125,7 @@ export const PostsCarousel = ({title, count, limit, direction, autoplay, showMet
                                     height="180px"
                                     showMeta={showMeta}
                                     showEngagement={showEngagement}
+                                    font="1.5rem"
                                 />
                             </div>
                         ))}
