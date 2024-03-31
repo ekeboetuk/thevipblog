@@ -94,7 +94,7 @@ const postschema = Schema({
             default: 0
         },
         tags: {
-            type: String,
+            type: [String],
             required: true
         }
     },

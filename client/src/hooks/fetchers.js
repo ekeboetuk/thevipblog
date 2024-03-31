@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export function usePosts(apiendpoint) {
     const fetcher = (url) => axios(url).then(response =>  {return response.data})
-    const {data, error, isLoading, isValidating, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `${apiendpoint}`,
+    const {data, error, isLoading, isValidating, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/posts${apiendpoint}`,
         fetcher,
         {
             keepPreviousData: true,

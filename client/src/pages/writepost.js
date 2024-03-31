@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { PostsCarousel } from '../components/carousels';
 import { Postform } from '../components/forms';
 import { Error } from '../components/errors';
@@ -19,7 +17,7 @@ function WritePost( {token} ) {
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                        <PostsCarousel count={3} limit={4} title="Most Recent" autoPlay={true} />
+                        <PostsCarousel count={3} limit={4} autoplay={true} />
                     </section>
                 </>:
                 <Error status="401" token={token} />

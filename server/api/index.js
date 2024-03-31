@@ -34,19 +34,65 @@ import users from './models/users.js';
 const JWT_SECRET = "Afriscope Dev Blog";
 
 // Define routes
-app.get('/', async (req, res) => {
-  const {sort, postId, authorId, limit} = req.query
+app.get('/posts', async (req, res) => {
+  const {sort, limit} = req.query
   await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
-    let filterByAuthor
-    if(authorId) {
-      filterByAuthor = posts.filter((post)=> post.meta.author.id === authorId)
-      return res.send(filterByAuthor)
-    }
     res.send(posts);
   })
   .catch(() => {
     res.send();
+  })
+})
+
+app.get('/posts/author', async (req, res) => {
+  const {sort, limit, postId, authorId} = req.query
+  authorId !== 'undefined' &&
+  await posts.find({$and: [{'meta.author':authorId},{'_id': {$ne: postId}}]}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
+  .then((posts) => {
+    res.send(posts);
+  })
+  .catch(() => {
+    res.send();
+  })
+})
+
+app.get('/posts/:grouping', async (req, res) => {
+  const {sort, limit, query, postId} = req.query
+  await posts.find(query !== 'undefined'?{$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}}]}:{}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
+  .then((posts) => {
+    res.send(posts);
+  })
+  .catch(() => {
+    console.log("catch")
+    res.send();
+  })
+})
+
+app.get('posts/:category', async (req, res) => {
+  await posts.find({'meta.category': req.params.category})
+  .select("-_id -__v -body")
+  .populate('meta.author', 'name')
+  .then(posts => {
+    res.send(posts)
+  })
+  .catch(() => res.send())
+})
+
+app.get('/posts/:category/:slug', async (req, res) => {
+  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
+  .collation({locale: 'en_US', strength: 2})
+  .populate('meta.author', 'image name isActive')
+  .populate('comments.user', 'image name isActive')
+  .then((post) => {
+    if(post === null) {
+      throw ({code: 404, message: "Post Doesn't Exist"})
+    }else{
+      res.send(post)
+    }
+  })
+  .catch((error) => {
+    res.status(error.code).send()
   })
 })
 
@@ -66,33 +112,6 @@ app.get('/users/:id?', async(req, res) => {
   })
 })
 
-app.get('/:category', async (req, res) => {
-  await posts.find({'meta.category': req.params.category})
-  .select("-_id -__v -body")
-  .populate('meta.author', 'name')
-  .then(posts => {
-    res.send(posts)
-  })
-  .catch(() => res.send())
-})
-
-app.get('/:category/:slug', async (req, res) => {
-  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
-  .collation({locale: 'en_US', strength: 2})
-  .populate('meta.author', 'image name isActive')
-  .populate('comments.user', 'image name isActive')
-  .then((post) => {
-    if(post === null) {
-      throw ({code: 404, message: "Post Doesn't Exist"})
-    }else{
-      res.send(post)
-    }
-  })
-  .catch((error) => {
-    res.status(error.code).send()
-  })
-})
-
 //Create new post
 app.post('/writepost', async (req, res) => {
   const post = new posts({
@@ -105,7 +124,7 @@ app.post('/writepost', async (req, res) => {
       category: req.body.category,
       author: req.body.author,
       featured: req.body.featured,
-      tags: req.body.tags
+      tags: req.body.tags.split(",").trim()
     },
     isApproved: req.body.approved
     })

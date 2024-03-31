@@ -9,6 +9,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
+import RecentPosts from '../components/recentpost';
 import { PostsCarousel } from '../components/carousels';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Postcard } from '../components/cards';
@@ -23,7 +24,7 @@ function Post({ token }) {
 
     useEffect(()=>{
         (async function(){
-            await axios.get(process.env.REACT_APP_SERVER_URL + `/?sort=-_id&postId=${posts?.id}&authorId=${posts?.meta.author.id}`)
+            await axios.get(process.env.REACT_APP_SERVER_URL + `/posts/author/?sort=-_id&postId=${posts?.id}&authorId=${posts?.meta.author.id}`)
             .then((response) => {
                 setAuthorsPosts(response.data)
             })
@@ -143,7 +144,7 @@ function Post({ token }) {
                     posts.meta.tags !== undefined ?
                         <>
                             <div className="d-flex flex-wrap mb-3">
-                                {posts.meta.tags.split(", ").map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
+                                {posts.meta.tags.map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
                             </div>
                         </>:"No Tags"
             author =
@@ -193,7 +194,7 @@ function Post({ token }) {
                             <Skeleton height="150px" />
                             <Skeleton count={3} />
                           </>:
-                          <PostsCarousel count={1} limit={1} />
+                          <RecentPosts count={1} limit={1}/>
                         }
                     </div>
                     <div className="w-100 mb-5">
@@ -228,36 +229,37 @@ function Post({ token }) {
                         <h4 className="text-uppercase mb-4">{`More From ${posts.meta?.author.name.split(" ")[0]}`}</h4>
                         {authorsPosts === null?
                             <div className="fst-italic"><i className="fa-solid fa-rotate-right fa-spin"></i>Loading</div>:
-                            authorsPosts?.length !== 0 ?
+                            (authorsPosts?.length !== 0 ?
                                 <div className="col-12 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
-                            {authorsPosts.slice(0,6).map((post) =>
-                                <div key={post._id} className="col d-flex flex-row pe-md-3 pb-5 align-self-start transition">
-                                    <Postcard
-                                        id={post._id}
-                                        slug={post.slug}
-                                        image={post.image}
-                                        height="100px"
-                                        title={post.title}
-                                        comments={post.comments}
-                                        meta={post.meta}
-                                        category={post.meta.category}
-                                        created={post.created}
-                                        showCategory={false}
-                                        showMeta={false}
-                                        showReadmore={false}
-                                        showEngagement={false}
-                                        font="1.2rem"
-                                    />
-                                </div>
-                            )}
+                                    {authorsPosts.slice(0,6).map((post) =>
+                                        <div key={post._id} className="col d-flex flex-row pe-md-3 pb-5 align-self-start transition">
+                                            <Postcard
+                                                id={post._id}
+                                                slug={post.slug}
+                                                image={post.image}
+                                                height="100px"
+                                                title={post.title}
+                                                comments={post.comments}
+                                                meta={post.meta}
+                                                category={post.meta.category}
+                                                created={post.created}
+                                                showCategory={false}
+                                                showMeta={false}
+                                                showReadmore={false}
+                                                showEngagement={false}
+                                                font="1.2rem"
+                                            />
+                                        </div>
+                                    )}
                                 </div>:
-                                <p className="container-md">Just starting.</p>
+                                <p className="container-md">Working On Something!</p>
+                            )
                         }
                     </>
                 }
             </section>
             <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                {typeof related !== "string"?<PostsCarousel count={3} limit={4} title="Related Posts" showMeta={false} />:<div className="text-center text-white">{related}</div>}
+                {typeof related !== "string"?<PostsCarousel count={3} limit={4} title="Related Posts" autoplay={true} query={posts?.meta.tags} postId={posts?.id} />:<div className="text-center text-white">{related}</div>}
             </section>
         </>
     )

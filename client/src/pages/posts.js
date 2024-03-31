@@ -10,7 +10,7 @@ import { Error } from '../components/errors';
 
 function Posts() {
     const category = useParams().category
-    const {posts, error, isLoading} = usePosts(`?sort=-_id`)
+    const {posts, error, isLoading} = usePosts(`/?sort=-_id`)
     let content, filtered, editorsPick, featuredIn
 
     if(!["lifestyles","sports","fashion","technology"].includes(category)){
@@ -158,6 +158,7 @@ function Posts() {
                                     comments={post.comments}
                                     meta={post.meta}
                                     created={post.created}
+                                    showFeatured={false}
                                     />
                                 </div>
                             ))}

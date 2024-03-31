@@ -13,7 +13,7 @@ function Home() {
         document.title = "Afriscope - Your Favourite Blog - Homepage"
     })
 
-    const {posts, error, isLoading} = usePosts('?sort=-_id')
+    const {posts, error, isLoading} = usePosts('/?sort=-_id')
     let content
 
     if(isLoading){
