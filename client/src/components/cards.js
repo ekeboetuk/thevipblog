@@ -258,7 +258,7 @@ export const Widgetcard = ({ title, children }) => {
     return (
         <div className="fw-normal rounded shadow-sm w-100 mb-5">
             {title && <h4 className="bg-primary text-white p-4 rounded-top fw-bold mb-0">
-                {title}
+                {title} {title === "Look Here" && <i className="fa-solid fa-angles-down notch-upward"></i>}
             </h4>}
             {children}
         </div>

@@ -65,10 +65,13 @@ export const Statistics = () => {
     )
 }
 
-export const Advertise = () => {
+export const Advertise = ({title = "Advertise Here", content}) => {
     return (
-        <Widgetcard title="Advertise Here">
-            <p className="p-4 fs-5">Sell you products here at an affordable rate</p>
+        <Widgetcard title={title}>
+            <div className="flexible d-flex flex-column p-4 fs-5">
+                {content?.quote}<br />
+                <small className="text-end">~{content?.name}</small>
+            </div>
         </Widgetcard>
     )
 }

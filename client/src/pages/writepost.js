@@ -13,7 +13,7 @@ function WritePost( {token} ) {
                             <Postform token={token}/>
                         </div>
                         <div className="align-self-start ps-md-4 w-100 w-md-25">
-                            <Sidebar advertise={true} subscribe={true} />
+                            <Sidebar subscribe={true} />
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>

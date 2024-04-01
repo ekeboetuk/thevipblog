@@ -264,7 +264,7 @@ app.post('/user/login', async (req, res) => {
   res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.image, type: user.type, isAdmin: user.isAdmin});
 })
 
-app.post("/user/newuser", async (req, res) => {
+app.post("/user/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const securepass = await bcrypt.hash(req.body.password, salt);
   const user = new users ({

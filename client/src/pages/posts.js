@@ -4,7 +4,7 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import { usePosts } from '../hooks/fetchers';
 
 import { Postcard, PostcardTransparent } from '../components/cards';
-import Sidebar from '../components/widgets'
+import { Advertise, Subscribe } from '../components/widgets'
 import RecentPosts from '../components/recentpost';
 import { Error } from '../components/errors';
 
@@ -164,7 +164,8 @@ function Posts() {
                             ))}
                         </div>
                         <div className="col-12 col-md-3">
-                            <Sidebar advertise={true} subscribe={true} latest={true} />
+                            <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
+                            <Subscribe />
                         </div>
                     </div>
                 </section>

@@ -1,20 +1,47 @@
-import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 
 import { usePosts } from '../hooks/fetchers';
+import axios from 'axios';
 
 import { Postcard, PostcardTransparent } from '../components/cards';
-import Sidebar, { Advertise, Subscribe } from '../components/widgets'
+import { Advertise, Subscribe } from '../components/widgets'
 import { Error } from '../components/errors';
 
 function Home() {
     const {posts, error, isLoading} = usePosts(`/?sort=-_id`)
-    let content, approved, editorsPick, featured
+    const [quotes, setQuotes] = useState()
+    const quote = useRef({quote: "Advertise you products here at an affordable rate", name: "Afriscope"})
+    const qdcount = useRef(0)
+    let content, approved, editorsPick//, featured
 
     useEffect(()=>{
         document.title = "Afriscope - Your Favourite Blog - Homepage"
-    })
+    },[])
+
+    useEffect(()=>{
+        (async function(){
+            await axios.get("/assets/random-quotes.json")
+            .then((res) => {
+                setQuotes(res.data)
+            })
+        })()
+    },[])
+
+   useEffect(()=>{
+        if(quotes?.length > 0){
+            setInterval(()=>{
+                if(qdcount.current === 5) {
+                    quote.current = {quote: "Advertise you products here at an affordable rate", name: "Afriscope"}
+                    return qdcount.current = 0
+                }
+                const n = Math.floor(Math.random()*quotes.length)
+                quote.current = quotes[n]
+                qdcount.current +=  1
+            }, 10000)
+        }
+    },[quotes])
 
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
@@ -53,7 +80,7 @@ function Home() {
     } else if(posts) {
         approved = posts.filter(post => post.isApproved)
         editorsPick = approved.filter(post => post.meta.editorsPick)
-        featured = approved.filter(post => post.meta.featured)
+        //featured = approved.filter(post => post.meta.featured)
         approved.length === 0?
         content = <Error status="204" document="Post" />:
         content =
@@ -155,7 +182,7 @@ function Home() {
                             ))}
                         </div>
                         <div className="col-12 col-md-3">
-                            <Advertise />
+                            <Advertise title="Look Here" content={quote.current} />
                             <div className="sticky-top" style={{top: "60px", zIndex: "-1"}}>
                                 <Subscribe />
                             </div>
@@ -166,16 +193,16 @@ function Home() {
                     <h2 className="container-md border-left">Popular Categories</h2>
                     <div className="container-md d-flex flex-column flex-md-row">
                         <div className="row row-cols-1 row-cols-md-3">
-                            <Link to="/technology" className="col d-flex flex-column position-relative pe-md-4">
-                                <img src="/media/technology.jpeg" className="w-100 h-100" style={{objectFit: "cover"}} alt="Technology" />
+                            <Link to="/technology" className="col d-flex flex-column position-relative mb-4 pe-md-4">
+                                <img src="/media/technology.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Technology" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Technology</h1>
                             </Link>
-                            <Link to="/fashion" className="col d-flex flex-column position-relative pe-md-4 shadow">
-                                <img src="/media/fashion-banner.jpeg" className="w-100 h-100" style={{objectFit: "cover"}} alt="Fashion" />
+                            <Link to="/fashion" className="col d-flex flex-column position-relative mb-4 pe-md-4">
+                                <img src="/media/fashion-banner.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Fashion" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Fashion</h1>
                             </Link>
-                            <Link to="/sports" className="col d-flex flex-column position-relative pe-md-4">
-                                <img src="/media/sports-banner.jpeg" className="w-100 h-100" style={{objectFit: "cover"}} alt="Sport" />
+                            <Link to="/sports" className="col d-flex flex-column position-relative mb-4 pe-md-4">
+                                <img src="/media/sports-banner.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Sport" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Sport</h1>
                             </Link>
                         </div>

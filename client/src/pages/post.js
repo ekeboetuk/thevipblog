@@ -186,8 +186,8 @@ function Post({ token }) {
                     </div>
                 }
                 <div className="col-12 col-md-3 d-flex flex-column align-items-start" >
-                    <Advertise />
-                        <div className="w-100 mb-5">
+                    <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
+                    <div className="w-100 mb-5">
                         <h5 className="fw-bolder text-uppercase mb-4">Trending</h5>
                         {isLoading?
                          <>

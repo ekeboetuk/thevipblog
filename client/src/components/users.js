@@ -33,7 +33,7 @@ export function Register() {
             message.classList.remove('text-success', 'text-danger')
             formelements.forEach(elem => elem.disabled = true);
 
-           await axios.post(process.env.REACT_APP_SERVER_URL + `/user/newuser`, {
+           await axios.post(process.env.REACT_APP_SERVER_URL + `/user/register`, {
                     email: state.email,
                     password: state.password,
                     name: state.names
@@ -218,7 +218,7 @@ export function UserMenu( ) {
 							</div>}
 					</div>
 				</> :
-				<Link className="text-white border border-primary rounded-pill p-3" to="/login" role="button">
+				<Link className="text-white border border-primary rounded-pill px-3 py-2" to="/login" role="button">
 					<i className="fas fa-right-to-bracket me-2"></i>
 					Login
 				</Link>
