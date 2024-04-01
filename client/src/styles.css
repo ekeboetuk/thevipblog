@@ -149,7 +149,7 @@ a {
 }
 
 #carousel {
-  transition: transform 3s ease-in-out;
+  transition: transform 2s linear;
 }
 
 .carousel, .carousel-item, .carousel-inner {

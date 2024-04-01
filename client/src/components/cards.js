@@ -143,7 +143,8 @@ export const PostcardTransparent = ({
     created,
     showIntro,
     showMeta,
-    showFeatured = true
+    showFeatured = true,
+    showCategory
 }) => {
     const updateViews = () => {
         axios
@@ -173,11 +174,18 @@ export const PostcardTransparent = ({
                     height: "100%"
                 }}
             >
-                {meta.featured && showFeatured && (
-                    <small className="bg-danger m-2 px-3 py-1 text-white fw-bold position-absolute start-0 top-0 rounded-pill">
-                        Featured
-                    </small>
-                )}
+                <div className="d-flex flex-row position-absolute start-0 top-0">
+                    {meta.featured && showFeatured && (
+                        <small className="bg-danger px-3 py-1 text-white fw-bold">
+                            Featured
+                        </small>
+                    )}
+                    {showCategory && (
+                        <small className="bg-warning px-3 py-1 text-white fw-bold">
+                            {meta.category.charAt(0).toUpperCase()+meta.category.slice(1)}
+                        </small>
+                    )}
+                </div>
                 <div className="postcontent d-flex flex-column w-100 w-md-50 justify-content-between text-white">
                       <div className="postintro d-flex flex-column bg-dark justify-content-between w-100">
                           <Link

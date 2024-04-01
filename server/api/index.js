@@ -63,8 +63,8 @@ app.get('/posts/:grouping', async (req, res) => {
   .then((posts) => {
     res.send(posts);
   })
-  .catch(() => {
-    console.log("catch")
+  .catch((error) => {
+    console.log(error)
     res.send();
   })
 })

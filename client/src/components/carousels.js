@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { usePosts } from "../hooks/fetchers"
 
 import { Postcard } from "./cards"
@@ -46,9 +46,10 @@ export const Carousel = () => {
     )
 }
 
-export const PostsCarousel = ({title = "Latest Post", count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, query, postId, showMeta, showEngagement}) => {
+export const PostsCarousel = ({title = "Latest Post", count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, continous = true, query, postId, showMeta, showEngagement}) => {
     const {posts, isLoading, isError} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=-_id&limit=${limit}&query=${query}&postId=${postId}`)
     const [scrollindex, setScrollindex] = useState(0)
+    const [play, setPlay] = useState(autoplay)
     let postWidth, containerWidth, carousel, carouselWidth, overflowCount, autoscroll
 
     if(posts?.length > 0 && document.getElementsByClassName("postcard")[0]){
@@ -59,12 +60,13 @@ export const PostsCarousel = ({title = "Latest Post", count = 3, limit = 4, scro
         overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
     }
 
-    if(autoplay && overflowCount > 0){
+    if(play && overflowCount > 0){
         if(posts?.length > 0 && document.getElementById("carousel")){
             autoscroll = setTimeout(()=>{
                 if(scrollindex === overflowCount){
                     carousel.style.transform = `translateX(-${0}px)`
-                    return setScrollindex(0)
+                    setScrollindex(0)
+                    return setPlay(continous)
                 }else{
                     carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
                     return setScrollindex(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
