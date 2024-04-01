@@ -212,16 +212,16 @@ export const PostcardTransparent = ({
 
 export const Usercard = ({ user, handleUserStatus }) => {
     return (
-        <div className="bg-light p-4 rounded-5">
+        <div className="bg-light rounded-5">
             <img
-                src="/assets/icon.png"
-                style={{ height: "100px", width: "100px" }}
+                src={`${user.image||"/media/picture-placeholder.svg"}`}
+                style={{ height: "150px", width: "100%", objectFit: "cover", objectPosition: "top center"}}
                 alt="Avatar"
-                className="square bg-white rounded-circle p-3 me-3 mb-3"
+                className="square bg-white"
             />
-            <div className="text-brand fw-bold">{user.name.toUpperCase()}</div>
-            <div className="d-flex">
-                <div className="d-flex flex-column align-items-end fw-normal pe-2">
+            <div className="text-brand fw-bold pt-4">{user.name.toUpperCase()}</div>
+            <div className="d-flex p-4 pt-0">
+                <div className="d-flex flex-column align-items-end fw-normal pe-2 fw-bold">
                     <small className="">E-mail:</small>
                     <small className="">Type:</small>
                     <small className="">Joined:</small>
@@ -238,7 +238,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
                     {user.email !== "admin@afriscope.ng" && (
                         <small className="fw-normal">
                             <button
-                                className="btn-primary px-2 rounded-pill text-white border-0"
+                                className="btn-primary px-2 text-white border-0 p-1"
                                 onClick={() =>
                                     handleUserStatus(user._id, user.isActive)
                                 }

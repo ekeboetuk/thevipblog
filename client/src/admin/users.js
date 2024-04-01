@@ -56,7 +56,6 @@ function Users() {
                         <div className="d-flex justify-content-left align-items-center mb-2">
                             <h6 className="mb-0 pe-2">View As:</h6>
                             <div className="bg-light p-2 rounded-5 px-4">
-                                <label className="pe-3"><input type="radio" name="view" value="Table" /> Table</label>
                                 <label className="pe-3"><input type="radio" name="view" value="List" defaultChecked={true} onChange={()=>setView('List')}/> List</label>
                                 <label><input type="radio" name="view" value="Grid"  onChange={()=>setView('Grid')}/> Grid</label>
                             </div>
@@ -78,7 +77,7 @@ function Users() {
                                     <tr key={index} id="userdetails" className={!user.isActive?"opacity-50":undefined}>
                                         <td className="border-0 p-3 bg-light">
                                             <div className="listing d-flex flex-fill justify-content-between">
-                                                <img src="/assets/icon.png" style={{height: "60px"}} alt="Avatar" className="square bg-white rounded-circle p-2 me-2" />
+                                                <img src={`${user.image||"/assets/icon.png"}`} style={{height: "60px", width: "60px", objectFit: "cover"}} alt="Avatar" className="square bg-white rounded-circle p-2 me-2" />
                                                 <div className="d-flex flex-column me-auto">
                                                     <h6 className="fw-bold">{user.name}</h6>
                                                     <small className="">{user.email}</small>

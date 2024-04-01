@@ -13,7 +13,7 @@ export function Register() {
     const [state, setState] = useState({password:''})
     const [sending, setSending] = useState(false)
     const message = document.getElementById("message")
-    const formelements = document.querySelectorAll("#names, #email, #password, #submit")
+    const formelements = document.querySelectorAll("#names, #email, #password, [name='role'], #submit")
 
         const handleChange = (e) => {
           const value = e.target.value;
@@ -36,14 +36,15 @@ export function Register() {
            await axios.post(process.env.REACT_APP_SERVER_URL + `/user/register`, {
                     email: state.email,
                     password: state.password,
-                    name: state.names
+                    name: state.names,
+                    type: state.role
                 }
             )
             .then(() => {
                 setTimeout(()=>{
                     message.classList.remove('d-none')
                     message.classList.add('text-success')
-                    message.innerHTML = "Signup successful! Sign in to continue";
+                    message.innerHTML = "Registeration successful! Login to continue";
                     formelements.forEach(elem => elem.disabled = false);
                     setState({});
                     setSending(false)
@@ -84,7 +85,20 @@ export function Register() {
                                 onChange ={handleChange} placeholder="E-mail"/>
                         <input type="password" id="password" name="password" className="w-100 mb-4" value={state.password??""}
                                 onChange ={handleChange} placeholder="Password"/>
-                        <button type="submit" id="submit" className="btn-primary" disabled={!state.names || !state.email || state.password.length < 5}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
+                        <div className="d-flex flex-column flex-md-row justify-content-between mb-4">
+                            <strong className="d-flex flex-row align-items-center">Register As <i className="fa-solid fa-caret-right"></i></strong>
+                            <div className="d-flex flex-row">
+                                <div className="d-flex pe-4">
+                                    <input type="radio" id="editor" name="role" value="Editor" onChange ={handleChange} />
+                                    <label htmlFor="editor" className="ps-2">Editor</label>
+                                </div>
+                                <div className="d-flex">
+                                    <input type="radio" id="subscriber" name="role" value="Subscriber" onChange ={handleChange} defaultChecked/>
+                                    <label htmlFor="subscriber" className="ps-2">Subscriber</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" id="submit" className="btn-primary" disabled={!state.names || !state.email || state.password?.length < 5}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
                         <p id="message" className="d-none mt-3 fw-bold" style={{height:"20px"}}>&nbsp;</p>
                     </form>
                 </div>
