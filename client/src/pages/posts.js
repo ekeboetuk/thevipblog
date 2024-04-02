@@ -5,8 +5,8 @@ import { usePosts } from '../hooks/fetchers';
 
 import { Postcard, PostcardTransparent } from '../components/cards';
 import { Advertise, Subscribe } from '../components/widgets'
-import RecentPosts from '../components/recentpost';
 import { Error } from '../components/errors';
+import { PostsCarousel } from '../components/carousels';
 
 function Posts() {
     const category = useParams().category
@@ -19,7 +19,7 @@ function Posts() {
             <section className="container-md mx-auto">
                 <Error status="404" document="Page" />
                 <h4 className="border-left">You Might Be Interested In</h4>
-                <RecentPosts count={4}/>
+                <PostsCarousel count={4}/>
             </section>
         )
     }

@@ -2,17 +2,7 @@ import { usePosts, useUsers } from '../hooks/fetchers';
 import { Widgetcard } from './cards'
 import { Subscription } from './forms';
 
-export default function Sidebar({statistics, advertise, subscribe, trending, recentuser}){
-    return (
-        <>
-            {statistics && <Statistics />}
-            {advertise && <Advertise />}
-            {subscribe && <Subscribe />}
-            {trending && <Trending />}
-            {recentuser && <RecentUser />}
-        </>
-    )
-};
+import RecentPosts from './recentpost';
 
 export const Statistics = () => {
     const {posts, isLoading} = usePosts('?sort=-_id');
@@ -78,7 +68,7 @@ export const Advertise = ({title = "Advertise Here", content}) => {
 
 export const Subscribe = () => {
     return (
-        <Widgetcard title="Newsletter Subscription">
+        <Widgetcard title="Be The First To Know">
             <div className="p-4" style={{backgroundColor: 'rgba(116, 65, 93, 0.14)'}}>
                 <p className="fs-5">Kindly fill and submit the form below to subscirbe to our periodic newsletters. We promise not to be intrusive.</p>
                 <Subscription />
@@ -90,7 +80,15 @@ export const Subscribe = () => {
 export const Trending = () => {
     return (
         <Widgetcard title="Trending">
-            <div className="p-2">Trending conversation shows here</div>
+            <RecentPosts sort='-comments' count={1} limit={1}/>
+        </Widgetcard>
+    )
+}
+
+export const LatestPost = () => {
+    return (
+        <Widgetcard title="Recent">
+            <RecentPosts count={1} limit={1}/>
         </Widgetcard>
     )
 }

@@ -4,8 +4,7 @@ import Toolbar from '../admin/toolbar';
 import Navigation from '../admin/navigation';
 
 import { ErrorBoundary } from '../components/errors';
-import { Statistics, RecentUser, Trending } from '../components/widgets';
-import RecentPosts from "../components/recentpost";
+import { Statistics, RecentUser, Trending, LatestPost } from '../components/widgets';
 
 function Administrator() {
     const toggleUtilbar = () => {
@@ -45,7 +44,7 @@ function Administrator() {
                     </div>
                     <div id="utilbar" className="col-12 col-md-3 px-4 py-3">
                         <Statistics />
-                        <RecentPosts count={1} />
+                        <LatestPost />
                         <Trending />
                         <RecentUser />
                     </div>

@@ -46,11 +46,11 @@ export const Carousel = () => {
     )
 }
 
-export const PostsCarousel = ({title = "Latest Post", count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, continous = true, query, postId, showMeta, showEngagement}) => {
-    const {posts, isLoading, isError} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=-_id&limit=${limit}&query=${query}&postId=${postId}`)
+export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, continous = true, query, postId, showMeta, showEngagement}) => {
+    const {posts, isLoading, isError} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=${sort||'-_id'}&limit=${limit}&query=${query}&postId=${postId}`)
     const [scrollindex, setScrollindex] = useState(0)
     const [play, setPlay] = useState(autoplay)
-    let postWidth, containerWidth, carousel, carouselWidth, overflowCount, autoscroll
+    let postWidth, containerWidth, carousel, carouselWidth, overflowCount
 
     if(posts?.length > 0 && document.getElementsByClassName("postcard")[0]){
         postWidth = document.getElementsByClassName("postcard")[0].getBoundingClientRect().width
@@ -62,7 +62,7 @@ export const PostsCarousel = ({title = "Latest Post", count = 3, limit = 4, scro
 
     if(play && overflowCount > 0){
         if(posts?.length > 0 && document.getElementById("carousel")){
-            autoscroll = setTimeout(()=>{
+            var autoscroll = setTimeout(()=>{
                 if(scrollindex === overflowCount){
                     carousel.style.transform = `translateX(-${0}px)`
                     setScrollindex(0)
@@ -113,9 +113,9 @@ export const PostsCarousel = ({title = "Latest Post", count = 3, limit = 4, scro
                         <i className="fa-solid fa-arrow-rotate-right fa-spin"></i>
                         &nbsp; Loading
                     </div>:
-                    (isError? <p className="text-center text-danger">Error Retrieving Posts</p>:
+                    (isError||posts?.length === 0 ? <p className="text-center text-white">Nothing To See Here Today!</p>:
                     <div id="carousel" className={`row row-cols-1 row-cols-md-${count||3} flex-nowrap`}>
-                        {posts && posts.slice(0, 20).map((post) => (
+                        {posts && posts.slice(0, limit).map((post) => (
                             <div key={post._id} className={`postcard notch-upward col g-4 gx-md-${count||3} gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}

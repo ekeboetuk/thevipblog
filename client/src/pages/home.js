@@ -5,6 +5,7 @@ import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import { usePosts } from '../hooks/fetchers';
 import axios from 'axios';
 
+import Adverts from '../components/adverts';
 import { Postcard, PostcardTransparent } from '../components/cards';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Error } from '../components/errors';
@@ -117,6 +118,8 @@ function Home() {
                                             comments={editorsPick[1].comments}
                                             meta={editorsPick[1].meta}
                                             created={editorsPick[1].created}
+                                            showCategory={true}
+                                            showMeta={true}
                                         />
                                     }
 
@@ -215,6 +218,7 @@ function Home() {
 
     return (
         <>
+            <Adverts />
             {content}
         </>
     )

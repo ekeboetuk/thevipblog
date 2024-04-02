@@ -14,8 +14,8 @@ export function Tags() {
     return [...tags]
 }
 
-function RecentPosts( {title, count, showMeta, showEngagement, query} ) {
-    const {posts, isLoading} = usePosts(`?sort=-_id`)
+function RecentPosts( {title, sort = '-_id', count, showMeta, showEngagement, query} ) {
+    const {posts, isLoading} = usePosts(`?sort=${sort}`)
 
     if (isLoading) {
         return (
@@ -35,9 +35,9 @@ function RecentPosts( {title, count, showMeta, showEngagement, query} ) {
             return (
                 <>
                     {title && <h4 className="text-uppercase mb-2">{title}</h4>}
-                    <div className={`row row-cols-1 row-cols-md-${count} mb-5`}>
+                    <div className={`row row-cols-1 row-cols-md-${count}`}>
                         {filter.slice(0, count).map((post) => (
-                            <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
+                            <div key={post._id} className={`notch-upward col g-4 gx-md-0 gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}
                                     slug={post.slug}
@@ -57,7 +57,7 @@ function RecentPosts( {title, count, showMeta, showEngagement, query} ) {
             )}
     }else {
         return (
-            <div className="text-center py-5 mb-5">
+            <div className="text-center py-5">
                 <h6 className="fst-italic text-danger fs-8">Error loading recent posts</h6>
             </div>
         )

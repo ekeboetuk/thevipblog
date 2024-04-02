@@ -149,7 +149,7 @@ a {
 }
 
 #carousel {
-  transition: transform 2s linear;
+  transition: transform 1s linear;
 }
 
 .carousel, .carousel-item, .carousel-inner {
@@ -179,7 +179,7 @@ a {
 }
 
 .flexible {
-  transition: height 1s linear
+  transition: height 3s linear
 }
 
 .input-group-addon {
@@ -421,6 +421,13 @@ footer {
   to {transform: translate(0, 0); opacity: 0.75}
 }
 
+@keyframes revealtransparent {
+  0% {width: 0%; opacity: 0;}
+  50% {width: 70%; opacity: 0.5}
+  80% {width: 50%; opacity: 0.75}
+  100% {width: 100%; opacity: 1}
+}
+
 /**Admin Area Only**/
 #navbar, #toolbar {
   background-color: #74415D;
@@ -470,6 +477,14 @@ footer {
   transform: translate(0, -8px)
 }
 
+.notch-downward {
+  transition: transform 0.5s ease-in-out
+}
+
+.notch-downward:hover {
+  transform: translate(0, 8px)
+}
+
 .notch-forward {
   transition: transform 0.5s ease-in-out
 }
@@ -499,6 +514,10 @@ footer {
 }
 
 @media only screen and (max-width: 576px) {
+  #advert {
+    height: 60px !important
+  }
+
   table .post img {
     min-width: 100% !important
   }

@@ -43,7 +43,7 @@ export const Postcard = ({
                     style={{
                         backgroundImage: `url(${image})`,
                         backgroundSize: "cover",
-                        backgroundPosition: "center",
+                        backgroundPosition: "top center",
                         height: `${height}`
                     }}
                 >
@@ -212,9 +212,9 @@ export const PostcardTransparent = ({
 
 export const Usercard = ({ user, handleUserStatus }) => {
     return (
-        <div className="bg-light rounded-5">
+        <div className="bg-light rounded-5 shadow-sm">
             <img
-                src={`${user.image||"/media/picture-placeholder.svg"}`}
+                src={`${user.image||"/media/picture-placeholder.jpeg"}`}
                 style={{ height: "150px", width: "100%", objectFit: "cover", objectPosition: "top center"}}
                 alt="Avatar"
                 className="square bg-white"
@@ -223,7 +223,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
             <div className="d-flex p-4 pt-0">
                 <div className="d-flex flex-column align-items-end fw-normal pe-2 fw-bold">
                     <small className="">E-mail:</small>
-                    <small className="">Type:</small>
+                    <small className="">Role:</small>
                     <small className="">Joined:</small>
                     {user.email !== "admin@afriscope.ng" && (
                         <small className="">Status:</small>
@@ -257,8 +257,8 @@ export const Usercard = ({ user, handleUserStatus }) => {
 export const Widgetcard = ({ title, children }) => {
     return (
         <div className="fw-normal rounded shadow-sm w-100 mb-5">
-            {title && <h4 className="bg-primary text-white p-4 rounded-top fw-bold mb-0">
-                {title} {title === "Look Here" && <i className="fa-solid fa-angles-down notch-upward"></i>}
+            {title && <h4 className="bg-primary text-white p-3 rounded-top fw-bold mb-0" style={{zIndex: "1"}}>
+                {title} {title === "Look Here" && <i className="fa-solid fa-angles-down notch-downward"></i>}
             </h4>}
             {children}
         </div>

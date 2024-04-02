@@ -96,22 +96,6 @@ app.get('/posts/:category/:slug', async (req, res) => {
   })
 })
 
-
-//Filter post by category
-app.get('/users/:id?', async(req, res) => {
-  await users.find({}).select(['-pswdhash', '-__v'])
-  .then((users)=>{
-    if(req.params.id){
-      let user = users.filter(user => user.id === req.params.id)
-      return res.send(user[0])
-    }
-    return res.send(users)
-  })
-  .catch(()=>{
-    res.status(400).send("There was an error processing your request")
-  })
-})
-
 //Create new post
 app.post('/writepost', async (req, res) => {
   const post = new posts({
@@ -231,8 +215,8 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
   })
 })
 
-
-/*app.get('/users/:id?', async(req, res) => {
+//Users Routes
+app.get('/users/:id?', async(req, res) => {
   await users.find({}).select(['-pswdhash', '-__v'])
   .then((users)=>{
     if(req.params.id){
@@ -244,7 +228,7 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
   .catch(()=>{
     res.status(400).send("There was an error processing your request")
   })
-})*/
+})
 
 app.post('/user/login', async (req, res) => {
   let user = await users.findOne({email: req.body.email});

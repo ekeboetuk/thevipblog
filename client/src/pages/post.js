@@ -9,7 +9,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
-import RecentPosts from '../components/recentpost';
+//import { Trending } from '../components/widgets';
 import { PostsCarousel } from '../components/carousels';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Postcard } from '../components/cards';
@@ -69,7 +69,7 @@ function Post({ token }) {
     let content, tags, author, related
 
     if(posts) {
-        if(posts.length === 0 || !posts.isApproved){ 
+        if(!posts.isApproved){ 
             content = <Error status="404" document="Post" />
             document.title = "Afriscope Blog - Not Found"
         }else if (!posts._id){
@@ -155,8 +155,12 @@ function Post({ token }) {
         }
     }else if(error){
         document.title = `Afriscope Blog - ${error.message}`
-        content = <Error status={500} document="Post" />
-        related = "Something Terrible Happened. Please Try Again."
+        if(error.response.status === 404){
+            content = <Error status={404} document="Post" />
+        }else {
+            content = <Error status={500} document="Post" />
+        }
+        related = "There Seems To Be An Issue. Please Try Again"
     }
 
     return (
@@ -187,16 +191,6 @@ function Post({ token }) {
                 }
                 <div className="col-12 col-md-3 d-flex flex-column align-items-start" >
                     <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
-                    <div className="w-100 mb-5">
-                        <h5 className="fw-bolder text-uppercase mb-4">Trending</h5>
-                        {isLoading?
-                         <>
-                            <Skeleton height="150px" />
-                            <Skeleton count={3} />
-                          </>:
-                          <RecentPosts count={1} limit={1}/>
-                        }
-                    </div>
                     <div className="w-100 mb-5">
                         <h5 className="fw-bolder text-uppercase mb-4">Tags</h5>
                         {isLoading?

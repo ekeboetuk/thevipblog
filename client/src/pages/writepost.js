@@ -1,7 +1,7 @@
 import { PostsCarousel } from '../components/carousels';
 import { Postform } from '../components/forms';
 import { Error } from '../components/errors';
-import Sidebar from '../components/widgets'
+import { Subscribe} from '../components/widgets'
 
 function WritePost( {token} ) {
     return (
@@ -13,7 +13,7 @@ function WritePost( {token} ) {
                             <Postform token={token}/>
                         </div>
                         <div className="align-self-start ps-md-4 w-100 w-md-25">
-                            <Sidebar subscribe={true} />
+                            <Subscribe />
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
