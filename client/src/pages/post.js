@@ -1,26 +1,31 @@
-import { useState, memo, useEffect } from 'react';
-import { Link, useParams, useLocation, ScrollRestoration } from 'react-router-dom';
+import { useState, useEffect, useContext, memo } from 'react';
+import { createPortal } from 'react-dom'
+import { Link, useParams, useLocation } from 'react-router-dom';
 
 import axios from 'axios';
 import moment from 'moment';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import DOMPurify from 'isomorphic-dompurify';
 
+import { Login } from "../components/users";
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import Meta from '../components/meta';
-//import { Trending } from '../components/widgets';
 import { PostsCarousel } from '../components/carousels';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Postcard } from '../components/cards';
+
+import { userContext } from '../index';
 
 function Post({ token }) {
     const { state } = useLocation()
     const [comment, setComment] = useState();
     const [sending, setSending] = useState(false);
+    const [portal, setPortal] = useState(false)
     const [authorsPosts, setAuthorsPosts] = useState(null);
     const params = useParams();
     const {posts, error, isLoading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
+	const {setToken} = useContext(userContext)
 
     useEffect(()=>{
         (async function(){
@@ -68,20 +73,29 @@ function Post({ token }) {
 
     let content, tags, author, related
 
-    if(posts) {
-        if(!posts.isApproved){ 
-            content = <Error status="404" document="Post" />
-            document.title = "Afriscope Blog - Not Found"
-        }else if (!posts._id){
-            content = <Error status="500" />
-            document.title = "Afriscope Blog - Internal Server Error"
-        } else {
+    if(isLoading){
+        window.scrollTo({top: 0, left: 0, behaviour: 'smooth'})
+        content =
+        <div id="loading" className="d-flex flex-column flex-fill justify-content-start align-self-start pe-md-2 mb-5">
+            <SkeletonTheme>
+                <div className="d-inline-flex">
+                    <Skeleton width="80px" height="100px" containerClassName="pe-3" />
+                    <div className="flex-fill" >
+                        <Skeleton count={2.8} width="80%" height="25px" />
+                        <Skeleton count={0.8} width="80%" height="15px" />
+                    </div>
+                </div>
+                <Skeleton height="300px" />
+                <Skeleton count={10.2} />
+            </SkeletonTheme>
+        </div>
+    }else if(posts) {
             let title = posts.title.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
             document.title = `Afriscope Blog - ${title}`
             content=
                 <>
                     <div className="d-flex align-items-center pb-3">
-                        <img src={`${posts.meta.author.image||'/assets/icon.png'}`} width={90} alt="afriscope icon" className="square bg-tertiary me-3 rounded align-self-start" />
+                        <img src={`${posts.meta.author.avatar||'/assets/icon.png'}`} width={90} alt="afriscope icon" className="square bg-tertiary me-3 rounded align-self-start" />
                         <div className="align-items-center">
                             <h4 className="display-4 m-0 mb-2 lh-1 fw-bold">{posts.title.toUpperCase()}</h4>
                             <div className="d-flex flex-wrap justify-content-start me-4">
@@ -111,10 +125,10 @@ function Post({ token }) {
                             comment.approved &&
                             <tr key={index} id="comments" className="d-flex">
                                 <td className="avatar flex-shrink-0 p-2 border-0">
-                                    <img src={`${comment.user.image||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
+                                    <img src={`${(comment.user?.isActive && comment.user?.avatar)||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
                                 </td>
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
-                                    <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.name) || "Anonymous"}</div>
+                                    <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
                                     <div className="d-flex justify-content-between p-0" contentEditable={comment.user?.name === token?.name ?"true":"false"} suppressContentEditableWarning>
                                         {comment.content}
                                     </div>
@@ -133,18 +147,28 @@ function Post({ token }) {
                         </form>:
                         <div className="postcomment text-center mb-5 py-5 bg-light">
                             <p>Kindly login to contribute</p>
-                            <Link to="/login" className="btn btn-primary rounded-0 fw-bold" role="button"><i className="fas fa-right-to-bracket me-2"></i>Login</Link>
+                            <button onClick={()=>{setPortal(true); window.history.pushState(state, `Afriscope Blog - ${title}`)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
+                            {portal &&
+                                createPortal(
+                                    <div id="pagemodal">
+                                        <div className="position-absolute top-0 start-0 opacity-75 w-100 h-100 bg-dark" onClick={()=>setPortal(false)}>
+                                        </div>
+                                        <div style={{position: 'fixed', top: '50%', left: '50%', opacity: '1', transform: 'translate(-50%, -50%)'}}>
+                                            {<Login setToken = {setToken} setPortal={setPortal} />}
+                                        </div>
+                                        <i className="fa-solid fa-circle-xmark fa-lg text-white" role="button" style={{position: 'fixed', top: '100px', right: '50px'}} onClick={()=>setPortal(false)}></i>
+                                    </div>,
+                                    document.body
+                                )
+                            }
                         </div>
                     }
-                    <ScrollRestoration getKey={(location, matches) => {
-                        return location.pathname;
-                    }}/>
                 </>
             tags =
                     posts.meta.tags !== undefined ?
                         <>
                             <div className="d-flex flex-wrap mb-3">
-                                {posts.meta.tags.map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5">{tag}</Link>)}
+                                {posts.meta.tags.map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5 shadow-sm">{tag}</Link>)}
                             </div>
                         </>:"No Tags"
             author =
@@ -152,10 +176,9 @@ function Post({ token }) {
                     <h4 className="text-uppercase">About The Author</h4>
                     <p>{posts.meta.author?.about?posts.meta.author.about:posts.meta.author.name}</p>
                 </div>
-        }
     }else if(error){
         document.title = `Afriscope Blog - ${error.message}`
-        if(error.response.status === 404){
+        if(error.response?.status === 404){
             content = <Error status={404} document="Post" />
         }else {
             content = <Error status={500} document="Post" />
@@ -166,29 +189,14 @@ function Post({ token }) {
     return (
         <>
             <section className={`container-md d-flex flex-column flex-md-row`}>
-                {isLoading ?
-                    <div id="loading" className="col-12 col-md-9 d-flex flex-column flex-fill justify-content-start align-self-start pe-md-5 mb-5">
-                        <SkeletonTheme>
-                            <div className="d-inline-flex">
-                                <Skeleton width="80px" height="100px" containerClassName="pe-3" />
-                                <div className="flex-fill" >
-                                    <Skeleton count={2.8} width="80%" height="25px" />
-                                    <Skeleton count={0.8} width="80%" height="15px" />
-                                </div>
-                            </div>
-                            <Skeleton height="300px" />
-                            <Skeleton count={10.2} />
-                        </SkeletonTheme>
-                    </div>:
-                    <div id="post" className={`${isLoading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
-                        {content}
-                        <div className="d-flex flex-column align-items-center position-fixed top-50 start-0 fs-1 ms-2 rounded">
-                            <Link to="#" className="text-brand"><i className="fa-brands fa-facebook-f pt-3 pb-2"></i></Link>
-                            <Link to="#" className="text-brand"><i className="fa-brands fa-twitter py-2"></i></Link>
-                            <Link to="#" className="text-brand"><i className="fa-brands fa-instagram pt-2 pb-3"></i></Link>
-                        </div>
+                <div id="post" className={`${isLoading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
+                    {content}
+                    <div className="d-flex flex-column align-items-center position-fixed top-50 start-0 fs-1 ms-2 rounded">
+                        <Link to="#" className="text-brand"><i className="fa-brands fa-facebook-f pt-3 pb-2"></i></Link>
+                        <Link to="#" className="text-brand"><i className="fa-brands fa-twitter py-2"></i></Link>
+                        <Link to="#" className="text-brand"><i className="fa-brands fa-instagram pt-2 pb-3"></i></Link>
                     </div>
-                }
+                </div>
                 <div className="col-12 col-md-3 d-flex flex-column align-items-start" >
                     <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
                     <div className="w-100 mb-5">

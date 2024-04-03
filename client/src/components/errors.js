@@ -43,7 +43,7 @@ export const Error = ({ status, document, image, token }) => {
             {status !== "204" && <h6 className="fw-semibold">{error[status].description.toUpperCase()}</h6>}
             <p className="mb-0">{error[status].message}{status === "500" && <Link className="text-black fw-semibold" onClick={()=>window.location.reload()}> Please retry</Link>}</p>
             {status === "401"?
-              <Link className="text-white btn-primary px-3 py-2 fw-semibold" to={token?"/":"/signin"} type="button"><i className={`fas ${token?"fa-home":"fa-right-to-bracket"} pe-2`}></i>{token?"Back to home":"Sign In"}</Link>:
+              <Link className="text-white btn-primary px-3 py-2 mt-5 rounded fw-semibold" to={token?"/":"/login"} type="button"><i className={`fas ${token?"fa-home":"fa-unlock-keyhole me-2"} pe-2`}></i>{token?"Back to home":"Login"}</Link>:
               (status !== "204" && status !=="500") && <Link className="text-white btn-primary px-3 py-2 my-5 fw-semibold" to="/" type="button"><i className={`fas fa-home pe-2`}></i>Back to home</Link>
             }
         </section>

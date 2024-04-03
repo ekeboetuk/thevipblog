@@ -1,12 +1,19 @@
+import { useEffect } from 'react';
+
 import { PostsCarousel } from '../components/carousels';
 import { Postform } from '../components/forms';
 import { Error } from '../components/errors';
 import { Subscribe} from '../components/widgets'
 
 function WritePost( {token} ) {
+
+    useEffect(()=>{
+        document.title = `Afriscope Blog - New Post`
+    },[])
+
     return (
         <>
-            {token && token?.type!== "Subscriber" ?
+            {token && token?.role!== "Subscriber" ?
                 <>
                     <section className="container-md d-flex flex-column flex-md-row">
                         <div className="bg-tertiary px-3 px-md-5 py-2 rounded-5 align-self-start" style={{maxWidth: '768px'}}>

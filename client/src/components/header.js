@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { NavLink } from 'react-router-dom';
 
-import { UserMenu } from './users';
+import Main, { User } from './navigations';
 
 export default function Header({title, background} ) {
   return (
@@ -58,20 +58,14 @@ export function Navbar() {
               </div>
               <div className="navbar-collapse collapse" id="mainnavigation">
                   <div className="navbar-nav flex-grow-1 justify-content-center mb-4 mb-md-0">
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/"><i className="fa-solid fa-house pe-2"></i><span className="fs-6">Home</span></NavLink>
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/lifestyles"><i className="fa-solid fa-headset pe-2"></i><span className="fs-6">Lifestyles</span></NavLink>
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/sports"><i className="fa-solid fa-dumbbell pe-2"></i><span className="fs-6">Sports</span></NavLink>
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/fashion"><i className="fa-solid fa-hat-cowboy pe-2"></i><span className="fs-6">Fashion</span></NavLink>
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/technology"><i className="fa-solid fa-microchip pe-2"></i><span className="fs-6">Technology</span></NavLink>
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/about-us"><i className="fa-solid fa-address-card pe-2"></i><span className="fs-6">About</span></NavLink>
-                      <NavLink className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
+                      <Main />
                   </div>
                   <div className="d-flex flex-row">
                     <div id="search" className="d-flex flex-grow-1 col-8 align-self-bottom position-relative justify-content-end px-4 pe-md-0">
-                        <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 me-2 fs-7 text-black-50" value={searchterm} onChange={e=>setSearchterm(e.target.value)} placeholder='Search' />
+                        <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 me-2 fs-7 text-black-50" value={searchterm} onChange={e=>setSearchterm(e.target.value)} placeholder='Search' disabled/>
                         <button className="border-0 bg-transparent text-secondary position-absolute top-50 translate-middle ms-n4" onClick={handleSearch} ><i className="fas fa-search"></i></button>
                     </div>
-                    <UserMenu />
+                    <User />
                   </div>
               </div>
           </div>

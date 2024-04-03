@@ -4,18 +4,16 @@ import axios from 'axios';
 
 import { Error } from '../components/errors'
 import { useUsers } from '../hooks/fetchers'
-import { userContext } from '../index';
 import { Usercard } from '../components/cards';
 
 
-function Users() {
+function Users({token}) {
     useEffect(()=>{
         document.title = "Afriscope Administrator - Manage Users"
     })
 
     const {users, error, isLoading, mutate} = useUsers('s')
     const [view, setView] = useState('List');
-	const {token} = useContext(userContext)
 
     const spinnerbound = document.getElementById('alert')
 
@@ -77,11 +75,11 @@ function Users() {
                                     <tr key={index} id="userdetails" className={!user.isActive?"opacity-50":undefined}>
                                         <td className="border-0 p-3 bg-light">
                                             <div className="listing d-flex flex-fill justify-content-between">
-                                                <img src={`${user.image||"/assets/icon.png"}`} style={{height: "60px", width: "60px", objectFit: "cover"}} alt="Avatar" className="square bg-white rounded-circle p-2 me-2" />
+                                                <img src={`${user.avatar||"/assets/icon.png"}`} style={{height: "60px", width: "60px", objectFit: "cover"}} alt="Avatar" className="square bg-white rounded-circle p-2 me-2" />
                                                 <div className="d-flex flex-column me-auto">
                                                     <h6 className="fw-bold">{user.name}</h6>
                                                     <small className="">{user.email}</small>
-                                                    <small className="">{user.type}</small>
+                                                    <small className="">{user.role}</small>
                                                 </div>
                                                 {user.email!=="admin@afriscope.ng" && token?.name!==user.name &&
                                                     <small className="d-flex no-wrap align-self-center">

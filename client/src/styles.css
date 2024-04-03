@@ -23,6 +23,10 @@ code {
     monospace;
 }
 
+body {
+  position: relative;
+}
+
 
 /** Overwrites **/
 h1, h2, h3, h4, h5, h6 {
@@ -292,7 +296,6 @@ td, th {
 .overlay {
   width: 100%;
   height:100%;
-  opacity: 0.50;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -416,16 +419,18 @@ footer {
   animation: revealuptransparent 1s ease-in-out 0s alternate ;
 }
 
+.componentreveal {
+  animation: reveal 0.5s ease-in-out
+}
+
+@keyframes reveal {
+  0% {opacity: 0;}
+  100% {opacity: 1}
+}
+
 @keyframes revealuptransparent {
   from {transform: translate(0, 100%); opacity: 1;}
   to {transform: translate(0, 0); opacity: 0.75}
-}
-
-@keyframes revealtransparent {
-  0% {width: 0%; opacity: 0;}
-  50% {width: 70%; opacity: 0.5}
-  80% {width: 50%; opacity: 0.75}
-  100% {width: 100%; opacity: 1}
 }
 
 /**Admin Area Only**/

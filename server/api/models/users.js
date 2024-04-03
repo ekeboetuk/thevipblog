@@ -9,7 +9,7 @@ const options = {
         },
         isAdmin: {
             get() {
-                return this.type === "Administrator"
+                return this.role === "Administrator"
             }
         }
     },
@@ -26,7 +26,7 @@ const options = {
 }
 
 const userschema = Schema({
-    image: {
+    avatar: {
         type: String,
     },
     name: {
@@ -47,7 +47,7 @@ const userschema = Schema({
     about: {
         type: String
     },
-    type: {
+    role: {
         type: String,
         enum: ["Administrator", "Author", "Editor",  "Contributor","Subscriber"],
         default: "Subscriber",

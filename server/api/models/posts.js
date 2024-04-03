@@ -6,7 +6,7 @@ const options = {
     virtuals: {
         timestamp: {
             get() {
-                return this._id.getTimestamp()
+                return this._id?.getTimestamp()
             }
         },
         slug: {

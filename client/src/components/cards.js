@@ -63,6 +63,7 @@ export const Postcard = ({
                         to={`/${meta.category}/${slug}`}
                         className=""
                         onClick={handleClick} state={{id: id}}
+                        preventScrollReset={true}
                     >
                         <h2 className="lh-1 fw-bolder text-body" style={{fontSize: font||"2rem"}}>
                             {title.toUpperCase()}
@@ -108,6 +109,7 @@ export const Postcard = ({
                                 to={`/${meta.category}/${slug}`}
                                 className="text-brand fw-bold"
                                 onClick={handleClick} state={{id: id}}
+                                preventScrollReset={true}
                             >
                                 Readmore
                                 <i className="fas fa-arrow-circle-right ms-2"></i>
@@ -191,6 +193,7 @@ export const PostcardTransparent = ({
                           <Link
                               to={`/${meta.category}/${slug}`}
                               onClick={updateViews} state={{id: id}}
+                              preventScrollReset={true}
                           >
                               <h3 className="title fw-bolder text-white lh-sm">{title.toUpperCase()}</h3>
                               {showIntro && <p className="intro text-white fs-5 mb-0">{intro}</p>}
@@ -257,8 +260,8 @@ export const Usercard = ({ user, handleUserStatus }) => {
 export const Widgetcard = ({ title, children }) => {
     return (
         <div className="fw-normal rounded shadow-sm w-100 mb-5">
-            {title && <h4 className="bg-primary text-white p-3 rounded-top fw-bold mb-0" style={{zIndex: "1"}}>
-                {title} {title === "Look Here" && <i className="fa-solid fa-angles-down notch-downward"></i>}
+            {title && <h4 className="bg-primary text-white p-3 rounded-top fw-bold mb-0">
+                {title} {title === "Look Here" && <i className="fa-solid fa-angles-down fa-bounce" style={{"--fa-animation-delay": "10s"}}></i>}
             </h4>}
             {children}
         </div>

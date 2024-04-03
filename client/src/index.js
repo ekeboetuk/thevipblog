@@ -1,6 +1,6 @@
 import React, { StrictMode, createContext } from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate, ScrollRestoration } from "react-router-dom";
 
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -15,6 +15,8 @@ import Post from "./pages/post";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import WritePost from "./pages/writepost";
+import Community from "./pages/community";
+import Search from "./pages/search";
 import { Error } from "./components/errors";
 import Administrator from "./pages/administrator";
 import { Login, Register, Profile } from "./components/users";
@@ -29,38 +31,39 @@ import { Postform } from "./components/forms";
 export const userContext = createContext()
 
 function Afriscope() {
-  const {token, setToken, unsetToken} = useToken();
+  const {tokenRef, setToken, unsetToken} = useToken();
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
         <Route exact path="/" element={
-          <userContext.Provider value={{token: token, unsetToken: unsetToken }}>
+          <userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
             <Layout />
           </userContext.Provider>
-        }>
+          }>
           <Route index element={<Home />} />
-          <Route path=":category" element={<Posts />} />
-          <Route path=":category/:slug" element={<Post token={token} />} />
+          <Route path=":category" element={<Posts token={tokenRef.current}/>} />
+          <Route path=":category/:slug" element={<Post token={tokenRef.current} />} />
           <Route path="about-us" element={<About />} />
           <Route path="contact-us" element={<Contact />} />
-          <Route path="login" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Login setToken = {setToken} />} />
-          <Route path="register" element={token ? <Navigate to={`/profile?q=${token?.name.replace(" ",".")}`} /> : <Register />} />
-          <Route path="profile" element={!token ? <Navigate to="/login" /> : <Profile token={token} />} />
-          <Route path="write-post" element={<WritePost token={token}/>} />
+          <Route path="community" element={<Community />} />
+          <Route path="search" element={<Search />} />
+          <Route path="login" element={tokenRef.current ? <Navigate to={`/profile?q=${tokenRef.current?.name.replace(" ",".")}`} /> : <Login setToken={setToken}/>} />
+          <Route path="register" element={tokenRef.current ? <Navigate to={`/profile?q=${tokenRef.current?.name.replace(" ",".")}`} /> : <Register />} />
+          <Route path="profile" element={!tokenRef.current ? <Navigate to="/login" /> : <Profile token={tokenRef.current} setToken={setToken} />} />
+          <Route path="write-post" element={<WritePost token={tokenRef.current}/>} />
           <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
-
         <Route exact path="/administrator" element={
-          <userContext.Provider value={{token: token, unsetToken: unsetToken }}>
-          {token ? (!token?.isAdmin ? <Navigate to={`../profile?=${token?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../login" />}
-          </userContext.Provider>
-        }>
+          <userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
+            {tokenRef.current ? (!tokenRef.current?.isAdmin ? <Navigate to={`../profile?=${tokenRef.current?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../login" />}
+            </userContext.Provider>
+          }>
           <Route index element={<Dashboard />} />
-          <Route path="users" element={<Users />} />
+          <Route path="users" element={<Users token={tokenRef.current} />} />
           <Route path="posts" element={<PostsBackend />} />
           <Route path="comments" element={<Comments />} />
-          <Route path="newpost" element={<Postform token={token} bgclass = "bg-light"/>} />
+          <Route path="newpost" element={<Postform token={tokenRef.current} bgclass = "bg-light"/>} />
           <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
       </>
@@ -69,7 +72,11 @@ function Afriscope() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} >
+        <ScrollRestoration getKey={(location, matches) => {
+            return location.pathname;
+        }}/>
+      </RouterProvider>
     </>
   )
 };

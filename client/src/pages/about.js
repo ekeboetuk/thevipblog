@@ -29,8 +29,8 @@ function About() {
                                 <em className="fst-italic">QA Engineer</em>
                             </div>
                         </div>
-                        <div className="photo-card col p-2">
-                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Lead Developer'/>
+                        <div className="photo-card col p-2 bg-brand text-white rounded">
+                            <img src="media/team/ekebo-brown.jpeg" className="w-100" alt='Lead Developer'/>
                             <div className="caption d-flex flex-column align-items-center p-2">
                                 <h4 className="text-uppercase">Ekebo Brown</h4>
                                 <em className="fst-italic">Lead Developer</em>
@@ -57,7 +57,7 @@ function About() {
                 <h2 className="border-left">Editors</h2>
                     <div className="row row-cols-2 row-cols-md-6 gy-4">
                         <div className="col p-2">
-                            <img src="media/photo-placeholder-male.jpeg" className="w-100" alt='Developer'/>
+                            <img src="media/team/goodnews-etim.jpeg" className="w-100" alt='Developer'/>
                             <div className="caption d-flex flex-column align-items-center p-2">
                                 <h5 className="text-uppercase">Goodnews Etim</h5>
                                 <em className="fst-italic">Chief Editor</em>

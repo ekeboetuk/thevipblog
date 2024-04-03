@@ -2,17 +2,20 @@ import { useEffect, useRef, memo } from 'react'
 
 function Advert() {
     const timerRef = useRef()
+    const timer =  useRef(Math.round(Math.random().toFixed(1)*10000) + 10000)
 
     useEffect(()=>{
         const advert = document.getElementById('advert')
         timerRef.current = setInterval(()=>{
             if(advert.style.visibility === "hidden"){
+                advert.style.animation = 'reveal 4s ease-in-out'
                 advert.style.visibility = 'visible'
-                advert.style.animation = 'revealtransparent 4s ease-out 0s alternate'
+                timer.current = Math.round(Math.random().toFixed(1)*10000) + 10000
             }else{
+                advert.style.animation = 'reveal 4s ease-in-out'
                 advert.style.visibility = 'hidden'
             }
-        }, 20000)
+        }, timer.current )
     },[])
 
     return (

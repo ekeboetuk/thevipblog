@@ -25,7 +25,7 @@ export function useUsers(apiendpoint) {
 
     return {
         users: data,
-        error,
+        isError: error,
         isLoading,
         mutate
     }

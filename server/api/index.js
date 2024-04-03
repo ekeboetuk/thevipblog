@@ -25,6 +25,12 @@ app.use(cors({
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
 }));
 app.use(cookieparser());
+app.use((err, req, response, next)=>{
+  if(err){
+    console.log("Error Middleware Evoked")
+    res.status(500).send()
+  }
+})
 
 // Models
 import posts from './models/posts.js';
@@ -34,32 +40,36 @@ import users from './models/users.js';
 const JWT_SECRET = "Afriscope Dev Blog";
 
 // Define routes
-app.get('/posts', async (req, res) => {
+app.get('/posts', async (req, res, next) => {
   const {sort, limit} = req.query
   await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
-  .catch(() => {
-    res.send();
-  })
+  .catch(()=>next())
 })
 
-app.get('/posts/author', async (req, res) => {
+app.get('/posts/author', async (req, res, next) => {
   const {sort, limit, postId, authorId} = req.query
   authorId !== 'undefined' &&
-  await posts.find({$and: [{'meta.author':authorId},{'_id': {$ne: postId}}]}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
+  await posts.find({$and: [{'meta.author':authorId},{'_id': {$ne: postId}}]})
+  .select('-body').limit(limit?`${limit}`:0)
+  .sort(`${sort}`)
+  .populate('meta.author')
+  .populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
-  .catch(() => {
-    res.send();
-  })
+  .catch(()=>next())
 })
 
 app.get('/posts/:grouping', async (req, res) => {
   const {sort, limit, query, postId} = req.query
-  await posts.find(query !== 'undefined'?{$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}}]}:{}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
+  await posts.find(query !== 'undefined'?{$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}}]}:{})
+  .select('-__v -body').limit(limit?`${limit}`:0)
+  .sort(`${sort}`)
+  .populate('meta.author')
+  .populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
@@ -71,7 +81,7 @@ app.get('/posts/:grouping', async (req, res) => {
 
 app.get('posts/:category', async (req, res) => {
   await posts.find({'meta.category': req.params.category})
-  .select("-_id -__v -body")
+  .select("-__v -body")
   .populate('meta.author', 'name')
   .then(posts => {
     res.send(posts)
@@ -82,10 +92,10 @@ app.get('posts/:category', async (req, res) => {
 app.get('/posts/:category/:slug', async (req, res) => {
   await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
   .collation({locale: 'en_US', strength: 2})
-  .populate('meta.author', 'image name isActive')
-  .populate('comments.user', 'image name isActive')
+  .populate('meta.author', 'avatar name isActive')
+  .populate('comments.user', 'avatar name isActive')
   .then((post) => {
-    if(post === null) {
+    if(post === null||!post.isApproved) {
       throw ({code: 404, message: "Post Doesn't Exist"})
     }else{
       res.send(post)
@@ -151,7 +161,7 @@ app.patch('/post/comment', async (req, res) => {
     const token = req.headers.cookie.split('; ').find(row => row.startsWith('authorization_token='))?.split('=')[1]
     const verifyToken = jwt.verify(token, JWT_SECRET)
     const user = await users.findById(verifyToken.user.id)
-    if(user && (user.type === "Administrator"||user.type === "Editor"||user.type === "Author"||user.type === "Contributor")){
+    if(user){
       let comment = await posts.findByIdAndUpdate(req.body.id,
         {$push:
           {comments:
@@ -216,18 +226,17 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
 })
 
 //Users Routes
-app.get('/users/:id?', async(req, res) => {
-  await users.find({}).select(['-pswdhash', '-__v'])
-  .then((users)=>{
-    if(req.params.id){
-      let user = users.filter(user => user.id === req.params.id)
-      return res.send(user[0])
-    }
-    return res.send(users)
-  })
-  .catch(()=>{
-    res.status(400).send("There was an error processing your request")
-  })
+app.get('/users', async(req, res, next) => {
+  const allusers = await users.find({}).select(['-pswdhash', '-__v'])
+  res.send(allusers)
+  next()
+})
+
+app.get('/user/:id', async (req, res, next) => {
+  if(req.params.id){
+    const user = await users.findById(req.params.id);
+    res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+  }
 })
 
 app.post('/user/login', async (req, res) => {
@@ -245,7 +254,7 @@ app.post('/user/login', async (req, res) => {
   }
 
   const authtoken = jwt.sign(data, JWT_SECRET)
-  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.image, type: user.type, isAdmin: user.isAdmin});
+  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
 })
 
 app.post("/user/register", async (req, res) => {
@@ -255,7 +264,7 @@ app.post("/user/register", async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       pswdhash: securepass,
-      type: req.body.type,
+      role: req.body.role,
       isActive: req.body.isActive
   })
 
@@ -294,9 +303,9 @@ app.delete('/user/:userId', async(req, res) => {
 app.post('/user/profile', async (req, res) => {
   const user = await users.findById(req.query.id).select(["-pswdhash", "-__v"])
   if(user){
-    user.image = req.body.picture
+    user.avatar = req.body.avatar
     await user.save()
-    return res.send(user)
+    return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin})
   }
     console.log(error.json)
     res.status(400).send("There Was An Error")
@@ -316,9 +325,10 @@ connect(db)
 // Start the server
 const port = process.env.MONITOR_PORT;
 try{
-  app.listen(port, () => {
+  const listening = app.listen(port, () => {
     console.debug(`Server is running on port ${port}`);
   })
+  listening.keepAlive = true
 }catch (error) {
   console.log(error)
 }

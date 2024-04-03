@@ -141,9 +141,13 @@ function Posts() {
                         <p className='container-md'>You are all caught up here. Enjoy other selections.</p>
                     }
                 </section>
-                <section className="container-fluid mx-auto" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
-                    <h2 className="container-md border-left">{`Latest`}</h2>
-                    <div className="container-md d-flex flex-column flex-md-row">
+                <section className="container-fluid" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
+                    <div className="container-md mx-auto row">
+                        <div className="col-12 col-md-3 order-md-last">
+                            <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
+                            <Subscribe />
+                        </div>
+                        <h2 className="col-12 border-left">{`Latest`}</h2>
                         <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
                             {filtered.slice(0,6).map((post) => (
                                 <div key={post._id} className="col pe-md-3
@@ -162,10 +166,6 @@ function Posts() {
                                     />
                                 </div>
                             ))}
-                        </div>
-                        <div className="col-12 col-md-3">
-                            <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
-                            <Subscribe />
                         </div>
                     </div>
                 </section>

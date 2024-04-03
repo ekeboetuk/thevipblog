@@ -68,7 +68,7 @@ export const Advertise = ({title = "Advertise Here", content}) => {
 
 export const Subscribe = () => {
     return (
-        <Widgetcard title="Be The First To Know">
+        <Widgetcard title="Be The First To Read">
             <div className="p-4" style={{backgroundColor: 'rgba(116, 65, 93, 0.14)'}}>
                 <p className="fs-5">Kindly fill and submit the form below to subscirbe to our periodic newsletters. We promise not to be intrusive.</p>
                 <Subscription />
