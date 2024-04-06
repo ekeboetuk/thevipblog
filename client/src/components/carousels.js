@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { usePosts } from "../hooks/fetchers";
 import Skeleton from "react-loading-skeleton";
 
@@ -8,19 +8,21 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
     const {posts, isLoading, isError} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=${sort||'-_id'}&limit=${limit}&query=${query}&postId=${postId}`)
     const [scrollindex, setScrollindex] = useState(0)
     const [play, setPlay] = useState(autoplay)
+    const scrollRef = useRef()
     let postWidth, containerWidth, carousel, carouselWidth, overflowCount
 
-    if(posts?.length > 0 && document.getElementsByClassName("postcard")[0]){
-        postWidth = document.getElementsByClassName("postcard")[0].getBoundingClientRect().width
+    if(posts?.length > 0 && document.getElementsByClassName("notch-upward")[0]){
+        postWidth = document.getElementsByClassName("notch-upward")[0].getBoundingClientRect().width
         containerWidth = postWidth * posts?.length
         carousel = document.getElementById("carousel")
         carouselWidth = carousel.getBoundingClientRect().width
         overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
     }
 
-    if(play && overflowCount > 0){
+    useEffect(()=>{
+        if(play && overflowCount > 0){
         if(posts?.length > 0 && document.getElementById("carousel")){
-            var autoscroll = setTimeout(()=>{
+            scrollRef.current = setTimeout(()=>{
                 if(scrollindex === overflowCount){
                     carousel.style.transform = `translateX(-${0}px)`
                     setScrollindex(0)
@@ -32,9 +34,11 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
             }, delay*1000)
         }
       }
+    },[])
 
     const handleClick = (navigation) => {
-        clearTimeout(autoscroll)
+        clearTimeout(scrollRef.current)
+        setPlay(false)
         if(navigation === "left" ){
         	if(scrollindex <= 0){
 		        return
@@ -50,7 +54,13 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
 	          setScrollindex(scrollindex +(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
 	        }
         }
+
+        setTimeout(()=>{
+            setPlay(continous)
+        }, 10000)
     }
+
+
 
     return(
         <div className="container-md overflow-hidden">
@@ -90,7 +100,7 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
                             </div>
                         </>:
                         posts && posts.slice(0, limit).map((post) => (
-                            <div key={post._id} className={`postcard notch-upward col g-4 gx-md-${count||3} gy-md-0 d-flex flex-column`}>
+                            <div key={post._id} className={`notch-upward col g-4 gx-md-${count||3} gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}
                                     slug={post.slug}

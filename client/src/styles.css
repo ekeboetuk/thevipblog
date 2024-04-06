@@ -152,36 +152,6 @@ a {
   background-color: #74415D !important;
 }
 
-#carousel {
-  transition: transform 1s linear;
-}
-
-.carousel, .carousel-item, .carousel-inner {
-  max-height: 350px !important;
-}
-
-.carousel-caption {
-  position: absolute !important;
-  padding-top: 2rem !important;
-  padding-bottom: 2rem !important;
-  margin: auto;
-  width: 40vw !important;
-  top: 6rem !important;
-  bottom: 5rem !important;
-  background-color: rgba(0, 0, 0, 0.2);
-  border: 2px solid #FFFFFF;
-}
-
-.carousel-control-prev, .carousel-control-next {
-  width: 27% !important;
-}
-
-.carousel-indicators [data-bs-target] {
-  width: 15px !important;
-  height: 14px !important;
-  border-radius: 50%;
-}
-
 .flexible {
   transition: height 3s linear
 }
@@ -291,6 +261,10 @@ td, th {
 
 #contentarea, #utilbar {
   transition: width 0.2s linear !important;
+}
+
+#carousel {
+  transition: transform 1s linear
 }
 
 .overlay {
@@ -521,6 +495,10 @@ footer {
 @media only screen and (max-width: 576px) {
   #advert {
     height: 60px !important
+  }
+  
+  .postcard {
+    width: 100% !important;
   }
 
   table .post img {

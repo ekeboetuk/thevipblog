@@ -1,5 +1,7 @@
 import { useState, useContext } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
+
+import axios from "axios"
 
 import { userContext } from ".."
 
@@ -21,6 +23,7 @@ export default function Main(){
 export function User() {
 	const [usermenu, showUsermenu] = useState(false)
 	const {token, unsetToken} = useContext(userContext)
+	const navigate = useNavigate()
 
     function handleClick () {
         showUsermenu(!usermenu)
@@ -28,6 +31,23 @@ export function User() {
             if (e.target.nodeName !== 'BUTTON' && e.target.nodeName !== 'IMG' && e.target.nodeName !== 'I') showUsermenu(false);
           });
     }
+
+	async function administrator() {
+		await axios.get(process.env.REACT_APP_SERVER_URL + '/user/auth', {
+			headers: {
+				"Authorization":`Bearer ${document.cookie.split('; ').filter((cookie)=>cookie.startsWith('authorization_token='))[0].split('=')[1]}`,
+				"Content-Type": "application/json"
+			}
+		})
+		.then(()=>{
+			navigate('/administrator/posts')
+		})
+		.catch((err)=>{
+			unsetToken()
+			window.alert("Your session has been invalidated. Please re-login to continue")
+			navigate("/login");
+		})
+	}
 
 	return (
 		<>

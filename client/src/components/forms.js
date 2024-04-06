@@ -57,7 +57,8 @@ export const Postform = ( {token} ) => {
                 author: token?.id
             }, {
                 headers: {
-                "Content-Type": "application/json",
+                    "Authorization": `Bearer ${document.cookie.split('; ').filter((cookie)=>cookie.startsWith('authorization_token='))[0].split('=')[1]}`,
+                    "Content-Type": "application/json"
             }
         })
         .then(()=>{

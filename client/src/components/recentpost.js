@@ -1,4 +1,7 @@
 import { memo } from 'react';
+
+import Skeleton from 'react-loading-skeleton';
+
 import { usePosts } from '../hooks/fetchers';
 import { Postcard } from './cards';
 import { Error } from './errors'
@@ -19,7 +22,12 @@ function RecentPosts( {title, sort = '-_id', count, showMeta, showEngagement, qu
 
     if (isLoading) {
         return (
-            <p className="py-3 fs-italic fw-bold text-white text-center"><i className="fa-solid fa-circle-notch fa-spin me-2"></i>Loading Recent</p>
+            <div className="d-flex flex-column">
+                <Skeleton className="w-100" height="180px"/>
+                <div className="p-3" style={{backgroundColor: "#FBFBFB"}}>
+                    <Skeleton count={3} />
+                </div>
+            </div>
         )
     }else if(posts){
         let filter

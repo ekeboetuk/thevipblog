@@ -52,7 +52,7 @@ function Home() {
                     <Skeleton width="5px" height="30px" baseColor="#EBEBEB"/>
                     <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
                 </div>
-                <div className="col-12 col-md-9 pe-md-5 align-self-start">
+                <div className="col-12 col-md-8 pe-md-5 align-self-start">
                     <SkeletonTheme baseColor="#FAFAFA">
                         <Skeleton width="100%" height="400px"/>
                         <div className="p-3 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "2.5rem"}}>
@@ -61,7 +61,7 @@ function Home() {
                         </div>
                     </SkeletonTheme>
                 </div>
-                <div className="col-12 col-md-3">
+                <div className="col-12 col-md-4">
                     <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
                         <Skeleton width="100%" height="200px"/>
                         <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>

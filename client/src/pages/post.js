@@ -74,7 +74,6 @@ function Post({ token }) {
     let content, tags, author, related
 
     if(isLoading){
-        window.scrollTo({top: 0, left: 0, behaviour: 'smooth'})
         content =
         <div id="loading" className="d-flex flex-column flex-fill justify-content-start align-self-start pe-md-2 mb-5">
             <SkeletonTheme>
@@ -86,7 +85,7 @@ function Post({ token }) {
                     </div>
                 </div>
                 <Skeleton height="300px" />
-                <Skeleton count={10.2} />
+                <Skeleton count={17.2} />
             </SkeletonTheme>
         </div>
     }else if(posts) {
@@ -165,12 +164,12 @@ function Post({ token }) {
                     }
                 </>
             tags =
-                    posts.meta.tags !== undefined ?
-                        <>
-                            <div className="d-flex flex-wrap mb-3">
-                                {posts.meta.tags.map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5 shadow-sm">{tag}</Link>)}
-                            </div>
-                        </>:"No Tags"
+                posts.meta.tags !== undefined ?
+                    <>
+                        <div className="d-flex flex-wrap mb-3">
+                            {posts.meta.tags.map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5 shadow-sm">{tag}</Link>)}
+                        </div>
+                    </>:"No Tags"
             author =
                 <div className="mb-5">
                     <h4 className="text-uppercase">About The Author</h4>

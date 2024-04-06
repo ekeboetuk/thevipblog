@@ -196,7 +196,7 @@ export function Login( {setToken, setPortal} ) {
 
 export function Profile({ token, setToken }) {
     let username = token.name.toLowerCase().replace(" ",".")
-    const {users, isLoading, isError} = useUsers(`/${token.id}`)
+    const {users, isLoading} = useUsers(`/${token.id}`)
     const [state, setState] = useState({avatar: users?.avatar||token.avatar||'/media/photo-placeholder-male.jpeg'})
     const [action, setAction] = useState("")
     const ref = useRef()

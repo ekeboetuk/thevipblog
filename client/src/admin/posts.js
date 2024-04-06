@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton';
 
 import { usePosts } from '../hooks/fetchers';
 import { Error } from '../components/errors'
@@ -174,7 +175,7 @@ function Posts() {
             )
         }else{
             return (
-                <div>{isLoading && <div className="position-fixed translate-middle-x" style={{top: `50vh`, left: `calc(${navwidth?.clientWidth + spinnerbound?.clientWidth/2}px)`}}><i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait...</i></div>}
+                <div>{isLoading && <div className="position-fixed translate-middle-x" style={{top: `calc(${window.innerHeight/2}px)`, left: `calc(${navwidth?.clientWidth + spinnerbound?.clientWidth/2}px)`}}><i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait...</i></div>}
                     <div className={`${isLoading && "opacity-25"} mb-0 mb-md-5 pe-md-0`} onClick={()=>setActionmenu({})}>
                     <input type="text" id="search" className="w-100 bg-light mb-3 px-3 py-1" value={search} onChange={(e)=>handleSearch(e)} placeholder="Ajax Search" />
                     <div className="d-flex flex-column flex-sm-row justify-content-between mb-2">
@@ -274,8 +275,47 @@ function Posts() {
             )}
     } else if(isLoading) {
         return (
-            <div className="position-absolute align-self-center fw-semibold" style={{top: `calc(${spinnerbound?.offsetHeight/2}px)`, right: `calc(${spinnerbound?.offsetWidth/2}px)`}}>
-                <i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait! Loading...</i>
+            <div className="d-flex flex-column flex-fill">
+                <div className="d-flex flex-row mb-4">
+                    <Skeleton width="100px" height="120px"/>
+                    <div className="align-self-start ms-2 p-2" style={{backgroundColor: "#FBFBFB", width: "100%", lineHeight: "1"}}>
+                        <Skeleton height="25px" />
+                        <Skeleton count={6.3} height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                        <Skeleton width="50%" height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                    </div>
+                </div>
+                <div className="d-flex flex-row mb-4">
+                    <Skeleton width="100px" height="120px"/>
+                    <div className="align-self-start ms-2 p-2" style={{backgroundColor: "#FBFBFB", width: "100%", lineHeight: "1"}}>
+                        <Skeleton height="25px" />
+                        <Skeleton count={6.3} height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                        <Skeleton width="50%" height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                    </div>
+                </div>
+                <div className="d-flex flex-row mb-4">
+                    <Skeleton width="100px" height="120px"/>
+                    <div className="align-self-start ms-2 p-2" style={{backgroundColor: "#FBFBFB", width: "100%", lineHeight: "1"}}>
+                        <Skeleton height="25px" />
+                        <Skeleton count={6.3} height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                        <Skeleton width="50%" height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                    </div>
+                </div>
+                <div className="d-flex flex-row">
+                    <Skeleton width="100px" height="120px"/>
+                    <div className="align-self-start ms-2 p-2" style={{backgroundColor: "#FBFBFB", width: "100%", lineHeight: "1"}}>
+                        <Skeleton height="25px" />
+                        <Skeleton count={6.3} height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                        <Skeleton width="50%" height="10px" />
+                        <Skeleton width="15%" height="10px" />
+                    </div>
+                </div>
             </div>
         )
     }else if(error || error === undefined) {

@@ -19,6 +19,14 @@ export const Error = ({ status, document, image, token }) => {
           width: "50px"
         }
       },
+      '403': {
+        description:'Forbidden',
+        message: 'You have supplied a non-administrator credentials\nPlease sign out and sign back in',
+        image: {
+          source: image || '/media/error_no_access.png',
+          width: "50px"
+        }
+      },
       '404': {
         description:`${document} Not Found`,
         message: `The ${document?.toLowerCase()} you are looking for cannot be found. Either it doesn't exist or it has been moved`,

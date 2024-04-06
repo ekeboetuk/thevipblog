@@ -16,6 +16,7 @@ function Administrator() {
         document.getElementById("toggler").classList.toggle("bxs-right-arrow")
         document.getElementById("toggler").classList.toggle("bxs-left-arrow")
     }
+
     return (
         <>
             <header id="toolbar" className="navbar navbar-expand-md container-fluid sticky-top d-flex flex-row align-items-center bg-primary border-bottom border-primary border-3 mx-auto px-md-4 pb-0">

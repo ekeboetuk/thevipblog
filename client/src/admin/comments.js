@@ -11,7 +11,7 @@ function Comments() {
     })
 
     const [sortby, setSortby] = useState("_id");
-    const {posts, error, isLoading, mutate} = usePosts(`s?sortby=${sortby}`)
+    const {posts, error, isLoading, mutate} = usePosts(`?sort=${sortby}`)
     const [search, setSearch] = useState("");
     const [actionmenu, setActionmenu] = useState({})
     const [operation, setOperation] = useState();
@@ -106,7 +106,7 @@ function Comments() {
             )}
     } else if(isLoading) {
         return (
-            <div className="position-absolute align-self-center fw-semibold" style={{top: `calc(${spinnerbound?.offsetHeight/2}px)`, right: `calc(${spinnerbound?.offsetWidth/2}px)`}}>
+            <div className="position-absolute align-self-center fw-semibold" style={{top: `calc(${window.innerHeight/3}px)`}}>
                 <i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait! Loading...</i>
             </div>
         )

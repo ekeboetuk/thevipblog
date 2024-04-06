@@ -7,6 +7,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "react-loading-skeleton/dist/skeleton.css"
 import "./styles.css";
 
+import axios from 'axios'
+
 
 import Layout from "./pages/layout";
 import Home from "./pages/home";
@@ -54,11 +56,12 @@ function Afriscope() {
           <Route path="write-post" element={<WritePost token={tokenRef.current}/>} />
           <Route path="*" element={<Error status="404" document="Page"/>} />
         </Route>
-        <Route exact path="/administrator" element={
-          <userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
+        <Route exact path="/administrator"
+          element={<userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
             {tokenRef.current ? (!tokenRef.current?.isAdmin ? <Navigate to={`../profile?=${tokenRef.current?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../login" />}
             </userContext.Provider>
-          }>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users token={tokenRef.current} />} />
           <Route path="posts" element={<PostsBackend />} />

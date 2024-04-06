@@ -16,15 +16,15 @@ function WritePost( {token} ) {
             {token && token?.role!== "Subscriber" ?
                 <>
                     <section className="container-md d-flex flex-column flex-md-row">
-                        <div className="bg-tertiary px-3 px-md-5 py-2 rounded-5 align-self-start" style={{maxWidth: '768px'}}>
+                        <div className="col-12 col-md-9 bg-tertiary p-2 px-md-4 mb-4 me-md-4 rounded-5 align-self-start" style={{maxWidth: '768px'}}>
                             <Postform token={token}/>
                         </div>
-                        <div className="align-self-start ps-md-4 w-100 w-md-25">
+                        <div className="col-12 col-md-3 align-self-start">
                             <Subscribe />
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                        <PostsCarousel count={3} limit={4} autoplay={true} continous={false} />
+                        <PostsCarousel count={4} limit={4} autoplay={true} continous={true} />
                     </section>
                 </>:
                 <Error status="401" token={token} />

@@ -23,30 +23,45 @@ app.use(cors({
   origin: true,
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  headers: ['Authorization', 'Content-Type']
 }));
 app.use(cookieparser());
-app.use((err, req, response, next)=>{
-  if(err){
-    console.log("Error Middleware Evoked")
-    res.status(500).send()
-  }
-})
 
 // Models
 import posts from './models/posts.js';
 import users from './models/users.js';
 
 //Constants
-const JWT_SECRET = "Afriscope Dev Blog";
+ /*const JWT_SECRET = (function RandomSecret() {
+  var alphabet = [
+    'abcdefghijklmnoqrstuvwxyz',
+    'ABCDEFGHIJKLMNOQRSTUVWXYZ',
+    '0123456789',
+    '?<>!"£$%^&*()-+./'
+  ];
+  var secret = '';
+
+  for (var i = 0; i < 14; i++) {
+     var subset = alphabet[i%4];
+     secret += subset[Math.floor(Math.random() * subset.length)]
+  }
+  return secret
+})()
+*/
+app.locals.secret = 'yM3^iJ7?hR2&oA'
 
 // Define routes
 app.get('/posts', async (req, res, next) => {
   const {sort, limit} = req.query
-  await posts.find({}).select('-body').limit(limit?`${limit}`:0).sort(`${sort}`).populate('meta.author').populate('comments.user')
+  await posts.find({}).select('-body')
+  .limit(limit?`${limit}`:0)
+  .sort(`${sort}`)
+  .populate('meta.author')
+  .populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
-  .catch(()=>next())
+  .catch(next)
 })
 
 app.get('/posts/author', async (req, res, next) => {
@@ -60,50 +75,62 @@ app.get('/posts/author', async (req, res, next) => {
   .then((posts) => {
     res.send(posts);
   })
-  .catch(()=>next())
+  .catch(next)
 })
 
-app.get('/posts/:grouping', async (req, res) => {
+app.get('/posts/search', async (req, res, next) => {
+  await posts.find({ $text : { $search : `${req.query.q}` }})
+  .select("-__v -body")
+  .populate('meta.author', 'name')
+  .then(posts => {
+    return res.send(posts)
+  })
+  .catch(next)
+})
+
+app.get('/posts/:grouping', async (req, res, next) => {
   const {sort, limit, query, postId} = req.query
-  await posts.find(query !== 'undefined'?{$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}}]}:{})
-  .select('-__v -body').limit(limit?`${limit}`:0)
+  if(query === 'undefined'||query === undefined) {
+    return next('route')
+  }
+  await posts.find({$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}}]})
+  .select('-__v -body')
+  .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
   .populate('meta.author')
   .populate('comments.user')
   .then((posts) => {
-    res.send(posts);
+    return res.send(posts);
   })
-  .catch((error) => {
-    console.log(error)
-    res.send();
-  })
+  .catch(next)
 })
 
-app.get('posts/:category', async (req, res) => {
-  await posts.find({'meta.category': req.params.category})
+app.get('/posts/:category', async (req, res, next) => {
+  const {sort, limit} = req.query
+  await posts.find(['sports', 'fashion', 'technology', 'lifestyles'].includes(req.params.category)?{'meta.category': req.params.category}:{})
   .select("-__v -body")
+  .limit(limit?limit:0)
+  .sort(sort)
   .populate('meta.author', 'name')
   .then(posts => {
-    res.send(posts)
+    return res.send(posts)
   })
-  .catch(() => res.send())
+  .catch(next)
 })
 
-app.get('/posts/:category/:slug', async (req, res) => {
+app.get('/posts/:category/:slug', async (req, res, next) => {
   await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
   .collation({locale: 'en_US', strength: 2})
   .populate('meta.author', 'avatar name isActive')
   .populate('comments.user', 'avatar name isActive')
   .then((post) => {
     if(post === null||!post.isApproved) {
-      throw ({code: 404, message: "Post Doesn't Exist"})
+      throw {status: 404, message: 'Not Found'}
     }else{
-      res.send(post)
+      return res.send(post)
     }
   })
-  .catch((error) => {
-    res.status(error.code).send()
-  })
+  .catch(next)
 })
 
 //Create new post
@@ -177,7 +204,7 @@ app.patch('/post/comment', async (req, res) => {
 })
 
 
-app.patch('/post/comment/togglestatus', async (req, res) => {
+app.patch('/post/comment/togglestatus', async (req, res, next) => {
   const {postId, commentId, status} = req.body
   await posts.findOneAndUpdate({
     _id:postId, 'comments._id':commentId
@@ -189,25 +216,20 @@ app.patch('/post/comment/togglestatus', async (req, res) => {
   .then((data) => {
     res.send(data)
   })
-  .catch((error) => {
-    console.log(error.message)
-  })
+  .catch(next)
 })
 
-app.delete('/post/:postId', async(req, res) => {
+app.delete('/post/:postId', async(req, res, next) => {
   const postId = req.params.postId
   await posts.findByIdAndDelete(postId)
   .then(() => {
     res.send()
   })
-  .catch((error)=>{
-    console.log(error)
-    res.send()
-  })
+  .catch(next)
 })
 
 
-app.delete('/post/:postId/:commentId', async(req, res) => {
+app.delete('/post/:postId/:commentId', async(req, res, next) => {
   const {postId, commentId} = req.params
   await posts.findByIdAndUpdate(postId, {
     $pull: {
@@ -219,44 +241,10 @@ app.delete('/post/:postId/:commentId', async(req, res) => {
   .then(() => {
     res.send()
   })
-  .catch((error)=>{
-    console.log(error)
-    res.send()
-  })
+  .catch(next)
 })
 
 //Users Routes
-app.get('/users', async(req, res, next) => {
-  const allusers = await users.find({}).select(['-pswdhash', '-__v'])
-  res.send(allusers)
-  next()
-})
-
-app.get('/user/:id', async (req, res, next) => {
-  if(req.params.id){
-    const user = await users.findById(req.params.id);
-    res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
-  }
-})
-
-app.post('/user/login', async (req, res) => {
-  let user = await users.findOne({email: req.body.email});
-  if (!user) return res.status(404).send(`Email address doesn't exist! Sign up <i class="fas fa-circle-arrow-right fa-beat"></i>`)
-  if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator.')
-
-  const validPassword = await bcrypt.compare(req.body.password, user.pswdhash);
-  if (!validPassword) return res.status(403).send('Invalid Password! Please Try Again.')
-
-  const data = {
-    user: {
-      id: user._id
-    }
-  }
-
-  const authtoken = jwt.sign(data, JWT_SECRET)
-  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
-})
-
 app.post("/user/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const securepass = await bcrypt.hash(req.body.password, salt);
@@ -281,34 +269,89 @@ app.post("/user/register", async (req, res) => {
   })
 })
 
-app.patch('/user', async (req, res) => {
+app.post('/user/login', async (req, res) => {
+  let user = await users.findOne({email: req.body.email});
+  if (!user) return res.status(404).send(`Email address doesn't exist! Sign up <i class="fas fa-circle-arrow-right fa-beat"></i>`)
+  if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator.')
+
+  const validPassword = await bcrypt.compare(req.body.password, user.pswdhash);
+  if (!validPassword) return res.status(403).send('Invalid Password! Please Try Again.')
+
+  const payload = {
+    user: {
+      id: user._id
+    }
+  }
+
+  const authtoken = jwt.sign(payload, app.locals.secret)
+  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+})
+
+app.get('/users', async(req, res, next) => {
+  const allusers = await users.find({}).select(['-pswdhash', '-__v'])
+  res.send(allusers)
+  next()
+})
+
+app.get('/user/auth', (req, res, next) => {
+      const token = req.headers.authorization.split(" ")[1]
+      const verifyToken = jwt.verify(token, app.locals.secret)
+      res.token = verifyToken
+      next()
+    },
+    async(req, res, next)=>{
+      const user = await users.findById(req.res.token.user.id)
+      if(user.isAdmin){
+        return res.status(200).send(user)
+      }
+      throw {status: 403, message: 'Not Authorized'}
+    }
+  )
+
+app.get('/user/:userId', async (req, res, next) => {
+  if(req.params.userId){
+    const user = await users.findById(req.params.userId);
+    res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+  }
+})
+
+
+app.patch('/user', async (req, res, next) => {
   await users.findByIdAndUpdate(req.body.id, {'isActive': req.body.status})
   .then(()=>{
     res.send()
-  });
+  })
+  .catch(next)
 })
 
-app.delete('/user/:userId', async(req, res) => {
+app.delete('/user/:userId', async(req, res, next) => {
   const userId = req.params.userId
   await users.findByIdAndDelete(userId)
   .then(() => {
     res.send()
   })
-  .catch((error)=>{
-    console.log(error)
-    res.send()
-  })
+  .catch(next)
 })
 
-app.post('/user/profile', async (req, res) => {
+app.post('/user/profile', async (req, res, next) => {
   const user = await users.findById(req.query.id).select(["-pswdhash", "-__v"])
   if(user){
     user.avatar = req.body.avatar
     await user.save()
     return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin})
   }
-    console.log(error.json)
     res.status(400).send("There Was An Error")
+})
+
+
+app.use((err, req, res, next)=>{
+  if(err && err.status){
+    res.status(err.status).send(err.message)
+  }else if(err instanceof jwt.JsonWebTokenError) {
+    return res.status(401).send('Invalid Signature')
+  }
+  console.log(err)
+  return res.status(500).send()
 })
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import axios from 'axios';
 
@@ -13,9 +13,8 @@ function Users({token}) {
     })
 
     const {users, error, isLoading, mutate} = useUsers('s')
-    const [view, setView] = useState('List');
-
-    const spinnerbound = document.getElementById('alert')
+    const user_view = useRef(`${localStorage.getItem('users_view')}`)
+    const [view, setView] = useState(user_view.current === 'null'?'List':user_view.current);
 
     const toggleUserActivation = async(id, status)=>{
         mutate(users.map((user) => {
@@ -42,7 +41,12 @@ function Users({token}) {
 
     if(isLoading){
         return (
-            <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{top: `calc(${spinnerbound?.offsetHeight/2}px)`, right: `calc(${spinnerbound?.offsetWidth/2}px)`}}></i>
+            <div className="d-inline-flex position-absolute" style={{top: `calc(${window.innerHeight/3}px)`}}>
+                <div>
+                    <i className="fa-solid fa-circle-notch fa-spin me-2"></i>
+                    Loading
+                </div>
+            </div>
           )
     }else if(users) {
         if(users.length === 0) {
@@ -54,8 +58,8 @@ function Users({token}) {
                         <div className="d-flex justify-content-left align-items-center mb-2">
                             <h6 className="mb-0 pe-2">View As:</h6>
                             <div className="bg-light p-2 rounded-5 px-4">
-                                <label className="pe-3"><input type="radio" name="view" value="List" defaultChecked={true} onChange={()=>setView('List')}/> List</label>
-                                <label><input type="radio" name="view" value="Grid"  onChange={()=>setView('Grid')}/> Grid</label>
+                                <label className="pe-3"><input type="radio" name="view" value="List" checked={view==='List'} onChange={()=>{setView('List');localStorage.setItem("users_view", 'List')}}/> List</label>
+                                <label><input type="radio" name="view" value="Grid" checked={view==='Grid'} onChange={()=>{setView('Grid');localStorage.setItem("users_view", 'Grid')}}/> Grid</label>
                             </div>
                         </div>
                         {view === 'Grid' ?

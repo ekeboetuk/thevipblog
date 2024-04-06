@@ -9,6 +9,7 @@ export const Postcard = ({
     id,
     slug,
     image,
+    imgWidth = '100%',
     height,
     title,
     intro,
@@ -39,12 +40,13 @@ export const Postcard = ({
         <>
             {image && (
                 <div
-                    className="w-100 w-md-50 position-relative"
+                    className="postcard position-relative"
                     style={{
                         backgroundImage: `url(${image})`,
                         backgroundSize: "cover",
                         backgroundPosition: "top center",
-                        height: `${height}`
+                        height: `${height}`,
+                        width: `${imgWidth}`
                     }}
                 >
                     {meta.featured && showFeatured && (
@@ -100,7 +102,7 @@ export const Postcard = ({
                     </div>
                         {intro && (
                         <div className="mb-0">
-                            <p className="intro text-justify lh-sm mt-3 mb-1">{intro}</p>
+                            <p className="intro text-justify lh-sm mt-3 mb-1">{intro}...</p>
                         </div>
                         )}
                         {showReadmore && (
@@ -217,7 +219,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
     return (
         <div className="bg-light rounded-5 shadow-sm">
             <img
-                src={`${user.image||"/media/picture-placeholder.jpeg"}`}
+                src={`${user.avatar||"/media/picture-placeholder.jpeg"}`}
                 style={{ height: "150px", width: "100%", objectFit: "cover", objectPosition: "top center"}}
                 alt="Avatar"
                 className="square bg-white"
@@ -234,7 +236,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
                 </div>
                 <div className="d-flex flex-column overflow-hidden align-items-start">
                     <small className="">{user.email}</small>
-                    <small className="">{user.type}</small>
+                    <small className="">{user.role}</small>
                     <small className="">
                         {moment(user.created).format("YYYY-MM-DD h:mm")}
                     </small>
