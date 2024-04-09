@@ -167,7 +167,7 @@ function Post({ token }) {
                 posts.meta.tags !== undefined ?
                     <>
                         <div className="d-flex flex-wrap mb-3">
-                            {posts.meta.tags.map((tag, index) => <Link to="#" key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5 shadow-sm">{tag}</Link>)}
+                            {posts.meta.tags.map((tag, index) => <Link to={`/search?${new URLSearchParams(`q=${encodeURIComponent(`"${tag}"`)}`)}`} key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5 shadow-sm">{tag}</Link>)}
                         </div>
                     </>:"No Tags"
             author =
