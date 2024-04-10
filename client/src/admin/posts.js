@@ -274,6 +274,7 @@ function Posts() {
                 </div>
             )}
     } else if(isLoading) {
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
         return (
             <div className="d-flex flex-column flex-fill">
                 <div className="d-flex flex-row mb-4">

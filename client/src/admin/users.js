@@ -40,6 +40,7 @@ function Users({token}) {
     }
 
     if(isLoading){
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
         return (
             <div className="d-inline-flex position-absolute" style={{top: `calc(${window.innerHeight/3}px)`}}>
                 <div>

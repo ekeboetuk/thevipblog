@@ -25,6 +25,7 @@ function Posts() {
     }
 
     if(isLoading) {
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
         content =
             <div className="container-md row mx-auto p-4 my-5">
                 <div className="d-flex gap-2">

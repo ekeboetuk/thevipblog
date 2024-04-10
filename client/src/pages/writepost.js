@@ -9,6 +9,7 @@ function WritePost( {token} ) {
 
     useEffect(()=>{
         document.title = `Afriscope Blog - New Post`
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
     },[])
 
     return (

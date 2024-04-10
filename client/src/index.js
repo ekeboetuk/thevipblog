@@ -7,8 +7,6 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "react-loading-skeleton/dist/skeleton.css"
 import "./styles.css";
 
-import axios from 'axios'
-
 
 import Layout from "./pages/layout";
 import Home from "./pages/home";
@@ -74,13 +72,11 @@ function Afriscope() {
   )
 
   return (
-    <>
       <RouterProvider router={router} >
         <ScrollRestoration getKey={(location, matches) => {
             return location.pathname;
         }}/>
       </RouterProvider>
-    </>
   )
 };
 

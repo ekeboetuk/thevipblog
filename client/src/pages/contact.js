@@ -6,7 +6,8 @@ import { GoogleMap } from '../components/maps';
 function ContactUs() {
     useEffect(()=>{
         document.title = "Afriscope Blog - Contact Us"
-    })
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
+    },[])
 
     return (
         <>

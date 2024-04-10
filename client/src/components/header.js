@@ -63,8 +63,8 @@ export function Navbar() {
                   </div>
                   <div className="d-flex flex-row">
                     <div id="search" className="d-flex flex-grow-1 col-8 align-self-bottom position-relative justify-content-end px-4 pe-md-0">
-                        <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 me-2 fs-7 text-black-50" value={searchterm} onChange={(e)=>handleChange(e)} onKeyDown={(e) => {e.key === 'Enter' && navigate(`search?q=${searchterm}`)}} placeholder='Instant search' />
-                        <div className="border-0 bg-transparent text-secondary position-absolute top-50 translate-middle ms-n4" role="button" onClick={() => navigate(`search?q=${searchterm}`)}>{searchterm !== "" && <i className="fas fa-search pe-2"></i>}</div>
+                        <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 me-2 fs-7 text-black-50" value={searchterm} onChange={(e)=>handleChange(e)} onKeyDown={(e) => {e.key === 'Enter' && navigate(`search?${new URLSearchParams(`q="${searchterm}"`)}`)}} placeholder='Instant search' />
+                        <div className="border-0 bg-transparent text-secondary position-absolute top-50 translate-middle ms-n4" role="button" onClick={() => navigate(`search?${new URLSearchParams(`q="${searchterm}"`)}`)}>{searchterm !== "" && <i className="fas fa-search pe-2"></i>}</div>
                     </div>
                     <User />
                   </div>

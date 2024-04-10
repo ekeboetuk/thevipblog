@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import Skeleton from 'react-loading-skeleton'
@@ -11,6 +11,11 @@ export default function Search({count}) {
     const [search] = useSearchParams()
     const {isLoading, error, posts} = usePosts(`/search?q=${search.get("q")}`)
     let content
+
+    useEffect(()=>{
+        document.title = `Afriscope Blog Search - ${search.get('q')}`
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
+    },[search])
 
    if(error) {
        content =

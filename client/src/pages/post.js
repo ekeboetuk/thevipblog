@@ -74,6 +74,7 @@ function Post({ token }) {
     let content, tags, author, related
 
     if(isLoading){
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
         content =
         <div id="loading" className="d-flex flex-column flex-fill justify-content-start align-self-start pe-md-2 mb-5">
             <SkeletonTheme>

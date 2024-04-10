@@ -6,7 +6,6 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 
 function Layout() {
-    window.scrollTo({top:0,left:0,behavior:'smooth'})
     const slug = useParams().slug
     const path = useParams().category
     let title
