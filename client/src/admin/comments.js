@@ -73,7 +73,7 @@ function Comments() {
 
     if(posts){
         if(posts.length === 0) {
-            return <Error status="204" document="comment" />
+            return <Error status="204" element="comment" />
         }else{
             return (
                 <div className={`position-relative flex-fill`}>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}

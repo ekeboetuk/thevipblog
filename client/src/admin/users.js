@@ -51,7 +51,7 @@ function Users({token}) {
           )
     }else if(users) {
         if(users.length === 0) {
-            return <Error status="204" document="posts" />
+            return <Error status="204" element="posts" />
         }else {
             return (
                 <div className={`position-relative flex-fill`}>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}

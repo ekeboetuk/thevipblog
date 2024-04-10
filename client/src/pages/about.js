@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 function About() {
     useEffect(()=>{
         document.title = "Afriscope Blog - About Us"
-    })
+        window.scrollTo({top:0,left:0,behavior:'smooth'})
+    },[])
 
     return (
         <>

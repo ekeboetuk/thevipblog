@@ -51,7 +51,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#2F2B2B",
   "background_color": "#2F2B2B",
-  "description": "Afriscope Blog - A Progressive Web Application Blog"
+  "description": "Articles On All Aspects Of Life Ranging From Sport to Technology."
 }

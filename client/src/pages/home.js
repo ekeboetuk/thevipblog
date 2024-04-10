@@ -83,7 +83,7 @@ function Home() {
         editorsPick = approved.filter(post => post.meta.editorsPick)
         //featured = approved.filter(post => post.meta.featured)
         approved.length === 0?
-        content = <Error status="204" document="Post" />:
+        content = <Error status="204" element="Post" />:
         content =
             <>
                 <section>

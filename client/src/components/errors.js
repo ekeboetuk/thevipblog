@@ -1,11 +1,21 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
+import { createPortal } from 'react-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 
-export const Error = ({ status, document, image, token }) => {
+import Modal from './modal'
+import { Login } from './users'
+import { userContext } from '..'
+
+export const Error = ({ status, element, image, token }) => {
+    const [portal, setPortal] = useState(false)
+    const {setToken} = useContext(userContext)
+    const navigate = useNavigate()
+    const location = useLocation()
+
     const error = {
       '204': {
         description:'No Content',
-        message: `No ${document}`,
+        message: `No ${element}`,
         image: {
           source: image || '/media/error_no_document_(1).webp',
           width: "200px"
@@ -28,8 +38,8 @@ export const Error = ({ status, document, image, token }) => {
         }
       },
       '404': {
-        description:`${document} Not Found`,
-        message: `The ${document?.toLowerCase()} you are looking for cannot be found. Either it doesn't exist or it has been moved`,
+        description:`${element} Not Found`,
+        message: `The ${element?.toLowerCase()} you are looking for cannot be found. Either it doesn't exist or it has been moved`,
         image: {
           source: image || '/media/error_404.png',
           width: "150px"
@@ -46,13 +56,23 @@ export const Error = ({ status, document, image, token }) => {
     }
 
     return (
-        <section className="container-md mx-auto mb-auto text-center align-items-center" style={{textTransform:"capitalize"}}>
+        <section id="portal" className="container-md mx-auto mb-auto text-center align-items-center" style={{textTransform:"capitalize"}}>
             <img src={error[status].image.source} width={error[status].image.width} className="pb-3" alt="error" />
             {status !== "204" && <h6 className="fw-semibold">{error[status].description.toUpperCase()}</h6>}
             <p className="mb-0">{error[status].message}{status === "500" && <Link className="text-black fw-semibold" onClick={()=>window.location.reload()}> Please retry</Link>}</p>
             {status === "401"?
-              <Link className="text-white btn-primary px-3 py-2 mt-5 rounded fw-semibold" to={token?"/":"/login"} type="button"><i className={`fas ${token?"fa-home":"fa-unlock-keyhole me-2"} pe-2`}></i>{token?"Back to home":"Login"}</Link>:
+              <button className="text-white btn-primary px-3 py-2 mt-5 rounded fw-semibold"
+              onClick={token?()=>navigate('/'):()=>{setPortal(true); window.history.pushState(location.state, `Afriscope Blog - ${location.pathname}`)}}
+              type="button"><i className={`fas ${token?"fa-home":"fa-unlock-keyhole me-2"} pe-2`}></i>{token?"Back to home":"Login"}</button>:
               (status !== "204" && status !=="500") && <Link className="text-white btn-primary px-3 py-2 my-5 fw-semibold" to="/" type="button"><i className={`fas fa-home pe-2`}></i>Back to home</Link>
+            }
+            {portal &&
+                createPortal(
+                    <Modal onClick={()=>setPortal(false)}>
+                        <Login setToken = {setToken} setPortal={setPortal} />
+                    </Modal>,
+                    document.body
+                )
             }
         </section>
     )

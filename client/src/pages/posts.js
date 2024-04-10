@@ -17,7 +17,7 @@ function Posts() {
         document.title = `Afriscope Blog - Not Found`;
         return(
             <section className="container-md mx-auto">
-                <Error status="404" document="Page" />
+                <Error status="404" element="Page" />
                 <h4 className="border-left">You Might Be Interested In</h4>
                 <PostsCarousel count={4}/>
             </section>
@@ -64,7 +64,7 @@ function Posts() {
         editorsPick = filtered.filter(post => post.meta.editorsPick)
         featuredIn = filtered.filter(post => post.meta.featured)
         filtered.length === 0?
-        content = <Error status="204" document={`Post Under ${category} Category`} />:
+        content = <Error status="204" element={`Post Under ${category} Category`} />:
         content =
             <>
                 <section>

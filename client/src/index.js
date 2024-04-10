@@ -1,13 +1,18 @@
+//React Libraries/Modules Import
 import React, { StrictMode, createContext } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate, ScrollRestoration } from "react-router-dom";
 
+//3rd Party Libraries/Modules Import
+//import {KindeProvider} from "@kinde-oss/kinde-auth-react";
+
+//Styles Import
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "react-loading-skeleton/dist/skeleton.css"
 import "./styles.css";
 
-
+//Components Import
 import Layout from "./pages/layout";
 import Home from "./pages/home";
 import Posts from "./pages/posts";
@@ -52,7 +57,7 @@ function Afriscope() {
           <Route path="register" element={tokenRef.current ? <Navigate to={`/profile?q=${tokenRef.current?.name.replace(" ",".")}`} /> : <Register />} />
           <Route path="profile" element={!tokenRef.current ? <Navigate to="/login" /> : <Profile token={tokenRef.current} setToken={setToken} />} />
           <Route path="write-post" element={<WritePost token={tokenRef.current}/>} />
-          <Route path="*" element={<Error status="404" document="Page"/>} />
+          <Route path="*" element={<Error status="404" element="Page"/>} />
         </Route>
         <Route exact path="/administrator"
           element={<userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
@@ -65,7 +70,7 @@ function Afriscope() {
           <Route path="posts" element={<PostsBackend />} />
           <Route path="comments" element={<Comments />} />
           <Route path="newpost" element={<Postform token={tokenRef.current} bgclass = "bg-light"/>} />
-          <Route path="*" element={<Error status="404" document="Page"/>} />
+          <Route path="*" element={<Error status="404" element="Page"/>} />
         </Route>
       </>
     )

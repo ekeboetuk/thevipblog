@@ -81,6 +81,9 @@ export default function Search({count}) {
         </>
    }
    if(posts) {
+        if(posts.length === 0) {
+            content = <p className='fst-italic'>Nothing found under <strong>{search.get('q')}</strong>. Please revise the search term and try again.</p>
+        }else{
         content =
             <>
                 {posts.slice(0,count).map((post) => (
@@ -107,6 +110,7 @@ export default function Search({count}) {
                         </div>
                 ))}
             </>
+        }
    }
 
     return (

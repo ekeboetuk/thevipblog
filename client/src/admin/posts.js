@@ -171,7 +171,7 @@ function Posts() {
     if(posts){
         if(posts.length === 0) {
             return (
-               <Error status="204" document="Post" />
+               <Error status="204" element="Post" />
             )
         }else{
             return (

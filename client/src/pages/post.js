@@ -7,6 +7,7 @@ import moment from 'moment';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import DOMPurify from 'isomorphic-dompurify';
 
+import Modal from '../components/modal';
 import { Login } from "../components/users";
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
@@ -150,14 +151,9 @@ function Post({ token }) {
                             <button onClick={()=>{setPortal(true); window.history.pushState(state, `Afriscope Blog - ${title}`)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
                             {portal &&
                                 createPortal(
-                                    <div id="pagemodal">
-                                        <div className="position-absolute top-0 start-0 opacity-75 w-100 h-100 bg-dark" onClick={()=>setPortal(false)}>
-                                        </div>
-                                        <div style={{position: 'fixed', top: '50%', left: '50%', opacity: '1', transform: 'translate(-50%, -50%)'}}>
-                                            {<Login setToken = {setToken} setPortal={setPortal} />}
-                                        </div>
-                                        <i className="fa-solid fa-circle-xmark fa-lg text-white" role="button" style={{position: 'fixed', top: '100px', right: '50px'}} onClick={()=>setPortal(false)}></i>
-                                    </div>,
+                                    <Modal onClick={()=>setPortal(false)}>
+                                        <Login setToken = {setToken} setPortal={setPortal} />
+                                    </Modal>,
                                     document.body
                                 )
                             }
@@ -179,9 +175,9 @@ function Post({ token }) {
     }else if(error){
         document.title = `Afriscope Blog - ${error.message}`
         if(error.response?.status === 404){
-            content = <Error status={404} document="Post" />
+            content = <Error status={404} element="Post" />
         }else {
-            content = <Error status={500} document="Post" />
+            content = <Error status={500} element="Post" />
         }
         related = "There Seems To Be An Issue. Please Try Again"
     }
