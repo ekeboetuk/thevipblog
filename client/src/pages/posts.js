@@ -18,7 +18,7 @@ function Posts() {
         return(
             <section className="container-md mx-auto">
                 <Error status="404" element="Page" />
-                <h4 className="border-left">You Might Be Interested In</h4>
+                <h3 className="border-left">You Might Be Interested In</h3>
                 <PostsCarousel count={4}/>
             </section>
         )
@@ -27,37 +27,39 @@ function Posts() {
     if(isLoading) {
         window.scrollTo({top:0,left:0,behavior:'smooth'})
         content =
-            <div className="container-md row mx-auto p-4 my-5">
-                <div className="d-flex gap-2">
-                    <Skeleton width="5px" height="30px" baseColor="#EBEBEB"/>
-                    <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
-                </div>
-                <div className="col-12 col-md-9 pe-md-5 align-self-start">
-                    <SkeletonTheme baseColor="#FAFAFA">
-                        <Skeleton width="100%" height="400px"/>
-                        <div className="p-3 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "2.5rem"}}>
-                            <Skeleton width="80%" height="20px" />
-                            <Skeleton count={3.2} width="100%" height="20px"/>
-                        </div>
-                    </SkeletonTheme>
-                </div>
-                <div className="col-12 col-md-3">
-                    <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
-                        <Skeleton width="100%" height="200px"/>
-                        <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
-                            <Skeleton count={2.7} width="100%" height="15px" />
-                        </div>
-                    </SkeletonTheme>
-                    <div className="bg-tertiary p-3 mb-3">
-                        <Skeleton  count ={2.7} width="100%" height="15px"/>
-                        <Skeleton width="40%" height="15px" />
+            <section>
+                <div className="container-md row mx-auto">
+                    <div className="d-flex gap-2">
+                        <Skeleton width="5px" height="30px" baseColor="#EBEBEB"/>
+                        <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
                     </div>
-                    <div className="bg-tertiary p-3 mb-3 lh-2">
-                        <Skeleton  count ={2.7} width="100%" height="15px"/>
-                        <Skeleton width="40%" height="15px" />
+                    <div className="col-12 col-md-8 pe-md-4 align-self-start">
+                        <SkeletonTheme baseColor="#FAFAFA">
+                            <Skeleton width="100%" height="265px"/>
+                            <div className="p-4 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                                <Skeleton width="80%" height="20px" className="mb-2"/>
+                                <Skeleton count={5.2} width="100%" height="10px"/>
+                            </div>
+                        </SkeletonTheme>
+                    </div>
+                    <div className="col-12 col-md-4 ps-md-4">
+                        <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
+                            <Skeleton width="100%" height="165px"/>
+                            <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
+                                <Skeleton count={2.7} width="100%" height="15px" />
+                            </div>
+                        </SkeletonTheme>
+                        <div className="bg-tertiary p-3 mb-3" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                            <Skeleton  count ={1.8} width="100%" height="15px"/>
+                            <Skeleton width="40%" height="15px" />
+                        </div>
+                        <div className="bg-tertiary p-3 mb-3 lh-2" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                            <Skeleton  count ={1.8} width="100%" height="15px"/>
+                            <Skeleton width="40%" height="15px" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
     } else if(posts) {
         document.title = `Afriscope Blog - ${category[0].toLocaleUpperCase()+category.slice(1)}`
         filtered = posts.filter(post => post.meta.category === category && post.isApproved)
@@ -68,7 +70,7 @@ function Posts() {
         content =
             <>
                 <section>
-                    <h2 className="container-md border-left">Editor's Pick</h2>
+                    <h3 className="container-md border-left">Editor's Pick</h3>
                     {editorsPick.length !== 0?
                         <div className="container-md mx-auto row row-col-2">
                             <div className={`col col-12 col-md-${editorsPick.length>1?8:12} pe-md-4 mb-5 mb-md-0 align-self-stretch`}>
@@ -147,7 +149,7 @@ function Posts() {
                             <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
                             <Subscribe />
                         </div>
-                        <h2 className="col-12 border-left">{`Latest`}</h2>
+                        <h3 className="col-12 border-left">{`Latest`}</h3>
                         <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
                             {filtered.slice(0,6).map((post) => (
                                 <div key={post._id} className="col pe-md-3
@@ -170,7 +172,7 @@ function Posts() {
                     </div>
                 </section>
                 <section className="container-fluid mx-auto">
-                    <h2 className="container-md border-left">{`Featured In ${category}`}</h2>
+                    <h3 className="container-md border-left">{`Featured In ${category}`}</h3>
                     {featuredIn.length > 0?
                         <div className="container-md d-flex flex-column flex-md-row">
                             <div className="col-12 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">

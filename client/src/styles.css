@@ -178,6 +178,12 @@ select,
   padding: 10px !important;
 }
 
+#search input[type="text"],
+#search select
+{
+  padding: 0 20px 0 5px !important;
+}
+
 input:focus,
 select:focus,
 textarea:focus,

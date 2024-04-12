@@ -51,9 +51,19 @@ import users from './models/users.js';
 app.locals.secret = 'yM3^iJ7?hR2&oA'
 
 // Define routes
+app.get('/posts', async (req, res, next)=> {
+  await posts.countDocuments({})
+  .then((count)=>{
+    res.locals.count = count
+    next('route')
+  })
+  .catch(next)
+})
+
 app.get('/posts', async (req, res, next) => {
   const {sort, limit} = req.query
-  await posts.find({}).select('-body')
+  await posts.find({})
+  .select('-body')
   .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
   .populate('meta.author')

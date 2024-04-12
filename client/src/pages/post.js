@@ -80,10 +80,12 @@ function Post({ token }) {
         <div id="loading" className="d-flex flex-column flex-fill justify-content-start align-self-start pe-md-2 mb-5">
             <SkeletonTheme>
                 <div className="d-inline-flex">
-                    <Skeleton width="80px" height="100px" containerClassName="pe-3" />
+                    <Skeleton width="85px" height="100px" containerClassName="pe-3" />
                     <div className="flex-fill" >
-                        <Skeleton count={2.8} width="80%" height="25px" />
-                        <Skeleton count={0.8} width="80%" height="15px" />
+                        <Skeleton count={2.4} width="80%" height="25px" />
+                        <Skeleton width="25%" height="15px" inline={true} containerClassName="pe-2" />
+                        <Skeleton width="25%" height="15px" inline={true} containerClassName="pe-2" />
+                        <Skeleton width="25%" height="15px" />
                     </div>
                 </div>
                 <Skeleton height="300px" />

@@ -13,6 +13,7 @@ import { Error } from '../components/errors';
 function Home() {
     const {posts, error, isLoading} = usePosts(`/?sort=-_id`)
     const [quotes, setQuotes] = useState()
+    const [count, setCount] = useState(4)
     const quote = useRef({quote: "Advertise you products here at an affordable rate", name: "Afriscope"})
     const qdcount = useRef(0)
     let content, approved, editorsPick//, featured
@@ -47,33 +48,29 @@ function Home() {
     if(isLoading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
-            <div className="container-md row mx-auto p-4 my-5">
-                <div className="d-flex gap-2">
-                    <Skeleton width="5px" height="30px" baseColor="#EBEBEB"/>
-                    <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
-                </div>
-                <div className="col-12 col-md-8 pe-md-5 align-self-start">
+            <div className="container-md row mx-auto p-4 p-md-0 my-5">
+                <div className="col-12 col-md-8 pe-md-4 align-self-start">
                     <SkeletonTheme baseColor="#FAFAFA">
-                        <Skeleton width="100%" height="400px"/>
-                        <div className="p-3 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "2.5rem"}}>
-                            <Skeleton width="80%" height="20px" />
-                            <Skeleton count={3.2} width="100%" height="20px"/>
+                        <Skeleton width="100%" height="265px"/>
+                        <div className="p-4 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                            <Skeleton width="80%" height="20px" className="mb-2"/>
+                            <Skeleton count={5.2} width="100%" height="10px"/>
                         </div>
                     </SkeletonTheme>
                 </div>
-                <div className="col-12 col-md-4">
+                <div className="col-12 col-md-4 ps-md-4">
                     <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
-                        <Skeleton width="100%" height="200px"/>
+                        <Skeleton width="100%" height="165px"/>
                         <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
                             <Skeleton count={2.7} width="100%" height="15px" />
                         </div>
                     </SkeletonTheme>
-                    <div className="bg-tertiary p-3 mb-3">
-                        <Skeleton  count ={2.7} width="100%" height="15px"/>
+                    <div className="bg-tertiary p-3 mb-3" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                        <Skeleton  count ={1.8} width="100%" height="15px"/>
                         <Skeleton width="40%" height="15px" />
                     </div>
-                    <div className="bg-tertiary p-3 mb-3 lh-2">
-                        <Skeleton  count ={2.7} width="100%" height="15px"/>
+                    <div className="bg-tertiary p-3 mb-3 lh-2" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                        <Skeleton  count ={1.8} width="100%" height="15px"/>
                         <Skeleton width="40%" height="15px" />
                     </div>
                 </div>
@@ -163,18 +160,18 @@ function Home() {
                     }
                 </section>
                 <section className="container-fluid" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
-                    <div className="container-md mx-auto row">
-                        <div className="col-12 col-md-3 order-md-last">
+                    <div className="container-md mx-auto row justify-content-center">
+                        <div className="col-12 col-md-4 order-md-2 ps-md-4">
                             <Advertise title="Look Here" content={quote.current} />
-                            <div className="sticky-top mb-5" style={{top: "60px", zIndex: "-1"}}>
+                            <div className="sticky-top mb-5 mb-md-4" style={{top: "60px", zIndex: "-1"}}>
                                 <Subscribe />
                             </div>
                         </div>
-                        <h2 className="col-12 border-left">Just In</h2>
-                        <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
-                            {approved.slice(0,6).map((post) => (
-                                <div key={post._id} className="col pe-md-3
-                                pb-5 align-self-start transition">
+                        <h3 className="col-12 border-left">Just In</h3>
+                        <div className="col-12 col-md-8 row row-cols-1 row-cols-md-2 pe-0">
+                            {approved.slice(0,count).map((post) => (
+                                <div key={post._id} className="col pe-md-4
+                                pb-4 align-self-start transition">
                                     <PostcardTransparent
                                     id={post._id}
                                     slug={post.slug}
@@ -191,12 +188,13 @@ function Home() {
                                 </div>
                             ))}
                         </div>
+                        {approved.length > count && <button className="col-12 btn btn-primary fw-bolder order-md-last" onClick={()=>setCount(count+1)}>Load More</button>}
                     </div>
                 </section>
                 <section id="popular-categories" className="container-fluid mx-auto">
-                    <h2 className="container-md border-left">Popular Categories</h2>
+                    <h3 className="container-md border-left">Popular Categories</h3>
                     <div className="container-md d-flex flex-column flex-md-row">
-                        <div className="row row-cols-1 row-cols-md-3">
+                        <div className="d-flex row row-cols-1 row-cols-md-3">
                             <Link to="/technology" className="col d-flex flex-column position-relative mb-4 pe-md-4">
                                 <img src="/media/technology.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Technology" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Technology</h1>
@@ -205,7 +203,7 @@ function Home() {
                                 <img src="/media/fashion-banner.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Fashion" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Fashion</h1>
                             </Link>
-                            <Link to="/sports" className="col d-flex flex-column position-relative mb-4 pe-md-4">
+                            <Link to="/sports" className="col d-flex flex-column position-relative mb-4 ms-auto">
                                 <img src="/media/sports-banner.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Sport" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Sport</h1>
                             </Link>

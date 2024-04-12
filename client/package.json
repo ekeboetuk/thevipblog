@@ -1,6 +1,6 @@
 {
   "name": "afriscope",
-  "homepage": "https://afriscope.reglerservices.com",
+  "homepage": "https://afriscope.vercel.app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
