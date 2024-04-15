@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { useUsers } from '../hooks/fetchers'
 
@@ -108,7 +108,8 @@ export function Register() {
 
 export function Login( {setToken, setPortal} ) {
     document.title = "Afriscope Blog - Sign In"
-
+    const msg = useLocation().state
+    const navigate = useNavigate();
     const [state, setState] = useState({
         email: sessionStorage.getItem('email')||"",
         password:"",
@@ -117,58 +118,66 @@ export function Login( {setToken, setPortal} ) {
     const [sending, setSending] = useState(false)
     const message = document.getElementById("message")
 
-    const navigate = useNavigate();
-
-        async function handleLogin(e) {
-            e.preventDefault()
-            setSending(true)
-
-           await axios.post(process.env.REACT_APP_SERVER_URL + `/user/login`,{
-                email: state.email,
-                password: state.password,
-                remember_me: state.remember_me
-            },{
-                withCredentials: true
-              })
-            .then((response) => {
-                if(state.remember_me && state.email !== sessionStorage.getItem('email')) {
-                    sessionStorage.setItem("email", state.email)
-                    sessionStorage.setItem("remember_me", state.remember_me)
-                }else if(!state.remember_me && state.email !== "") {
-                    sessionStorage.removeItem("email", state.email)
-                    sessionStorage.removeItem("remember_me", state.remember_me)
-                }
-                message.classList.remove('d-none')
-                message.innerHTML = "Login successful";
-                message.style.color = "green";
-                navigate(-1)
-                setTimeout(()=>{
-                    setPortal && setPortal(false)
-                    setToken(response.data);
-                }, 10)
-            })
-            .catch((error) => {
-                setSending(false)
-                message.classList.remove('d-none')
-                message.innerHTML = `${error.response?.data}`;
-                message.style.color = "red";
-            })
+    useEffect(()=>{
+        if(msg !== null) {
+            const alert = document.createElement('div')
+            alert.setAttribute('class', 'text-brand fw-bolder px-3 py-2 bg-tertiary rounded mb-5 z-2')
+            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${msg.message}`
+            const elem = document.getElementById('login')
+            elem.insertBefore(alert, elem.children[0])
         }
+    },[msg])
 
-        const handleChange = (e) => {
-            const value = e.target.value;
-            setState({
-              ...state,
-              [e.target.name]: value
-            });
+    async function handleLogin(e) {
+        e.preventDefault()
+        setSending(true)
 
-            if(message){
-                message.classList.add('d-none')
+        await axios.post(process.env.REACT_APP_SERVER_URL + `/user/login`,{
+            email: state.email,
+            password: state.password,
+            remember_me: state.remember_me
+        },{
+            withCredentials: true
+            })
+        .then((response) => {
+            if(state.remember_me && state.email !== sessionStorage.getItem('email')) {
+                sessionStorage.setItem("email", state.email)
+                sessionStorage.setItem("remember_me", state.remember_me)
+            }else if(!state.remember_me && state.email !== "") {
+                sessionStorage.removeItem("email", state.email)
+                sessionStorage.removeItem("remember_me", state.remember_me)
             }
-          }
+            message.classList.remove('d-none')
+            message.innerHTML = "Login successful";
+            message.style.color = "green";
+            navigate(-1)
+            setTimeout(()=>{
+                setPortal && setPortal(false)
+                setToken(response.data);
+            }, 10)
+        })
+        .catch((error) => {
+            setSending(false)
+            message.classList.remove('d-none')
+            message.innerHTML = `${error.response?.data}`;
+            message.style.color = "red";
+        })
+    }
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setState({
+            ...state,
+            [e.target.name]: value
+        });
+
+        if(message){
+            message.classList.add('d-none')
+        }
+    }
 
     return(
-        <section className="componentreveal container-sm mx-auto rounded-6 mt-5">
+        <section id="login" className="componentreveal container-sm mx-auto rounded-6 my-5">
             <div className="d-flex flex-column flex-md-row shadow">
                 <div id="formarea" className="col-12 col-md-8 bg-tertiary text-center text-brand px-5 pb-5 rounded-end display-relative">
                     <img src="/media/login-avatar-white.webp" width={80} height={80} className="bg-primary display-absolute top-0 start-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>

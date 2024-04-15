@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, memo } from 'react';
+import { useState, useEffect, useContext, useRef, memo } from 'react';
 import { createPortal } from 'react-dom'
 import { Link, useParams, useLocation } from 'react-router-dom';
 
@@ -20,13 +20,14 @@ import { userContext } from '../index';
 
 function Post({ token }) {
     const { state } = useLocation()
-    const [comment, setComment] = useState();
+    const [commenting, setCommenting] = useState({edit:false, content:'', id:null});
     const [sending, setSending] = useState(false);
     const [portal, setPortal] = useState(false)
     const [authorsPosts, setAuthorsPosts] = useState(null);
     const params = useParams();
     const {posts, error, isLoading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
 	const {setToken} = useContext(userContext)
+    const commentRef = useRef()
 
     useEffect(()=>{
         (async function(){
@@ -46,19 +47,15 @@ function Post({ token }) {
 
         await axios
         .patch(process.env.REACT_APP_SERVER_URL + '/post/comment', {
-            comment: comment,
-            user: token?.id,
-            post: params.slug,
-            id: posts._id
+            content: commenting.content,
+            postId: posts._id,
+            commentId: commenting.id
         }, {
             withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${document.cookie.split("; ").find(row=>row.startsWith('authorization_token='))?.split('=')[1]}`
-            }
         })
-        .then(()=>{
-            message.innerHTML = '<span class="text-success pe-4 fs-5">Comment successfully submitted. Will show up here after moderation!</span>';
-            setComment('');
+        .then((response)=>{
+            message.innerHTML = `<span class="text-success pe-4 fs-5">${response.data}</span>`;
+            setCommenting({edit:false, content:'', id: null});
             setSending(false)
             setTimeout(()=>{
                 message.innerHTML = "";
@@ -89,7 +86,7 @@ function Post({ token }) {
                     </div>
                 </div>
                 <Skeleton height="300px" />
-                <Skeleton count={17.2} />
+                <Skeleton count={37.2} />
             </SkeletonTheme>
         </div>
     }else if(posts) {
@@ -132,20 +129,22 @@ function Post({ token }) {
                                 </td>
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
                                     <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
-                                    <div className="d-flex justify-content-between p-0" contentEditable={comment.user?.name === token?.name ?"true":"false"} suppressContentEditableWarning>
                                         {comment.content}
-                                    </div>
+                                        <div className="d-inline-flex align-self-end">
+                                            {token && token?.name === comment?.user.name && <div className="border border-1 rounded-pill px-3 me-2 fs-6" role="button" onClick={(e)=>{setCommenting({...commenting, edit: true, content: comment.content, id: comment.id}); commentRef.current.scrollIntoView(false)}}>Edit</div>}
+                                            {token && <div className="border border-1 rounded-pill px-3 fs-6" role="button">Reply</div>}
+                                        </div>
                                 </td>
                             </tr>
                         ))}
                         </tbody>
                     </table>
                     {token?
-                        <form id="commentform" name="commentform" className="postcomment mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
-                            <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={comment} onChange={(e)=> setComment(e.target.value)} disabled={sending} required />
+                        <form id="commentform" ref={commentRef} name="commentform" className="postcomment mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
+                            <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={commenting.content} onChange={(e)=> setCommenting({...commenting, content: e.target.value})} disabled={sending} required />
                             <div className="d-flex flex-column flex-md-row">
                                 <span id="message" className="me-auto "></span>
-                                <button type="submit" id="submit" className="btn-primary border-0 text-white py-2 px-5 text-nowrap rounded-0 align-selft-stretch align-self-md-start" disabled={sending}>{sending ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting</>:"Submit Comment"}</button>
+                                <button type="submit" id="submit" className="btn-primary border-0 text-white py-2 px-5 text-nowrap rounded-0 align-selft-stretch align-self-md-start" disabled={sending}>{sending ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting</>:commenting.edit?"Update Comment":"Submit Comment"}</button>
                             </div>
                         </form>:
                         <div className="postcomment text-center mb-5 py-5 bg-light">

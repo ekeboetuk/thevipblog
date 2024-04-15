@@ -50,7 +50,109 @@ import users from './models/users.js';
 */
 app.locals.secret = 'yM3^iJ7?hR2&oA'
 
-// Define routes
+//User Routes
+app.post("/user/register", async (req, res) => {
+  const salt = await bcrypt.genSalt(10);
+  const securepass = await bcrypt.hash(req.body.password, salt);
+  const user = new users ({
+      name: req.body.name,
+      email: req.body.email,
+      pswdhash: securepass,
+      role: req.body.role,
+      isActive: req.body.isActive
+  })
+
+  await user.save()
+  .then(() => {
+    res.send();
+  })
+  .catch((error) => {
+    if(error.code === 11000) {
+      res.status(409).send(`User already exist with supplied email.<br /> <i class="fas fa-circle-arrow-left fa-beat"></i> Sign in`)
+    }else{
+      res.status(500).send(`Failure signing up. Please try again.`)
+    }
+  })
+})
+
+app.post('/user/login', async (req, res) => {
+  let user = await users.findOne({email: req.body.email});
+  if (!user) return res.status(404).send(`Email address doesn't exist! Sign up <i class="fas fa-circle-arrow-right fa-beat"></i>`)
+  if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator.')
+
+  const validPassword = await bcrypt.compare(req.body.password, user.pswdhash);
+  if (!validPassword) return res.status(403).send('Invalid Password! Please Try Again.')
+
+  const payload = {
+    user: {
+      id: user._id
+    }
+  }
+
+  const authtoken = jwt.sign(payload, app.locals.secret)
+  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+})
+
+app.get('/user/auth', (req, res, next) => {
+  const token = req.headers.cookie?.split('; ').find(cookie => cookie.startsWith('authorization_token='))?.split('=')[1]
+  const verifyToken = jwt.verify(token, app.locals.secret)
+  res.token = verifyToken
+  next()
+},
+  async(req, res, next)=>{
+    await users.findById(req.res.token.user.id)
+    .then(user=>{
+      if(user.isAdmin){
+      return res.status(200).send(user)
+      }
+      throw {status: 403, message: 'Not Authorized'}
+    })
+    .catch(next)
+  }
+)
+
+app.get('/users', async(req, res, next) => {
+  const allusers = await users.find({}).select(['-pswdhash', '-__v'])
+  res.send(allusers)
+  next()
+})
+
+app.get('/user/:userId', async (req, res, next) => {
+  if(req.params.userId){
+    const user = await users.findById(req.params.userId);
+    res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+  }
+})
+
+
+app.patch('/user', async (req, res, next) => {
+  await users.findByIdAndUpdate(req.body.id, {'isActive': req.body.status})
+  .then(()=>{
+    res.send()
+  })
+  .catch(next)
+})
+
+app.delete('/user/:userId', async(req, res, next) => {
+  const userId = req.params.userId
+  await users.findByIdAndDelete(userId)
+  .then(() => {
+    res.send()
+  })
+  .catch(next)
+})
+
+app.post('/user/profile', async (req, res, next) => {
+  const user = await users.findById(req.query.id).select(["-pswdhash", "-__v"])
+  if(user){
+    user.avatar = req.body.avatar
+    await user.save()
+    return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin})
+  }
+    res.status(400).send("There Was An Error")
+})
+
+// Post routes
 app.get('/posts', async (req, res, next)=> {
   await posts.countDocuments({})
   .then((count)=>{
@@ -136,9 +238,8 @@ app.get('/posts/:category/:slug', async (req, res, next) => {
   .then((post) => {
     if(post === null||!post.isApproved) {
       throw {status: 404, message: 'Not Found'}
-    }else{
-      return res.send(post)
     }
+    return res.send(post)
   })
   .catch(next)
 })
@@ -194,22 +295,37 @@ app.patch('/post/togglestatus', async (req, res) => {
 })
 
 app.patch('/post/comment', async (req, res) => {
+  const {postId, content, commentId} = req.body
   try{
     const token = req.headers.cookie.split('; ').find(row => row.startsWith('authorization_token='))?.split('=')[1]
-    const verifyToken = jwt.verify(token, JWT_SECRET)
+    const verifyToken = jwt.verify(token, app.locals.secret)
     const user = await users.findById(verifyToken.user.id)
-    if(user){
-      let comment = await posts.findByIdAndUpdate(req.body.id,
-        {$push:
-          {comments:
-            {content: req.body.comment, user: req.body.user}
-          }
-        })
-      if(!comment) return res.status(404).send('Error Posting Comment');
-      res.send('Comment successfully posted')
+    if(!user) {
+      res.status(401).send('Failed to post comment - unauthorized')
     }
+    let post
+    if(commentId !== null){
+      post = await posts.findOneAndUpdate({_id:postId, 'comments._id': commentId},
+        {
+          $set: {
+            'comments.$.content': content
+          }
+        },{returnDocument: 'after'}
+      )
+    }else{
+      post = await posts.findByIdAndUpdate(postId, {
+        $push: {
+          comments: {
+            content: content,
+            user: user
+          }
+        }
+      },{returnDocument: 'after'} )
+    }
+    if(!post) return res.status(404).send('Error Posting Comment');
+    return res.status(200).send('Comment Operation Successful!')
   }catch(error){
-    res.status(401).send('Failed to post comment - unauthorized')
+    res.status(500).send('Failed to post comment')
     }
 })
 
@@ -223,8 +339,8 @@ app.patch('/post/comment/togglestatus', async (req, res, next) => {
       'comments.$.approved': status
     }
   })
-  .then((data) => {
-    res.send(data)
+  .then(() => {
+    res.sendStatus(200)
   })
   .catch(next)
 })
@@ -254,113 +370,13 @@ app.delete('/post/:postId/:commentId', async(req, res, next) => {
   .catch(next)
 })
 
-//Users Routes
-app.post("/user/register", async (req, res) => {
-  const salt = await bcrypt.genSalt(10);
-  const securepass = await bcrypt.hash(req.body.password, salt);
-  const user = new users ({
-      name: req.body.name,
-      email: req.body.email,
-      pswdhash: securepass,
-      role: req.body.role,
-      isActive: req.body.isActive
-  })
-
-  await user.save()
-  .then(() => {
-    res.send();
-  })
-  .catch((error) => {
-    if(error.code === 11000) {
-      res.status(409).send(`User already exist with supplied email.<br /> <i class="fas fa-circle-arrow-left fa-beat"></i> Sign in`)
-    }else{
-      res.status(500).send(`Failure signing up. Please try again.`)
-    }
-  })
-})
-
-app.post('/user/login', async (req, res) => {
-  let user = await users.findOne({email: req.body.email});
-  if (!user) return res.status(404).send(`Email address doesn't exist! Sign up <i class="fas fa-circle-arrow-right fa-beat"></i>`)
-  if (!user.isActive) return res.status(404).send('Account not activated! Contact Administrator.')
-
-  const validPassword = await bcrypt.compare(req.body.password, user.pswdhash);
-  if (!validPassword) return res.status(403).send('Invalid Password! Please Try Again.')
-
-  const payload = {
-    user: {
-      id: user._id
-    }
-  }
-
-  const authtoken = jwt.sign(payload, app.locals.secret)
-  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
-})
-
-app.get('/users', async(req, res, next) => {
-  const allusers = await users.find({}).select(['-pswdhash', '-__v'])
-  res.send(allusers)
-  next()
-})
-
-app.get('/user/auth', (req, res, next) => {
-      const token = req.headers.authorization.split(" ")[1]
-      const verifyToken = jwt.verify(token, app.locals.secret)
-      res.token = verifyToken
-      next()
-    },
-    async(req, res, next)=>{
-      const user = await users.findById(req.res.token.user.id)
-      if(user.isAdmin){
-        return res.status(200).send(user)
-      }
-      throw {status: 403, message: 'Not Authorized'}
-    }
-  )
-
-app.get('/user/:userId', async (req, res, next) => {
-  if(req.params.userId){
-    const user = await users.findById(req.params.userId);
-    res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
-  }
-})
-
-
-app.patch('/user', async (req, res, next) => {
-  await users.findByIdAndUpdate(req.body.id, {'isActive': req.body.status})
-  .then(()=>{
-    res.send()
-  })
-  .catch(next)
-})
-
-app.delete('/user/:userId', async(req, res, next) => {
-  const userId = req.params.userId
-  await users.findByIdAndDelete(userId)
-  .then(() => {
-    res.send()
-  })
-  .catch(next)
-})
-
-app.post('/user/profile', async (req, res, next) => {
-  const user = await users.findById(req.query.id).select(["-pswdhash", "-__v"])
-  if(user){
-    user.avatar = req.body.avatar
-    await user.save()
-    return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin})
-  }
-    res.status(400).send("There Was An Error")
-})
-
 
 app.use((err, req, res, next)=>{
   if(err && err.status){
     res.status(err.status).send(err.message)
   }else if(err instanceof jwt.JsonWebTokenError) {
-    return res.status(401).send('Invalid Signature')
+    return res.status(401).send('Invalid session token.')
   }
-  console.log(err)
   return res.status(500).send()
 })
 

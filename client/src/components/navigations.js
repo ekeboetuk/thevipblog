@@ -34,18 +34,14 @@ export function User() {
 
 	async function administrator() {
 		await axios.get(process.env.REACT_APP_SERVER_URL + '/user/auth', {
-			headers: {
-				"Authorization":`Bearer ${document.cookie.split('; ').filter((cookie)=>cookie.startsWith('authorization_token='))[0].split('=')[1]}`,
-				"Content-Type": "application/json"
-			}
+			withCredentials: true
 		})
 		.then(()=>{
 			navigate('/administrator/posts')
 		})
 		.catch((err)=>{
 			unsetToken()
-			window.alert("Your session has been invalidated. Please re-login to continue")
-			navigate("/login");
+			navigate("/login",{state: {message: `${err.response.data} Please re-login to continue!`}});
 		})
 	}
 
@@ -66,7 +62,7 @@ export function User() {
 										<Link className="menuitem link-dark" to="/write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
 									</>
 								}
-								{token?.isAdmin && <Link to="/administrator/posts" className="menuitem link-dark"><li className="fa-solid fa-toolbox me-2"></li>Administrator</Link>}
+								{token?.isAdmin && <div onClick={administrator} className="menuitem link-dark" role="button"><li className="fa-solid fa-toolbox me-2"></li>Administrator</div>}
 								<div className="menuitem link-dark" role="button" onClick={unsetToken}><li className="fa-solid fa-lock-open me-2"></li>Sign Out</div>
 							</div>}
 					</div>
