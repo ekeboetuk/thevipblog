@@ -56,10 +56,7 @@ export const Postform = ( {token} ) => {
                 approved: post.approved,
                 author: token?.id
             }, {
-                headers: {
-                    "Authorization": `Bearer ${document.cookie.split('; ').filter((cookie)=>cookie.startsWith('authorization_token='))[0].split('=')[1]}`,
-                    "Content-Type": "application/json"
-            }
+                withCredentials: true
         })
         .then(()=>{
             window.scrollTo(0,0)

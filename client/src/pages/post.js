@@ -61,7 +61,7 @@ function Post({ token }) {
                 message.innerHTML = "";
             }, 10000)
         },(error) => {
-            message.innerHTML = `<span class="text-danger pe-4 fs-5">${error.response.data}</span>`;
+            message.innerHTML = `<span class="text-danger pe-4 fs-5">${error.response.data} Please try again.</span>`;
             setSending(false)
             setTimeout(()=>{
                 message.innerHTML = "";

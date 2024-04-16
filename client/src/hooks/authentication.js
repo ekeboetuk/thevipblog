@@ -16,7 +16,7 @@ export const useToken = () => {
               setToken(response.data)
           })
           .catch((error) => {
-            console.log(error)
+              console.log(error)
           })
       })()
     }
@@ -30,7 +30,7 @@ export const useToken = () => {
 
   const removeToken = () => {
     localStorage.removeItem("token")
-    document.cookie = "authorization_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = `session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${process.env.REACT_APP_SERVER_DOMAIN}; path=/;`;
     tokenRef.current = null
     setToken()
   }

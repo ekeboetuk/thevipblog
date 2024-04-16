@@ -33,7 +33,7 @@ export const Postcard = ({
             {
                 withCredentials: true
             }
-        );
+        )
     };
 
     return (

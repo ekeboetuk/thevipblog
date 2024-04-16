@@ -36,7 +36,7 @@ export function Register() {
                     email: state.email,
                     password: state.password,
                     name: state.names,
-                    type: state.role
+                    role: state.role
                 }
             )
             .then(() => {

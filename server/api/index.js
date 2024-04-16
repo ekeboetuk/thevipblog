@@ -26,28 +26,23 @@ app.use(cors({
   headers: ['Authorization', 'Content-Type']
 }));
 app.use(cookieparser());
+app.use(async (req, res, next) => {
+  const session_token = req.cookies['session_token']
+  if(!session_token) return next()
+  try{
+    const token = jwt.verify(session_token, app.locals.secret)
+    res.locals.user = await users.findById(token.user.id)
+  }catch(error){
+    return next(error)
+  }
+  return next()
+})
 
 // Models
 import posts from './models/posts.js';
 import users from './models/users.js';
 
 //Constants
- /*const JWT_SECRET = (function RandomSecret() {
-  var alphabet = [
-    'abcdefghijklmnoqrstuvwxyz',
-    'ABCDEFGHIJKLMNOQRSTUVWXYZ',
-    '0123456789',
-    '?<>!"£$%^&*()-+./'
-  ];
-  var secret = '';
-
-  for (var i = 0; i < 14; i++) {
-     var subset = alphabet[i%4];
-     secret += subset[Math.floor(Math.random() * subset.length)]
-  }
-  return secret
-})()
-*/
 app.locals.secret = 'yM3^iJ7?hR2&oA'
 
 //User Routes
@@ -64,7 +59,7 @@ app.post("/user/register", async (req, res) => {
 
   await user.save()
   .then(() => {
-    res.send();
+    res.sendStatus(200);
   })
   .catch((error) => {
     if(error.code === 11000) {
@@ -89,32 +84,28 @@ app.post('/user/login', async (req, res) => {
     }
   }
 
-  const authtoken = jwt.sign(payload, app.locals.secret)
-  res.cookie('authorization_token', authtoken, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+  const session_token = jwt.sign(payload, app.locals.secret)
+  res.cookie('session_token', session_token, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
 })
 
-app.get('/user/auth', (req, res, next) => {
-  const token = req.headers.cookie?.split('; ').find(cookie => cookie.startsWith('authorization_token='))?.split('=')[1]
-  const verifyToken = jwt.verify(token, app.locals.secret)
-  res.token = verifyToken
-  next()
-},
-  async(req, res, next)=>{
-    await users.findById(req.res.token.user.id)
-    .then(user=>{
-      if(user.isAdmin){
-      return res.status(200).send(user)
+app.get('/user/auth', (req, res, next)=>{
+  const user = res.locals.user
+   try{
+    if(user && user.isAdmin){
+      return res.status(200).send('Authentication Successful')
       }
       throw {status: 403, message: 'Not Authorized'}
-    })
-    .catch(next)
-  }
-)
+    }catch(error){
+      next(error)
+    }
+})
 
 app.get('/users', async(req, res, next) => {
-  const allusers = await users.find({}).select(['-pswdhash', '-__v'])
-  res.send(allusers)
-  next()
+  await users.find({}).select(['-pswdhash', '-__v'])
+  .then((users)=>{
+    return res.send(users)
+  })
+  .catch(next)
 })
 
 app.get('/user/:userId', async (req, res, next) => {
@@ -295,11 +286,9 @@ app.patch('/post/togglestatus', async (req, res) => {
 })
 
 app.patch('/post/comment', async (req, res) => {
+  const user = res.locals.user
   const {postId, content, commentId} = req.body
   try{
-    const token = req.headers.cookie.split('; ').find(row => row.startsWith('authorization_token='))?.split('=')[1]
-    const verifyToken = jwt.verify(token, app.locals.secret)
-    const user = await users.findById(verifyToken.user.id)
     if(!user) {
       res.status(401).send('Failed to post comment - unauthorized')
     }
@@ -375,7 +364,7 @@ app.use((err, req, res, next)=>{
   if(err && err.status){
     res.status(err.status).send(err.message)
   }else if(err instanceof jwt.JsonWebTokenError) {
-    return res.status(401).send('Invalid session token.')
+    return res.status(401).send('Missing or invalid session token.')
   }
   return res.status(500).send()
 })
