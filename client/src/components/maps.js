@@ -4,7 +4,7 @@ export const GoogleMap = () => {
   const position = {lat: 5.163690, lng: 7.732550};
 
   return (
-    <APIProvider apiKey={"AIzaSyAkFtokqvx17fwQWfsqSQz7nP-fBys0IMA"}>
+    <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
       <Map
       style={{width: '100vw', height: '400px'}}
       center={position}

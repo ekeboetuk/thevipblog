@@ -1,22 +1,56 @@
 import { useState, useContext } from "react"
-import { Link, NavLink, useNavigate } from "react-router-dom"
+import { Link, NavLink, useParams, useNavigate } from "react-router-dom"
 
 import axios from "axios"
 
 import { userContext } from ".."
 
 export default function Main(){
+	const path = useParams().category
     return(
-        <>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/"><i className="fa-solid fa-house pe-2"></i><span className="fs-6">Home</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/lifestyles"><i className="fa-solid fa-headset pe-2"></i><span className="fs-6">Lifestyles</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/sports"><i className="fa-solid fa-dumbbell pe-2"></i><span className="fs-6">Sports</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/fashion"><i className="fa-solid fa-hat-cowboy pe-2"></i><span className="fs-6">Fashion</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/technology"><i className="fa-solid fa-microchip pe-2"></i><span className="fs-6">Technology</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/about-us"><i className="fa-solid fa-address-card pe-2"></i><span className="fs-6">About</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3" to="/contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
-            <NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link px-3 py-3 mt-5 mt-md-0 ms-md-5" to="/community"><i className="fa-solid fa-layer-group pe-2"></i><span className="fs-6">Community</span></NavLink>
-        </>
+        <div className="d-flex flex-column pt-4 pt-md-0">
+			<div className="d-flex flex-column flex-md-row">
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/"><i className="fa-solid fa-house pe-2"></i><span className="fs-6">Home</span></NavLink>
+				<div className={`d-flex flex-column nav-link ${['sports', 'fashion', 'technology', 'lifestyles','education','general'].includes(path)&&'active'}`} role="button" data-bs-toggle="collapse" data-bs-target="#categories" aria-expanded="false" aria-controls="categories">
+					<div className="d-flex flex-row flex-md-column align-items-center">
+						<i className="fa-solid fa-list pe-2"></i>
+						<span className="fs-6 me-auto">Categories</span>
+						<i className="fa-solid fa-caret-down"></i>
+					</div>
+					<div id ="categories" className="collapse dropdown">
+						<div className="d-flex flex-column flex-md-row px-3">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/lifestyles">
+								<i className="fa-solid fa-headset pe-2"></i>
+								<span className="fs-6">Lifestyles</span>
+							</NavLink>
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/sports">
+								<i className="fa-solid fa-dumbbell pe-2"></i>
+								<span className="fs-6">Sports</span>
+							</NavLink>
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/fashion">
+								<i className="fa-solid fa-hat-cowboy pe-2"></i>
+								<span className="fs-6">Fashion</span>
+							</NavLink>
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/technology">
+								<i className="fa-solid fa-microchip pe-2"></i>
+								<span className="fs-6">Technology</span>
+							</NavLink>
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/education">
+								<i className="fa-solid fa-book-open-reader pe-2"></i>
+								<span className="fs-6">Education</span>
+							</NavLink>
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/general">
+								<i className="fa-solid fa-layer-group pe-2"></i>
+								<span className="fs-6">General</span>
+							</NavLink>
+						</div>
+					</div>
+				</div>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/about-us"><i className="fa-solid fa-address-card pe-2"></i><span className="fs-6">About</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0 ms-md-5" to="/community"><i className="fa-solid fa-layer-group pe-2"></i><span className="fs-6">Community</span></NavLink>
+			</div>
+		</div>
     )
 }
 

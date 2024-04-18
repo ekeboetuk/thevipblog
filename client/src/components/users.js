@@ -108,7 +108,7 @@ export function Register() {
 
 export function Login( {setToken, setPortal} ) {
     document.title = "Afriscope Blog - Sign In"
-    const msg = useLocation().state
+    const msg = useLocation().state?.message
     const navigate = useNavigate();
     const [state, setState] = useState({
         email: sessionStorage.getItem('email')||"",
@@ -119,10 +119,10 @@ export function Login( {setToken, setPortal} ) {
     const message = document.getElementById("message")
 
     useEffect(()=>{
-        if(msg !== null) {
+        if(msg !== undefined) {
             const alert = document.createElement('div')
             alert.setAttribute('class', 'text-brand fw-bolder px-3 py-2 bg-tertiary rounded mb-5 z-2')
-            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${msg.message}`
+            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${msg}`
             const elem = document.getElementById('login')
             elem.insertBefore(alert, elem.children[0])
         }

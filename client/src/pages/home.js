@@ -16,10 +16,10 @@ function Home() {
     const [count, setCount] = useState(4)
     const quote = useRef({quote: "Advertise you products here at an affordable rate", name: "Afriscope"})
     const qdcount = useRef(0)
-    let content, approved, editorsPick//, featured
+    let content, approved, featured//, featured
 
     useEffect(()=>{
-        document.title = "Afriscope - Your Favourite Blog - Homepage"
+        document.title = "Afriscope - Your Contentful Blog - Homepage"
     },[])
 
     useEffect(()=>{
@@ -49,6 +49,10 @@ function Home() {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
             <div className="container-md row mx-auto p-4 p-md-0 my-5">
+                <div className="d-flex gap-2">
+                    <Skeleton width="5px" height="28px" baseColor="#EBEBEB"/>
+                    <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
+                </div>
                 <div className="col-12 col-md-8 pe-md-4 align-self-start">
                     <SkeletonTheme baseColor="#FAFAFA">
                         <Skeleton width="100%" height="265px"/>
@@ -77,26 +81,26 @@ function Home() {
             </div>
     } else if(posts) {
         approved = posts.filter(post => post.isApproved)
-        editorsPick = approved.filter(post => post.meta.editorsPick)
-        //featured = approved.filter(post => post.meta.featured)
+        featured = approved.filter(post => post.meta.featured)
         approved.length === 0?
         content = <Error status="204" element="Post" />:
         content =
             <>
                 <section>
-                    {editorsPick.length !== 0?
+                <h3 className="container-md border-left fs-4">Featured Posts</h3>
+                    {featured.length !== 0?
                         <div className="container-md mx-auto row row-col-2">
-                            <div className={`col col-12 col-md-${editorsPick.length>1?8:12} pe-md-4 mb-5 mb-md-0 align-self-stretch`}>
+                            <div className={`col col-12 col-md-${featured.length>1?8:12} pe-md-4 mb-5 mb-md-0 align-self-stretch`}>
                                 <PostcardTransparent
-                                    id={editorsPick[0]._id}
-                                    slug={editorsPick[0].slug}
-                                    image={editorsPick[0].image}
+                                    id={featured[0]._id}
+                                    slug={featured[0].slug}
+                                    image={featured[0].image}
                                     height="450px"
-                                    title={editorsPick[0].title}
-                                    intro={`${editorsPick[0].intro.slice(0, 500)}...`}
-                                    comments={editorsPick[0].comments}
-                                    meta={editorsPick[0].meta}
-                                    created={editorsPick[0].created}
+                                    title={featured[0].title}
+                                    intro={`${featured[0].intro.slice(0, 500)}...`}
+                                    comments={featured[0].comments}
+                                    meta={featured[0].meta}
+                                    created={featured[0].created}
                                     showIntro={true}
                                     showMeta={true}
                                     showCategory={true}
@@ -104,31 +108,31 @@ function Home() {
                             </div>
                                 <div className="col col-12 col-md-4 ps-md-4">
                                     <div className="d-flex flex-column gap-4">
-                                    {editorsPick.length > 1 &&
+                                    {featured.length > 1 &&
                                         <PostcardTransparent
-                                            id={editorsPick[1]._id}
-                                            slug={editorsPick[1].slug}
-                                            image={editorsPick[1].image}
+                                            id={featured[1]._id}
+                                            slug={featured[1].slug}
+                                            image={featured[1].image}
                                             height="250px"
-                                            title={editorsPick[1].title}
-                                            intro={`${editorsPick[1].intro.slice(0, 500)}...`}
-                                            comments={editorsPick[1].comments}
-                                            meta={editorsPick[1].meta}
-                                            created={editorsPick[1].created}
+                                            title={featured[1].title}
+                                            intro={`${featured[1].intro.slice(0, 500)}...`}
+                                            comments={featured[1].comments}
+                                            meta={featured[1].meta}
+                                            created={featured[1].created}
                                             showCategory={true}
                                             showMeta={true}
                                         />
                                     }
 
-                                    {editorsPick.length > 2 &&
+                                    {featured.length > 2 &&
                                         <Postcard
-                                            id={editorsPick[2]._id}
-                                            slug={editorsPick[2].slug}
-                                            title={editorsPick[2].title}
-                                            comments={editorsPick[2].comments}
-                                            category={editorsPick[2].meta.category}
-                                            meta={editorsPick[2].meta}
-                                            created={editorsPick[2].created}
+                                            id={featured[2]._id}
+                                            slug={featured[2].slug}
+                                            title={featured[2].title}
+                                            comments={featured[2].comments}
+                                            category={featured[2].meta.category}
+                                            meta={featured[2].meta}
+                                            created={featured[2].created}
                                             height="100px"
                                             showCategory={true}
                                             showMeta={false}
@@ -137,15 +141,15 @@ function Home() {
                                             font="1.8rem"
                                         />
                                     }
-                                    {editorsPick.length > 3 &&
+                                    {featured.length > 3 &&
                                         <Postcard
-                                            id={editorsPick[3]._id}
-                                            slug={editorsPick[3].slug}
-                                            title={editorsPick[3].title}
-                                            comments={editorsPick[3].comments}
-                                            category={editorsPick[3].meta.category}
-                                            meta={editorsPick[3].meta}
-                                            created={editorsPick[3].created}
+                                            id={featured[3]._id}
+                                            slug={featured[3].slug}
+                                            title={featured[3].title}
+                                            comments={featured[3].comments}
+                                            category={featured[3].meta.category}
+                                            meta={featured[3].meta}
+                                            created={featured[3].created}
                                             height="100px"
                                             showCategory={true}
                                             showMeta={false}
@@ -167,7 +171,7 @@ function Home() {
                                 <Subscribe />
                             </div>
                         </div>
-                        <h3 className="col-12 border-left">Just In</h3>
+                        <h3 className="col-12 border-left fs-4">Just In</h3>
                         <div className="col-12 col-md-8 row row-cols-1 row-cols-md-2 pe-0">
                             {approved.slice(0,count).map((post) => (
                                 <div key={post._id} className="col pe-md-4
@@ -192,11 +196,11 @@ function Home() {
                     </div>
                 </section>
                 <section id="popular-categories" className="container-fluid mx-auto">
-                    <h3 className="container-md border-left">Popular Categories</h3>
+                    <h3 className="container-md border-left fs-4">Popular Categories</h3>
                     <div className="container-md d-flex flex-column flex-md-row">
                         <div className="d-flex row row-cols-1 row-cols-md-3">
                             <Link to="/technology" className="col d-flex flex-column position-relative mb-4 pe-md-4">
-                                <img src="/media/technology.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Technology" />
+                                <img src="/media/technology-banner.jpeg" style={{objectFit: "cover", width: "100%", height: "150px"}} alt="Technology" />
                                 <h1 className="position-absolute top-50 start-50 translate-middle text-uppercase text-white">Technology</h1>
                             </Link>
                             <Link to="/fashion" className="col d-flex flex-column position-relative mb-4 pe-md-4">

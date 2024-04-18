@@ -16,7 +16,7 @@ export const Postform = ( {token} ) => {
         featured: false,
         approved: false,
         featuredImage: null,
-        category: "uncategorized",
+        category: "general",
         introText: "",
         tags: "",
         textarea: ""
@@ -90,11 +90,12 @@ export const Postform = ( {token} ) => {
                     <label htmlFor="category" className="pe-2 fw-bold">Category</label>
                     <select className="w-100 px-2 bg-white" id="category" name="category" value={post.category} onChange={(e) => setPost({...post, category: e.target.value})} disabled={sending} required>
                         <option value="" disabled>Choose a Category</option>
-                        <option value="uncategorized">Uncategorized</option>
+                        <option value="general">General</option>
                         <option value="lifestyles">Lifestyles</option>
                         <option value="sports">Sports</option>
                         <option value="fashion">Fashion</option>
                         <option value="technology">Technology</option>
+                        <option value="education">Education</option>
                     </select>
                 </div>
                 <div className="mb-3 d-block">
@@ -150,11 +151,18 @@ export const Postform = ( {token} ) => {
                             body_id : 'content',
                             browser_spellcheck : true,
 
-                            plugins: 'code image link lists',
-                            toolbar: 'undo redo | fontfamily fontsize lineheight | bullist numlist | bold italic underline forecolor backcolor | link image code hr | alignleft aligncenter alignright alignjustify indent outdent',
+                            plugins: 'code image link lists table',
+                            toolbar: 'undo redo | fontfamily fontsize lineheight | bullist numlist table | bold italic underline forecolor backcolor | link image code hr | alignleft aligncenter alignright alignjustify indent outdent',
                             font_family_formats:"Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Montserrat=montserrat; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva",
                             font_size_formats: "8pt 9pt 10pt 11pt 12pt 14pt 18pt 24pt 30pt 36pt 48pt 60pt 72pt 96pt",
                             indentation: '20pt',
+                            table_default_attributes: {
+                                border: '1'
+                                },
+                            table_default_styles: {
+                                width: '100%',
+                                'border-collapse': 'collapse'
+                                },
 
                             images_file_types: 'jpg,png,webp',
                             file_picker_types: 'image ',

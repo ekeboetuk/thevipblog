@@ -65,9 +65,9 @@ const postschema = Schema({
         },
         category: {
             type: String,
-            default: "uncategorized",
+            default: 'general',
             enum: {
-                values: ["uncategorized","sports","lifestyles","fashion","technology"],
+                values: ['sports','lifestyles','fashion','technology','education','genera'],
                 message: 'enum validator failed for path `{PATH}` with value `{VALUE}`',
             },
             required: true

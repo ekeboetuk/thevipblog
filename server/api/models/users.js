@@ -49,7 +49,7 @@ const userschema = Schema({
     },
     role: {
         type: String,
-        enum: ["Administrator", "Author", "Editor",  "Contributor","Subscriber"],
+        enum: ["Administrator","Author","Editor","Contributor","Subscriber"],
         default: "Subscriber",
         required: true
     },

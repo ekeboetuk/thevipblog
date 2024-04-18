@@ -11,6 +11,7 @@ import cookieparser from 'cookie-parser';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken';
+import { json } from 'express';
 
 // Create an Express app
 const app = express();
@@ -31,11 +32,11 @@ app.use(async (req, res, next) => {
   if(!session_token) return next()
   try{
     const token = jwt.verify(session_token, app.locals.secret)
-    res.locals.user = await users.findById(token.user.id)
+    res.locals.user = await users.findOne({'_id': token.user.id, isActive: true})
+    next()
   }catch(error){
-    return next(error)
+    next(error)
   }
-  return next()
 })
 
 // Models
@@ -210,7 +211,7 @@ app.get('/posts/:grouping', async (req, res, next) => {
 
 app.get('/posts/:category', async (req, res, next) => {
   const {sort, limit} = req.query
-  await posts.find(['sports', 'fashion', 'technology', 'lifestyles'].includes(req.params.category)?{'meta.category': req.params.category}:{})
+  await posts.find(['sports', 'fashion', 'technology', 'lifestyles','education','general'].includes(req.params.category)?{'meta.category': req.params.category}:{})
   .select("-__v -body")
   .limit(limit?limit:0)
   .sort(sort)
@@ -236,26 +237,30 @@ app.get('/posts/:category/:slug', async (req, res, next) => {
 })
 
 //Create new post
-app.post('/writepost', async (req, res) => {
-  const post = new posts({
-    image: req.body.image,
-    title: req.body.title,
-    intro: req.body.intro,
-    body: req.body.body.toString(),
-    meta: {
-      description: req.body.metaDescription,
-      category: req.body.category,
-      author: req.body.author,
-      featured: req.body.featured,
-      tags: req.body.tags.split(",").trim()
-    },
-    isApproved: req.body.approved
+app.post('/writepost', async (req, res, next) => {
+  const user = res.locals.user
+  if(user && !user.role === 'Subscriber') {
+    const post = new posts({
+      image: req.body.image,
+      title: req.body.title,
+      intro: req.body.intro,
+      body: req.body.body.toString(),
+      meta: {
+        description: req.body.metaDescription,
+        category: req.body.category,
+        author: req.body.author,
+        featured: req.body.featured,
+        tags: req.body.tags.split(",").forEach(el => el.trim())
+      },
+      isApproved: req.body.approved
     })
-
     await post.save()
     .then(()=>{
-      res.send();
+      return res.send();
     })
+    .catch(next)
+  }
+  throw {status: 403, message: 'Not Authorized'}
 })
 
 app.patch('/post/likes', async (req, res) => {
@@ -289,8 +294,8 @@ app.patch('/post/comment', async (req, res) => {
   const user = res.locals.user
   const {postId, content, commentId} = req.body
   try{
-    if(!user) {
-      res.status(401).send('Failed to post comment - unauthorized')
+    if(!user || user === null ) {
+      return res.status(401).send('Failed to post comment - unauthorized')
     }
     let post
     if(commentId !== null){

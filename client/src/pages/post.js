@@ -94,7 +94,7 @@ function Post({ token }) {
             document.title = `Afriscope Blog - ${title}`
             content=
                 <>
-                    <div className="d-flex align-items-center pb-3">
+                    <div id="header" className="d-flex align-items-center pb-3">
                         <img src={`${posts.meta.author.avatar||'/assets/icon.png'}`} width={90} alt="afriscope icon" className="square bg-tertiary me-3 rounded align-self-start" />
                         <div className="align-items-center">
                             <h4 className="display-4 m-0 mb-2 lh-1 fw-bold">{posts.title.toUpperCase()}</h4>
@@ -106,16 +106,16 @@ function Post({ token }) {
                         </div>
                     </div>
                     {posts.meta.description &&
-                        <div className="my-4">
+                        <div id="metadesc" className="my-4">
                             <h4 className="border-left">Meta Description</h4>
                             <p style={{fontWeight: 800}}>{posts.meta.description}</p>
                         </div>
                     }
                     <img src={posts.image} style={{width: "100%", height: "400px", objectFit: "cover"}} className="shadow" alt={posts.meta.description}/>
-                    <div className="my-4">
+                    <div id="intro" className="my-4">
                         <p style={{fontSize: "1.7rem", fontWeight: 800}}>{posts.intro}</p>
                     </div>
-                    <div className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
+                    <div id="content" className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
                     <div id="comments" className="mt-2 bg-tertiary px-3">
                         <Meta slug={posts.slug} id={posts._id} meta={posts.meta} comments={posts.comments} />
                     </div>
@@ -229,9 +229,9 @@ function Post({ token }) {
                         {authorsPosts === null?
                             <div className="fst-italic"><i className="fa-solid fa-rotate-right fa-spin"></i>Loading</div>:
                             (authorsPosts?.length !== 0 ?
-                                <div className="col-12 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
+                                <div id="author" className="col-12 row row-cols-1 row-cols-md-3">
                                     {authorsPosts.slice(0,6).map((post) =>
-                                        <div key={post._id} className="col d-flex flex-row pe-md-3 pb-5 align-self-start transition">
+                                        <div key={post._id} className="col d-flex flex-row pb-5 align-self-start transition">
                                             <Postcard
                                                 id={post._id}
                                                 slug={post.slug}

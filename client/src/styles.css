@@ -108,7 +108,7 @@ section {
   border: 0 !important;
   outline: 0 !important;
   color: #FAFAFA;
-  padding: 10px;
+  padding: 4px;
 }
 
 .btn-primary:hover {
@@ -145,15 +145,36 @@ a {
   color: #FFFFFF;
   font-weight: 700;
   text-transform: none;
+  padding: 1rem 1rem 0 1rem !important;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: #9c9c9c !important;
+  color: #FCFCFC !important;
   background-color: #74415D !important;
 }
 
+
+.dropdown {
+  background-color: var(--primary-color);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+
+.dropdown .nav-link {
+  padding: 1rem !important;
+}
+
+.dropdown .nav-link:hover, .dropdown .nav-link.active {
+  background-color: #9F7A7A !important;
+}
+
 .flexible {
-  transition: height 3s linear
+  transition: height 3s linear;
 }
 
 .input-group-addon {
@@ -399,6 +420,38 @@ footer {
   animation: revealuptransparent 1s ease-in-out 0s alternate ;
 }
 
+#post #content, #post #metadesc, #post #intro {
+  text-align: justify;
+}
+
+#post #content img {
+  width: 100%;
+  height: 300px !important;
+  object-fit: cover;
+}
+
+#post #content table {
+  width: 100%;
+  border: 0 !important;
+  margin-bottom: 2rem !important;
+}
+
+#post #content table thead tr {
+  background-color: rgba(116, 65, 93, 0.14) !important
+}
+
+#post table tr:nth-child(odd) {
+  background-color: var(--tertiary-color) !important;
+}
+
+#post #content table td {
+  padding: 5px !important
+}
+
+#author div:not(:last-child), #featured div:not(:last-child) {
+  padding-right: 20px !important;
+}
+
 .componentreveal {
   animation: reveal 0.5s ease-in-out
 }
@@ -502,7 +555,20 @@ footer {
   #advert {
     height: 60px !important
   }
-  
+
+  #author div:not(:last-child), #featured div:not(:last-child) {
+    padding-right: 0 !important;
+  }
+
+  .nav-link {
+    padding: 1rem!important;
+  }
+
+  .dropdown {
+    position: relative;
+    flex-direction: column;
+  }
+
   .postcard {
     width: 100% !important;
   }

@@ -13,7 +13,7 @@ function Posts() {
     const {posts, error, isLoading} = usePosts(`/${category}?sort=-_id`)
     let content, filtered, editorsPick, featuredIn
 
-    if(!["lifestyles","sports","fashion","technology"].includes(category)){
+    if(!["lifestyles","sports","fashion","technology","education","general"].includes(category)){
         document.title = `Afriscope Blog - Not Found`;
         return(
             <section className="container-md mx-auto">
@@ -175,9 +175,9 @@ function Posts() {
                     <h3 className="container-md border-left">{`Featured In ${category}`}</h3>
                     {featuredIn.length > 0?
                         <div className="container-md d-flex flex-column flex-md-row">
-                            <div className="col-12 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
+                            <div id="featured" className="col-12 row row-cols-1 row-cols-md-3">
                                 {featuredIn.slice(0,3).map((post) => (
-                                    <div key={post._id} className="col d-flex flex-row pe-md-3 pb-5 align-self-start transition">
+                                    <div key={post._id} className="col d-flex flex-row pb-5 align-self-start transition">
                                         <Postcard
                                             id={post._id}
                                             slug={post.slug}
