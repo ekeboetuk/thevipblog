@@ -11,14 +11,14 @@ export default function Header({title, background} ) {
         <Navbar />
       </div>
       {/** Page Banner & Title */}
-      {["Sports","Lifestyles","Fashion","Technology","Education","about us","contact us","profile","write post"].includes(title) &&
+      {["sports","lifestyles","fashion","technology","education","general","about us","contact us","profile","write post"].includes(title) &&
         <div className="container-fluid mx-auto fw-bold px-0 position-relative" style={{backgroundImage: `url(${background?background:'/media/about-us-banner.jpeg'})`, backgroundSize: 'cover', backgroundPosition: 'center center'}}>
           <div className="bg-primary opacity-50" style={{padding: '80px 0px'}}>
           </div>
           {/** Breadcrumbs */}
-          {!["profile","login","register"].includes(title) &&
+          {!["profile"].includes(title) &&
             <div id="page-title">
-              <h4 className="display-4 fw-semibold text-white text-uppercase">{title && title}</h4>
+              <h4 className="display-4 fw-semibold text-white">{title && title}</h4>
               <small className="text-white" style={{textTransform:"capitalize"}}><NavLink className="text-white" to="/">home </NavLink><i className="fa-solid fa-angles-right"></i> {title}</small>
             </div>
           }
@@ -66,7 +66,7 @@ export function Navbar() {
                   </div>
                   <div className="d-flex flex-row align-self-start py-3">
                     <div id="search" className="d-flex flex-grow-1 col-8 align-self-bottom position-relative justify-content-end px-4 pe-md-0">
-                        <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 me-2 fs-6 text-black-50" value={searchterm} onChange={(e)=>handleChange(e)} onKeyDown={(e) => {e.key === 'Enter' && searchterm.trim() !== "" && navigate(`search?${new URLSearchParams(`q=${searchterm}`)}`)}} placeholder='Instant search' />
+                        <input type="search" ref={searchform} id="searchform" className="flex-fill border-0 rounded-4 ps-3 pe-5 me-2 fs-6 text-black-50" value={searchterm} onChange={(e)=>handleChange(e)} onKeyDown={(e) => {e.key === 'Enter' && searchterm.trim() !== "" && navigate(`search?${new URLSearchParams(`q=${searchterm}`)}`)}} placeholder='Instant Search' />
                         <div className="border-0 bg-transparent text-secondary position-absolute top-50 translate-middle ms-n4" role="button" onClick={() => navigate(`search?${new URLSearchParams(`q=${searchterm}`)}`)}>{searchterm.trim() !== "" && <i className="fas fa-search pe-2"></i>}</div>
                     </div>
                     <User />

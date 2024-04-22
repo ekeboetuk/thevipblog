@@ -3,81 +3,34 @@ import { useEffect, useState } from 'react';
 
 import { usePosts } from '../hooks/fetchers';
 import { Error } from '../components/errors'
-import axios from 'axios';
 
 function Comments() {
     useEffect(()=>{
         document.title = "Afriscope Administrator - Manage Comments"
     })
 
-    const [sortby, setSortby] = useState("_id");
-    const {posts, error, isLoading, mutate} = usePosts(`?sort=${sortby}`)
+    const [sortby] = useState("_id");
+    const {posts, error, loading, mutating} = usePosts(`?sort=${sortby}`)
     const [search, setSearch] = useState("");
-    const [actionmenu, setActionmenu] = useState({})
-    const [operation, setOperation] = useState();
     const [select, setSelect] = useState({})
 
-    const spinnerbound = document.getElementById('contentarea')
-
-    const handleCommentsort = (e) => {
-        setSortby(e.target.value)
-        mutate(posts.sort((a, b)=>{
-            return (a.meta.category).localeCompare((b.meta.category))
-        }))
-    }
 
     const handleSearch = (e) => {
         setSearch(e.target.value)
         const searchexp = new RegExp(`${search}`,'gi')
-        mutate(posts.filter((post)=>{
+        mutating(posts.filter((post)=>{
             return searchexp.test(post.title)
         }))
-    }
+    } 
 
-
-    const togglePublishComment = async(postId, commentId, status)=>{
-        setOperation(true)
-        mutate(posts.map((post)=>{
-            return {
-                ...post, comments: post.comments.map((comment) => {
-                    if(comment._id === commentId) {
-                        return {
-                            ...comment, approved: !status}
-                    }else{
-                        return comment
-                    }
-                })
-            }}),
-            await axios.patch(process.env.REACT_APP_SERVER_URL + '/post/comment/togglestatus', {
-                postId: postId,
-                commentId: commentId,
-                status: !status
-            }))
-        setOperation(false)
-    }
-
-    const handleDeleteComment = async (postId, postIndex, commentId) => {
-        setOperation(true)
-        mutate(
-            [...posts, {...posts[postIndex], comments: posts[postIndex].comments.filter(comment => comment.commentId !== commentId)
-            }],
-            await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}/${commentId}`)
-        )
-        setOperation(false)
-    }
-
-    const toggleActionmenu = (e, index)=>{
-        e.stopPropagation()
-        setActionmenu({[index]:  !actionmenu[index]})
-    }
 
     if(posts){
         if(posts.length === 0) {
             return <Error status="204" element="comment" />
         }else{
             return (
-                <div className={`position-relative flex-fill`}>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}
-                    <div className={`${isLoading && "opacity-25"} mb-0 pe-md-0`} onClick={()=>setActionmenu({})}>
+                <div className={`position-relative flex-fill`}>{loading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}
+                    <div className={`${loading && "opacity-25"} mb-0 pe-md-0`} >
                     <input type="text" id="search" className="w-100 bg-light mb-3 px-3 py-1" value={search} onChange={(e)=>handleSearch(e)} placeholder="Ajax Search" />
                     </div>
                     <div className="d-flex flex-column">
@@ -104,7 +57,7 @@ function Comments() {
                     </div>
                 </div>
             )}
-    } else if(isLoading) {
+    } else if(loading) {
         return (
             <div className="position-absolute align-self-center fw-semibold" style={{top: `calc(${window.innerHeight/3}px)`}}>
                 <i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait! Loading...</i>

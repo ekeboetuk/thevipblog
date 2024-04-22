@@ -64,7 +64,8 @@ export const Postcard = ({
                     <Link
                         to={`/${meta.category}/${slug}`}
                         className=""
-                        onClick={handleClick} state={{id: id}}
+                        onClick={handleClick}
+                        state={{id: id}}
                         preventScrollReset={true}
                     >
                         <h2 className="lh-1 fw-bolder text-body" style={{fontSize: font||"2rem"}}>

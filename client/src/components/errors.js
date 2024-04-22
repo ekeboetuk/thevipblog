@@ -6,7 +6,7 @@ import Modal from './modal'
 import { Login } from './users'
 import { userContext } from '..'
 
-export const Error = ({ status, element, image, token }) => {
+export const Error = ({ status, message, element, image, token }) => {
     const [portal, setPortal] = useState(false)
     const {setToken} = useContext(userContext)
     const navigate = useNavigate()
@@ -15,7 +15,7 @@ export const Error = ({ status, element, image, token }) => {
     const error = {
       '204': {
         description:'No Content',
-        message: `No ${element}`,
+        message: `${element}`,
         image: {
           source: image || '/media/error_no_document_(1).webp',
           width: "200px"
@@ -46,8 +46,8 @@ export const Error = ({ status, element, image, token }) => {
         }
       },
       '500': {
-        description:'Internal Server Error',
-        message: `Problem trying to connect to server.`,
+        description:'Network Error',
+        message: message||`Problem trying to connect to server.`,
         image: {
           source: image || '/media/internal_server_error.avif',
           width: "100px"
@@ -68,7 +68,7 @@ export const Error = ({ status, element, image, token }) => {
             }
             {portal &&
                 createPortal(
-                    <Modal onClick={()=>setPortal(false)}>
+                    <Modal onClick={()=>{setPortal(false)}}>
                         <Login setToken = {setToken} setPortal={setPortal} />
                     </Modal>,
                     document.body

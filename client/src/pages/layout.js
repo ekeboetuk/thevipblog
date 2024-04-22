@@ -15,7 +15,7 @@ function Layout() {
         if(slug){
             title = null
         }else{
-            title = path.charAt(0).toUpperCase() + path.slice(1)
+            title = path
         }
     }
 

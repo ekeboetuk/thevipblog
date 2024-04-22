@@ -1,10 +1,11 @@
 //React Libraries/Modules Import
 import React, { StrictMode, createContext } from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate, ScrollRestoration } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate, ScrollRestoration, redirect } from "react-router-dom";
 
 //3rd Party Libraries/Modules Import
 //import {KindeProvider} from "@kinde-oss/kinde-auth-react";
+import axios from 'axios';
 
 //Styles Import
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
@@ -36,41 +37,54 @@ import { Postform } from "./components/forms";
 export const userContext = createContext()
 
 function Afriscope() {
-  const {tokenRef, setToken, unsetToken} = useToken();
+  const {token, setToken, unsetToken} = useToken();
+
+  async function auth({request}) {
+		const url = new URL(request.url)
+    const path = url.pathname.replace('/','')
+		try{
+        await axios.get(process.env.REACT_APP_SERVER_URL + `/user/auth?q=${path}`, {
+        withCredentials: true
+		  })
+      return null
+    }catch(error) {
+      unsetToken()
+      return redirect('/login')
+    }
+	}
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
         <Route exact path="/" element={
-          <userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
+          <userContext.Provider value={{token: token, setToken: setToken, unsetToken: unsetToken }}>
             <Layout />
           </userContext.Provider>
           }>
           <Route index element={<Home />} />
-          <Route path=":category" element={<Posts token={tokenRef.current}/>} />
-          <Route path=":category/:slug" element={<Post token={tokenRef.current} />} />
+          <Route path=":category" element={<Posts token={token}/>} />
+          <Route path=":category/:slug" element={<Post token={token} unsetToken={unsetToken}/>} />
           <Route path="about-us" element={<About />} />
           <Route path="contact-us" element={<Contact />} />
           <Route path="community" element={<Community />} />
           <Route path="search" element={<Search />} />
-          <Route path="login" element={tokenRef.current ? <Navigate to={`/profile?q=${tokenRef.current?.name.replace(" ",".")}`} /> : <Login setToken={setToken}/>} />
-          <Route path="register" element={tokenRef.current ? <Navigate to={`/profile?q=${tokenRef.current?.name.replace(" ",".")}`} /> : <Register />} />
-          <Route path="profile" element={!tokenRef.current ? <Navigate to="/login" /> : <Profile token={tokenRef.current} setToken={setToken} />} />
-          <Route path="write-post" element={<WritePost token={tokenRef.current}/>} />
-          <Route path="*" element={<Error status="404" element="Page"/>} />
+          <Route path="login" element={<Login token={token} setToken={setToken} unsetToken={unsetToken}/>}/>
+          <Route path="register" element={token ? <Navigate to={`/profile?q=${token?.name.toLowerCase()}`} replace={true}/> : <Register />} />
+          <Route path="profile" element={<Profile token={token} setToken={setToken} unsetToken={unsetToken} />} />
+          <Route path="write-post" element={<WritePost token={token}/>} />
+          <Route path="*" element={<Error status="404" element="No Page"/>} />
         </Route>
-        <Route exact path="/administrator"
-          element={<userContext.Provider value={{token: tokenRef.current, setToken: setToken, unsetToken: unsetToken }}>
-            {tokenRef.current ? (!tokenRef.current?.isAdmin ? <Navigate to={`../profile?=${tokenRef.current?.name.split(" ").join(".")}`} /> : <Administrator />): <Navigate to="../login" />}
-            </userContext.Provider>
-          }
-        >
+        <Route exact path="/administrator" element={
+          <userContext.Provider value={{token: token, setToken: setToken, unsetToken: unsetToken }}>
+            <Administrator />
+          </userContext.Provider>
+        } loader={auth}>
           <Route index element={<Dashboard />} />
-          <Route path="users" element={<Users token={tokenRef.current} />} />
+          <Route path="users" element={<Users token={token} />} />
           <Route path="posts" element={<PostsBackend />} />
           <Route path="comments" element={<Comments />} />
-          <Route path="newpost" element={<Postform token={tokenRef.current} bgclass = "bg-light"/>} />
-          <Route path="*" element={<Error status="404" element="Page"/>} />
+          <Route path="newpost" element={<Postform token={token} bgclass = "bg-light"/>} />
+          <Route path="*" element={<Error status="404" element="No Page"/>} />
         </Route>
       </>
     )

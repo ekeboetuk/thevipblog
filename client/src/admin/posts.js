@@ -13,7 +13,7 @@ function Posts() {
     })
 
     const [query, setQuery] = useState({sort: "-_id", limit: 20});
-    const {posts, error, isLoading, mutate} = usePosts(`?sort=${query.sort}&limit=${query.limit}`)
+    const {posts, error, loading, mutating} = usePosts(`?sort=${query.sort}&limit=${query.limit}`)
     const [search, setSearch] = useState("");
     const [actionmenu, setActionmenu] = useState({})
     const [operation, setOperation] = useState();
@@ -24,27 +24,27 @@ function Posts() {
 
     const handleSort = (e) => {
         setQuery({...query, sort: e.target.value})
-        mutate(posts.sort((a, b)=>{
+        mutating(posts.sort((a, b)=>{
             return (a.meta.category).localeCompare((b.meta.category))
         }))
     }
 
     const handleLimit = (e) => {
         setQuery({...query, limit: e.target.value})
-        mutate(posts.slice(e.target.value))
+        mutating(posts.slice(e.target.value))
     }
 
     const handleSearch = (e) => {
         setSearch(e.target.value)
         const searchexp = new RegExp(`${search}`,'gi')
-        mutate(posts.filter((post)=>{
+        mutating(posts.filter((post)=>{
             return searchexp.test(post.title)
         }))
     }
 
     const togglePublishPost = async (postId, status, index) => {
         setOperation(true)
-        mutate(posts.map((post) => {
+        mutating(posts.map((post) => {
                 if(post._id === postId) {
                     return {
                         ...post, isApproved: !status
@@ -77,7 +77,7 @@ function Posts() {
 
     const handleDeletePost = async (postId) => {
         setOperation(true)
-        mutate(posts.filter((post)=>{
+        mutating(posts.filter((post)=>{
                 return post._id !== postId
             }),
             await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}`)
@@ -88,7 +88,7 @@ function Posts() {
     const togglePublishComment = async(postId, commentId, status)=>{
         setOperation(true)
         try{
-            mutate(posts.map((post)=>{
+            mutating(posts.map((post)=>{
                 return {
                     ...post, comments: post.comments.map((comment) => {
                         if(comment._id === commentId) {
@@ -130,7 +130,7 @@ function Posts() {
     const handleDeleteComment = async (postId, postIndex, commentId) => {
         setOperation(true)
         await axios.delete(process.env.REACT_APP_SERVER_URL + `/post/${postId}/${commentId}`)
-        mutate(posts.map((post)=>{
+        mutating(posts.map((post)=>{
                 return {
                     ...post, comments: post.comments.filter((comment) => comment._id !== commentId)
                 }
@@ -139,7 +139,7 @@ function Posts() {
     }
 
     const toggleFeatured = async(index, postId, featured) => {
-        mutate(await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
+        mutating(await axios.patch(process.env.REACT_APP_SERVER_URL + `/post/togglestatus`,{
                 id: postId,
                 property: "meta.featured",
                 status: !featured
@@ -175,8 +175,8 @@ function Posts() {
             )
         }else{
             return (
-                <div>{isLoading && <div className="position-fixed translate-middle-x" style={{top: `calc(${window.innerHeight/2}px)`, left: `calc(${navwidth?.clientWidth + spinnerbound?.clientWidth/2}px)`}}><i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait...</i></div>}
-                    <div className={`${isLoading && "opacity-25"} mb-0 mb-md-5 pe-md-0`} onClick={()=>setActionmenu({})}>
+                <div>{loading && <div className="position-fixed translate-middle-x" style={{top: `calc(${window.innerHeight/2}px)`, left: `calc(${navwidth?.clientWidth + spinnerbound?.clientWidth/2}px)`}}><i className="fa-solid fa-circle-notch fa-spin me-2"></i><i>Please Wait...</i></div>}
+                    <div className={`${loading && "opacity-25"} mb-0 mb-md-5 pe-md-0`} onClick={()=>setActionmenu({})}>
                     <input type="text" id="search" className="w-100 bg-light mb-3 px-3 py-1" value={search} onChange={(e)=>handleSearch(e)} placeholder="Ajax Search" />
                     <div className="d-flex flex-column flex-sm-row justify-content-between mb-2">
                         <div className="d-flex flex-wrap align-items-center mb-2">
@@ -256,7 +256,7 @@ function Posts() {
                                             <div className="actionbutton">
                                                 <span type="button" className="fa-solid fa-ellipsis-vertical bg-transparent border-0 position-absolute top-0 end-0" onClick={(e)=>toggleActionmenu(e, index)}></span>
                                                 {actionmenu[index] &&
-                                                <div className="d-flex flex-column position-absolute top-0 end-0 bg-tertiary actionmenu shadow-sm">
+                                                <div className="d-flex flex-column position-absolute top-0 end-0 bg-tertiary actionmenu shadow">
                                                     <button className="border-0 menuitem bg-tertiary"  onClick={()=>togglePublishPost(post._id, post.isApproved, index)}>{post.isApproved?'Unpublish':'Publish'}</button>
                                                     <button className="border-0 menuitem bg-tertiary">Edit Post</button>
                                                     <button className="border-0 menuitem bg-tertiary"  onClick={()=>handleDeletePost(post._id)}>Delete</button>
@@ -273,7 +273,7 @@ function Posts() {
                     </div>
                 </div>
             )}
-    } else if(isLoading) {
+    } else if(loading) {
         window.scrollTo({top:0,left:0,behavior:'smooth'})
         return (
             <div className="d-flex flex-column flex-fill">

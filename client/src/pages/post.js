@@ -18,14 +18,14 @@ import { Postcard } from '../components/cards';
 
 import { userContext } from '../index';
 
-function Post({ token }) {
+function Post({ token, unsetToken }) {
     const { state } = useLocation()
     const [commenting, setCommenting] = useState({edit:false, content:'', id:null});
     const [sending, setSending] = useState(false);
     const [portal, setPortal] = useState(false)
     const [authorsPosts, setAuthorsPosts] = useState(null);
     const params = useParams();
-    const {posts, error, isLoading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
+    const {posts, error, loading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
 	const {setToken} = useContext(userContext)
     const commentRef = useRef()
 
@@ -34,6 +34,9 @@ function Post({ token }) {
             await axios.get(process.env.REACT_APP_SERVER_URL + `/posts/author/?sort=-_id&postId=${posts?.id}&authorId=${posts?.meta.author.id}`)
             .then((response) => {
                 setAuthorsPosts(response.data)
+            })
+            .catch((error)=>{
+                console.log(error.response?.message)
             })
         })()
     },[posts?.id, posts?.meta.author.id])
@@ -61,17 +64,25 @@ function Post({ token }) {
                 message.innerHTML = "";
             }, 10000)
         },(error) => {
-            message.innerHTML = `<span class="text-danger pe-4 fs-5">${error.response.data} Please try again.</span>`;
-            setSending(false)
-            setTimeout(()=>{
-                message.innerHTML = "";
-            }, 5000)
+            if(error.response){
+                message.innerHTML = `<span class="text-danger pe-4 fs-5">${error.response.data} Please login and try again.</span>`;
+                setSending(false)
+                setTimeout(()=>{
+                    unsetToken()
+                }, 5000)
+            }else if(error.request){
+                message.innerHTML = `<span class="text-danger pe-4 fs-5">Network Error. Please check you internet try again.</span>`;
+                setSending(false)
+                setTimeout(()=>{
+                    message.innerHTML = "";
+                }, 5000)
+            }
         })
     }
 
     let content, tags, author, related
 
-    if(isLoading){
+    if(loading){
         window.scrollTo({top:0,left:0,behavior:'smooth'})
         content =
         <div id="loading" className="d-flex flex-column flex-fill justify-content-start align-self-start pe-md-2 mb-5">
@@ -125,7 +136,7 @@ function Post({ token }) {
                             comment.approved &&
                             <tr key={index} id="comments" className="d-flex">
                                 <td className="avatar flex-shrink-0 p-2 border-0">
-                                    <img src={`${(comment.user?.isActive && comment.user?.avatar)||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" alt="Avatar"/>
+                                    <img src={`${(comment.user?.isActive && comment.user?.avatar)||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" height="50px" alt="Avatar"/>
                                 </td>
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
                                     <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
@@ -149,7 +160,7 @@ function Post({ token }) {
                         </form>:
                         <div className="postcomment text-center mb-5 py-5 bg-light">
                             <p>Kindly login to contribute</p>
-                            <button onClick={()=>{setPortal(true); window.history.pushState(state, `Afriscope Blog - ${title}`)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
+                            <button onClick={()=>{setPortal(true); window.history.replaceState(state, `Afriscope Blog - ${title}`)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
                             {portal &&
                                 createPortal(
                                     <Modal onClick={()=>setPortal(false)}>
@@ -186,7 +197,7 @@ function Post({ token }) {
     return (
         <>
             <section className={`container-md d-flex flex-column flex-md-row`}>
-                <div id="post" className={`${isLoading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
+                <div id="post" className={`${loading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
                     {content}
                     <div className="d-flex flex-column align-items-center position-fixed top-50 start-0 fs-1 ms-2 rounded">
                         <Link to="#" className="text-brand"><i className="fa-brands fa-facebook-f pt-3 pb-2"></i></Link>
@@ -198,7 +209,7 @@ function Post({ token }) {
                     <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
                     <div className="w-100 mb-5">
                         <h5 className="fw-bolder text-uppercase mb-4">Tags</h5>
-                        {isLoading?
+                        {loading?
                             <SkeletonTheme>
                                 <Skeleton inline={true} width="20%" containerClassName="pe-2" />
                                 <Skeleton inline={true} width="60%" containerClassName="pe-2" />
@@ -217,7 +228,7 @@ function Post({ token }) {
                         }
                     </div>
                     {author}
-                    <div className="" style={{position: "sticky", top: "60px", marginBottom: "0"}}>
+                    <div className="" style={{position: "sticky", top: "70px", marginBottom: "0"}}>
                         <Subscribe />
                     </div>
                 </div>

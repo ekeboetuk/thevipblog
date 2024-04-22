@@ -1,44 +1,44 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 import axios from 'axios';
 
 export const useToken = () => {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
-  const tokenRef = useRef(token)
 
   useEffect(()=>{
-    if(token){
+      if(token == null) return
       (async function(){
-          await axios.get(process.env.REACT_APP_SERVER_URL + `/user/${JSON.parse(localStorage.getItem("token"))?.id}`)
-          .then((response) => {
-              tokenRef.current = response.data
-              localStorage.setItem('token', JSON.stringify(response.data))
-              setToken(response.data)
-          })
-          .catch((error) => {
-              console.log(error)
-          })
-      })()
-    }
-  },[])
+        await axios.get(process.env.REACT_APP_SERVER_URL + `/user/${token?.id}`,{
+          withCredentials: true
+        })
+        .then(() => {
+            return null
+        })
+        .catch((error) => {
+            if(error.request && error.response.status >= 500){
+              return null
+            }else if(error.response.status >= 400 && error.response.status < 500){
+              removeToken()
+            }
+        })
+      }
+    )()
+  },[token])
 
   const saveToken = (token) => {
     localStorage.setItem("token", JSON.stringify(token));
-    tokenRef.current = token
     setToken(token);
   };
 
   const removeToken = () => {
     localStorage.removeItem("token")
     document.cookie = `session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${process.env.REACT_APP_SERVER_DOMAIN}; path=/;`;
-    tokenRef.current = null
     setToken()
   }
 
   return {
     setToken: saveToken,
     token,
-    tokenRef,
     unsetToken: removeToken
   }
 }

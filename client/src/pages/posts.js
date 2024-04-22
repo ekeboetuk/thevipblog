@@ -10,7 +10,7 @@ import { PostsCarousel } from '../components/carousels';
 
 function Posts() {
     const category = useParams().category
-    const {posts, error, isLoading} = usePosts(`/${category}?sort=-_id`)
+    const {posts, error, loading} = usePosts(`/${category}?sort=-_id`)
     let content, filtered, editorsPick, featuredIn
 
     if(!["lifestyles","sports","fashion","technology","education","general"].includes(category)){
@@ -24,7 +24,7 @@ function Posts() {
         )
     }
 
-    if(isLoading) {
+    if(loading) {
         window.scrollTo({top:0,left:0,behavior:'smooth'})
         content =
             <section>
@@ -66,7 +66,7 @@ function Posts() {
         editorsPick = filtered.filter(post => post.meta.editorsPick)
         featuredIn = filtered.filter(post => post.meta.featured)
         filtered.length === 0?
-        content = <Error status="204" element={`Post Under ${category} Category`} />:
+        content = <Error status="204" element={`No Post Under ${category} Category`} />:
         content =
             <>
                 <section>
@@ -182,7 +182,7 @@ function Posts() {
                                             id={post._id}
                                             slug={post.slug}
                                             image={post.image}
-                                            height="100px"
+                                            height="125px"
                                             title={post.title}
                                             comments={post.comments}
                                             meta={post.meta}

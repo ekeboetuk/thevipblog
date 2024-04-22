@@ -18,9 +18,9 @@ export function Tags() {
 }
 
 function RecentPosts( {title, sort = '-_id', count, showMeta, showEngagement, query} ) {
-    const {posts, isLoading} = usePosts(`?sort=${sort}`)
+    const {posts, loading} = usePosts(`?sort=${sort}`)
 
-    if (isLoading) {
+    if (loading) {
         return (
             <div className="d-flex flex-column">
                 <Skeleton className="w-100" height="180px"/>

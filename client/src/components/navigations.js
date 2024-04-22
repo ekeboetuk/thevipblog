@@ -1,7 +1,7 @@
 import { useState, useContext } from "react"
 import { Link, NavLink, useParams, useNavigate } from "react-router-dom"
 
-import axios from "axios"
+//import axios from "axios"
 
 import { userContext } from ".."
 
@@ -66,19 +66,6 @@ export function User() {
           });
     }
 
-	async function administrator() {
-		await axios.get(process.env.REACT_APP_SERVER_URL + '/user/auth', {
-			withCredentials: true
-		})
-		.then(()=>{
-			navigate('/administrator/posts')
-		})
-		.catch((err)=>{
-			unsetToken()
-			navigate("/login",{state: {message: `${err.response.data} Please re-login to continue!`}});
-		})
-	}
-
 	return (
 		<>
 			{token ?
@@ -90,18 +77,18 @@ export function User() {
 						</button>
 						{usermenu &&
 							<div id="usermenu" className="d-flex flex-column position-absolute top-100 end-0 bg-tertiary actionmenu shadow-sm">
-								<Link to={`/profile?q=${token.name.split(' ').join('.').toLowerCase()}`} className="menuitem link-dark"><li className="fas fa-address-card me-2"></li>My Profile</Link>
+								<Link to='profile' className="menuitem link-dark"><li className="fas fa-address-card me-2"></li>My Profile</Link>
 								{token?.role !== 'Subscriber' &&
 									<>
 										<Link className="menuitem link-dark" to="/write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
 									</>
 								}
-								{token?.isAdmin && <div onClick={administrator} className="menuitem link-dark" role="button"><li className="fa-solid fa-toolbox me-2"></li>Administrator</div>}
+								{token?.isAdmin && <Link to='administrator/posts' onClick={(e)=>{e.preventDefault(); navigate('administrator/posts')}} className="menuitem link-dark"><li className="fa-solid fa-toolbox me-2"></li>Administrator</Link>}
 								<div className="menuitem link-dark" role="button" onClick={unsetToken}><li className="fa-solid fa-lock-open me-2"></li>Sign Out</div>
 							</div>}
 					</div>
 				</> :
-				<Link className="text-white border border-primary rounded-pill px-3 py-2 fs-6" to="/login" role="button">
+				<Link className="text-white border border-primary rounded-pill px-3 py-2 fs-6" to="/login" onClick={(e)=>{e.preventDefault(); navigate('login',{state: {path:window.location.pathname.replace('/','')}, replace:true})}} role="button">
 					<i className="fa-solid fa-unlock-keyhole me-2"></i>
 					Login
 				</Link>

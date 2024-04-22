@@ -12,12 +12,12 @@ function Users({token}) {
         document.title = "Afriscope Administrator - Manage Users"
     })
 
-    const {users, error, isLoading, mutate} = useUsers('s')
+    const {users, error, loading, mutating} = useUsers('s')
     const user_view = useRef(`${localStorage.getItem('users_view')}`)
     const [view, setView] = useState(user_view.current === 'null'?'List':user_view.current);
 
     const toggleUserActivation = async(id, status)=>{
-        mutate(users.map((user) => {
+        mutating(users.map((user) => {
             if(user.id === id) {
                     return {...user, isActive: !status}
                 }else{
@@ -32,14 +32,14 @@ function Users({token}) {
     }
 
     const handleDeleteUser = async(userId) => {
-        mutate(users.filter((user)=>{
+        mutating(users.filter((user)=>{
                 return user._id !== userId
             }),
             await axios.delete(process.env.REACT_APP_SERVER_URL + `/user/${userId}`)
         )
     }
 
-    if(isLoading){
+    if(loading){
         window.scrollTo({top:0,left:0,behavior:'smooth'})
         return (
             <div className="d-inline-flex position-absolute" style={{top: `calc(${window.innerHeight/3}px)`}}>
@@ -54,8 +54,8 @@ function Users({token}) {
             return <Error status="204" element="posts" />
         }else {
             return (
-                <div className={`position-relative flex-fill`}>{isLoading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}
-                    <div className={`${isLoading && "opacity-25"} p-3 d-flex flex-column flex-fill`}>
+                <div className={`position-relative flex-fill`}>{loading && <i className="fa-solid fa-circle-notch fa-spin me-2 position-absolute" style={{left: "30vw", top: "40vh"}}></i>}
+                    <div className={`${loading && "opacity-25"} p-3 d-flex flex-column flex-fill`}>
                         <div className="d-flex justify-content-left align-items-center mb-2">
                             <h6 className="mb-0 pe-2">View As:</h6>
                             <div className="bg-light p-2 rounded-5 px-4">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { flushSync } from 'react-dom';
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import Skeleton from 'react-loading-skeleton'
 
@@ -8,25 +8,23 @@ import Adverts from '../components/adverts'
 import { Postcard } from '../components/cards'
 import { usePosts } from '../hooks/fetchers'
 
-export default function Search({count}) {
-    const [search, setSearchParams] = useSearchParams()
+export default function Search({limit = 20}) {
+    const [max, setmax] = useState(limit)
+    const [search, setSearch] = useSearchParams()
     const [advanced, setAdvanced] = useState(false)
     const [state, setState] = useState({
                                         query: search.get('q')||'',
-                                        author: search.get('author')||'',
-                                        category: search.get('category')||'all'
+                                        author: '',
+                                        category: ''
                                     })
-    const {isLoading, error, posts} = usePosts(`/search?q=${search.get("q")}`)
-    let content
+    const {posts, error, loading} = usePosts(`/search?${advanced?`q=${state.query}&author=${state.author}&category=${state.category}`:`q=${search.get('q')}`}`)
+    let content, count, pagination
 
     useEffect(()=>{
-        document.title = `Afriscope Blog Search - ${search.get('q')}`
+        document.title = `Afriscope Blog Search - ${state.query}`
         window.scrollTo({top:0,left:0,behavior:'smooth'})
-    },[search])
-
-    useEffect(()=>{
-        advanced?setSearchParams(`q=${state.query}&author=${state.author}&category=${state.category}`):setSearchParams(`q=${state.query}`)
-    },[setSearchParams, state, advanced])
+        window.history.replaceState({},`Afriscope Blog Search - ${state.query}`,`?q=${state.query}${state.category===''?'':`&category=${state.category}`}${state.author == ''?'':`&author=${state.author}`}`)
+    },[search, state])
 
     const serializeFormQuery = (e) => {
         const value = e.target.value;
@@ -39,12 +37,13 @@ export default function Search({count}) {
     }
 
    if(error) {
+        console.log(error)
        content =
             <>
                 <p className="text-danger">Error fetching posts</p>
             </>
    }
-   if(isLoading) {
+   if(loading) {
         content =
         <>
             <div className="d-flex flex-row pb-5">
@@ -103,34 +102,36 @@ export default function Search({count}) {
    }
    if(posts) {
         if(posts.length === 0) {
-            content = <p className='fst-italic'>Nothing found under <strong>{search.get('q')||"null"}</strong>. Please revise the search term and try again.</p>
+            content = <p className='fst-italic'>Nothing found under <strong>{state.query||"null"}</strong>. Please revise the search term and try again.</p>
         }else{
-        content =
-            <>
-                {posts.slice(0,count).map((post) => (
-                        <div key={post._id} className={`col d-flex flex-column flex-md-row pe-md-3 pb-5 align-self-stretch transition ${isLoading&&"opacity-50"}`}>
-                            <Postcard
-                                id={post._id}
-                                slug={post.slug}
-                                image={post.image}
-                                imgWidth="200px"
-                                height="100px"
-                                title={post.title}
-                                intro={post.intro.slice(0,200)}
-                                comments={post.comments}
-                                meta={post.meta}
-                                category={post.meta.category}
-                                created={post.created}
-                                showCategory={false}
-                                showMeta={false}
-                                showFeatured={false}
-                                showReadmore={false}
-                                showEngagement={false}
-                                font="1.4rem"
-                            />
-                        </div>
-                ))}
-            </>
+            count = posts.length
+            pagination = Array.from({length:Math.ceil(count/limit)},(page, i)=><Link key={i} className="me-2 text-white bg-brand text-center" style={{width: '25px', height: '25px'}} onClick={()=>{setmax((i+1)*limit)}}>{i+1}</Link>)
+            content =
+                <>
+                    {posts.slice(max-limit, max).map((post) => (
+                            <div key={post._id} className={`col d-flex flex-column flex-md-row pe-md-3 pb-5 align-self-stretch transition ${loading&&"opacity-50"}`}>
+                                <Postcard
+                                    id={post._id}
+                                    slug={post.slug}
+                                    image={post.image}
+                                    imgWidth="200px"
+                                    height="100px"
+                                    title={post.title}
+                                    intro={post.intro.slice(0,200)}
+                                    comments={post.comments}
+                                    meta={post.meta}
+                                    category={post.meta.category}
+                                    created={post.created}
+                                    showCategory={false}
+                                    showMeta={false}
+                                    showFeatured={false}
+                                    showReadmore={false}
+                                    showEngagement={false}
+                                    font="1.4rem"
+                                />
+                            </div>
+                    ))}
+                </>
         }
    }
 
@@ -150,7 +151,7 @@ export default function Search({count}) {
                             &emsp; &emsp;
                             <label className="fst-italic fw-bolder d-flex align-items-end lh-1">Category: &nbsp;
                                 <select name="category" className="flex-fill" value={state.category} onChange={(e)=>serializeFormQuery(e)} >
-                                    <option value="all">All</option>
+                                    <option value="">All</option>
                                     <option value="lifestyles">Lifestyles</option>
                                     <option value="sports">Sports</option>
                                     <option value="fashion">Fashion</option>
@@ -161,7 +162,8 @@ export default function Search({count}) {
                     </>}
                     <h4 className='border-left text-brand'>Search Results</h4>
                     {content}
-                    <button className="btn btn-primary px-4 py-2 fw-bolder" onClick={()=>setAdvanced(!advanced)}>Advanced Search</button>
+                    {limit < count && <div className="d-flex flex-row align-self-center">{pagination}</div>}
+                    <button className="btn btn-primary px-4 py-2 fw-bolder" onClick={(e)=>{setAdvanced(!advanced); !advanced && serializeFormQuery(e); advanced && setSearch(`q=${state.query}`)}}>Advanced Search</button>
                 </div>
             </section>
         </>

@@ -11,7 +11,7 @@ import { Advertise, Subscribe } from '../components/widgets'
 import { Error } from '../components/errors';
 
 function Home() {
-    const {posts, error, isLoading} = usePosts(`/?sort=-_id`)
+    const {posts, error, loading} = usePosts(`/?sort=-_id`)
     const [quotes, setQuotes] = useState()
     const [count, setCount] = useState(4)
     const quote = useRef({quote: "Advertise you products here at an affordable rate", name: "Afriscope"})
@@ -45,7 +45,7 @@ function Home() {
         }
     },[quotes])
 
-    if(isLoading) {
+    if(loading) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
             <div className="container-md row mx-auto p-4 p-md-0 my-5">
@@ -83,7 +83,7 @@ function Home() {
         approved = posts.filter(post => post.isApproved)
         featured = approved.filter(post => post.meta.featured)
         approved.length === 0?
-        content = <Error status="204" element="Post" />:
+        content = <Error status="204" element="Just in time for the party. Subscribe to be the first to know ->" />:
         content =
             <>
                 <section>
@@ -192,7 +192,7 @@ function Home() {
                                 </div>
                             ))}
                         </div>
-                        {approved.length > count && <button className="col-12 btn btn-primary fw-bolder order-md-last" onClick={()=>setCount(count+1)}>Load More</button>}
+                        {approved.length > count && <button className="col-12 btn btn-primary fw-bolder order-md-last" onClick={()=>setCount(count+2)}>Load More</button>}
                     </div>
                 </section>
                 <section id="popular-categories" className="container-fluid mx-auto">

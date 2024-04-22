@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 
-import { useUsers } from '../hooks/fetchers'
+import { useUser } from '../hooks/fetchers';
+import { Error } from "./errors";
 
 import axios from "axios";
+import Skeleton from 'react-loading-skeleton';
 
 
 export function Register() {
-    document.title = "Afriscope Blog - Sign Up"
+    document.title = "Afriscope Blog - Register"
 
     const [state, setState] = useState({password:''})
     const [sending, setSending] = useState(false)
@@ -106,11 +108,11 @@ export function Register() {
     )
 }
 
-export function Login( {setToken, setPortal} ) {
-    document.title = "Afriscope Blog - Sign In"
-    const msg = useLocation().state?.message
+export function Login( {token, setToken, unsetToken, setPortal} ) {
+    document.title = "Afriscope Blog - Login"
+    const state = useLocation().state
     const navigate = useNavigate();
-    const [state, setState] = useState({
+    const [details, setDetails] = useState({
         email: sessionStorage.getItem('email')||"",
         password:"",
         remember_me:sessionStorage.getItem('remember_me')==="true"
@@ -119,38 +121,43 @@ export function Login( {setToken, setPortal} ) {
     const message = document.getElementById("message")
 
     useEffect(()=>{
-        if(msg !== undefined) {
+        if(state?.resetToken){
+            unsetToken()
+            return navigate('/login',{state:{msg:state?.msg, path:state?.path, resetToken:false},replace:true})
+        }
+        if(state?.msg !== undefined) {
             const alert = document.createElement('div')
             alert.setAttribute('class', 'text-brand fw-bolder px-3 py-2 bg-tertiary rounded mb-5 z-2')
-            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${msg}`
+            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${state.msg} Please login to try again.`
             const elem = document.getElementById('login')
             elem.insertBefore(alert, elem.children[0])
         }
-    },[msg])
+        if(token && !state?.resetToken){
+            navigate(state?.path==null?'/':`/${state.path}`,{replace:true})
+        }
+    },[state, token, navigate, unsetToken])
 
     async function handleLogin(e) {
         e.preventDefault()
         setSending(true)
-
         await axios.post(process.env.REACT_APP_SERVER_URL + `/user/login`,{
-            email: state.email,
-            password: state.password,
-            remember_me: state.remember_me
+            email: details.email,
+            password: details.password,
+            remember_me: details.remember_me
         },{
             withCredentials: true
             })
         .then((response) => {
-            if(state.remember_me && state.email !== sessionStorage.getItem('email')) {
-                sessionStorage.setItem("email", state.email)
-                sessionStorage.setItem("remember_me", state.remember_me)
-            }else if(!state.remember_me && state.email !== "") {
-                sessionStorage.removeItem("email", state.email)
-                sessionStorage.removeItem("remember_me", state.remember_me)
+            if(details.remember_me && details.email !== sessionStorage.getItem('email')) {
+                sessionStorage.setItem("email", details.email)
+                sessionStorage.setItem("remember_me", details.remember_me)
+            }else if(!details.remember_me && details.email !== "") {
+                sessionStorage.removeItem("email", details.email)
+                sessionStorage.removeItem("remember_me", details.remember_me)
             }
             message.classList.remove('d-none')
             message.innerHTML = "Login successful";
             message.style.color = "green";
-            navigate(-1)
             setTimeout(()=>{
                 setPortal && setPortal(false)
                 setToken(response.data);
@@ -159,15 +166,19 @@ export function Login( {setToken, setPortal} ) {
         .catch((error) => {
             setSending(false)
             message.classList.remove('d-none')
-            message.innerHTML = `${error.response?.data}`;
             message.style.color = "red";
+            if(error.request) {
+                message.innerHTML = "Network Error. Please Try Again"
+            }else{
+                message.innerHTML = `${error.response?.data}`;
+            }
         })
     }
 
     const handleChange = (e) => {
         const value = e.target.value;
-        setState({
-            ...state,
+        setDetails({
+            ...details,
             [e.target.name]: value
         });
 
@@ -183,13 +194,13 @@ export function Login( {setToken, setPortal} ) {
                     <img src="/media/login-avatar-white.webp" width={80} height={80} className="bg-primary display-absolute top-0 start-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
                     <h4 className="fw-bold pb-5">Please Sign In To Continue</h4>
                     <form onSubmit={handleLogin} className="d-flex flex-column px-0 px-md-5 mx-0 mx-md-5">
-                        <input type="email" id="email" name="email" className="w-100 text-black-50 mb-4" onChange={handleChange} value={state.email??""} placeholder="E-mail" autoComplete="on"/>
-                        <input type="password" id="password" name="password" className="w-100 text-black-50 mb-4" onChange={handleChange} value={state.password??""} placeholder="Password"/>
+                        <input type="email" id="email" name="email" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.email??""} placeholder="E-mail" autoComplete="on"/>
+                        <input type="password" id="password" name="password" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.password??""} placeholder="Password"/>
                         <div className="d-inline-flex align-items-center mb-4">
-                            <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setState({...state, remember_me: !state.remember_me})} checked={state.remember_me} />
+                            <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setDetails({...details, remember_me: !details.remember_me})} checked={details.remember_me} />
                             <label htmlFor="remember_me">Remember Me</label>
                         </div>
-                        <button type="submit" className="btn-primary rounded"  disabled={!state.email || state.password.length < 5 || sending}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
+                        <button type="submit" className="btn-primary rounded"  disabled={!details.email || details.password.length < 5 || sending}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
                         <p id="message" className="d-none mt-3 mb-5 fw-bold" style={{height:"20px"}}>&nbsp;</p>
                     </form>
                 </div>
@@ -204,31 +215,29 @@ export function Login( {setToken, setPortal} ) {
 }
 
 export function Profile({ token, setToken }) {
-    let username = token.name.toLowerCase().replace(" ",".")
-    const {users, isLoading} = useUsers(`/${token.id}`)
-    const [state, setState] = useState({avatar: users?.avatar||token.avatar||'/media/photo-placeholder-male.jpeg'})
+    const {user, loading, error } = useUser(`/profile`)
+    const [state, setState] = useState({avatar: user?.avatar})
     const [action, setAction] = useState("")
     const ref = useRef()
-    let navigate = useNavigate()
+    const navigate = useNavigate()
 
     useEffect(()=> {
         ref.current = document.getElementById("update")
         document.title = `Afriscope Blog - Your Profile`
-        navigate(`?q=${username}`,{replace: true})
-    }, [navigate, username])
+        if(user){
+            window.history.replaceState({},"",`/profile?q=${user?.name.toLowerCase()}`)
+        }
+        if(!token) {
+            navigate('/login',{state:{msg:'Session expired.', path:'profile', resetToken:true}, replace:true})
+        }
+    }, [navigate, token, user])
+
 
     const previewFile = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
         setAction("preview")
 
-        reader.addEventListener(
-          "load",
-          () => {
-            setState({...state, avatar:reader.result})
-          },
-          false,
-        );
         if (file) {
            if(file.size > 1024 * 3000) {
             let msg = document.createElement("div")
@@ -244,13 +253,21 @@ export function Profile({ token, setToken }) {
             reader.readAsDataURL(file);
            }
         }
+
+        reader.addEventListener(
+            "load",
+            () => {
+              setState({...state, avatar:reader.result})
+            },
+            false,
+          );
       }
 
     const updateProfile = async(e) => {
         e.preventDefault()
         setAction("sending")
 
-        await axios.post(process.env.REACT_APP_SERVER_URL+`/user/profile?id=${token.id}`, state)
+        await axios.post(process.env.REACT_APP_SERVER_URL+`/user/profile`, state, {withCredentials:true})
         .then((response)=>{
             let msg = document.createElement("div")
             msg?.classList.add("text-success", "fw-bolder", "mt-4")
@@ -272,26 +289,45 @@ export function Profile({ token, setToken }) {
             },20000)
         })
     }
-
-    return (
+    if(loading){
+        return (
+            <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
+                <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
+                    <Skeleton width="200px" height="200px" circle={true} className="border border-2 position-relative"/>
+                </div>
+                <div className="pt-5 pb-2 mt-5">
+                    <Skeleton width="250px" height="15px" direction="rtl"/>
+                </div>
+            </section>
+        )
+    }
+    if(error){
+        if(error.message==='Network Error' || error.response?.status >= 500) {
+            return <Error status="500" message="Problem Loading Profile Data"/>
+        }else{
+            return <Navigate to='/login' state={{msg:'Invalid session token.', path:'profile', resetToken:true}} replace={true} />
+            }
+        }
+    if(user){
+        return (
         <>
             <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
                 <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
                     <div id="profileimagearea"
                         className="border border-2 rounded-circle position-relative"
-                        style={{width: "200px", height: "200px", backgroundImage:`url(${state.avatar})`, backgroundPosition: "center", backgroundSize:"cover"}}
+                        style={{width: "200px", height: "200px", backgroundImage:`url(${action==='edit'||action==='preview'?state.avatar:user.avatar||'/media/photo-placeholder-male.jpeg'})`, backgroundPosition: "center", backgroundSize:"cover"}}
                         >
                         <div className={`${action!=="" && action!=="sending"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
                             <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
                             &nbsp;
                         </div>
                         <label htmlFor="profile-picture" className={`${action!=="" && action!=="sending"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
-                                <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
+                            <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
                         </label>
-                        {isLoading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
+                        {loading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
                     </div>
                 </div>
-                <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{token?.name} </strong>{action!=="sending" && <i className="fa-solid fa-pen-to-square" role="button" onClick={(e)=>{action===""?setAction("edit"):setAction("")}}></i>}</h4>
+                <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{user?.name} </strong>{action!=="sending" && <i className="fa-solid fa-pen-to-square" role="button" onClick={(e)=>{action===""?setAction("edit"):setAction("")}}></i>}</h4>
                 {(action!=="")  &&
                     <button id="update" ref={ref} className={`btn btn-primary px-4 px-2 rounded-pill`}
                         onClick={updateProfile}
@@ -300,6 +336,6 @@ export function Profile({ token, setToken }) {
                     </button>
                 }
             </section>
-        </>
-    )
+        </>)
+    }
 }

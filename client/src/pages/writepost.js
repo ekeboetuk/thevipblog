@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { PostsCarousel } from '../components/carousels';
 import { Postform } from '../components/forms';
@@ -6,11 +7,12 @@ import { Error } from '../components/errors';
 import { Subscribe} from '../components/widgets'
 
 function WritePost( {token} ) {
+    const [action] = useSearchParams()
 
     useEffect(()=>{
-        document.title = `Afriscope Blog - New Post`
+        document.title = `Afriscope Blog - ${action.get("action")==="edit"?"Edit":"New"} Post`
         window.scrollTo({top:0,left:0,behavior:'smooth'})
-    },[])
+    },[action])
 
     return (
         <>

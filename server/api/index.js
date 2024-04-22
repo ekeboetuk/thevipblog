@@ -16,20 +16,28 @@ import { json } from 'express';
 // Create an Express app
 const app = express();
 
+//Constants
+app.locals.secret = 'yM3^iJ7?hR2&oA'
+
 // Middleware
 //app.use(morgan('tiny'));
 app.use(express.urlencoded({limit: '25mb', extended: false }));
 app.use(express.json({limit: '25mb'}));
 app.use(cors({
-  origin: true,
+  origin: ['http://localhost','https://afriscope.vercel.app'],
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   headers: ['Authorization', 'Content-Type']
 }));
 app.use(cookieparser());
-app.use(async (req, res, next) => {
+
+// Models
+import posts from './models/posts.js';
+import users from './models/users.js';
+
+// Middlewares
+const authenticate = async (req, res, next) => {
   const session_token = req.cookies['session_token']
-  if(!session_token) return next()
   try{
     const token = jwt.verify(session_token, app.locals.secret)
     res.locals.user = await users.findOne({'_id': token.user.id, isActive: true})
@@ -37,14 +45,16 @@ app.use(async (req, res, next) => {
   }catch(error){
     next(error)
   }
-})
+}
 
-// Models
-import posts from './models/posts.js';
-import users from './models/users.js';
-
-//Constants
-app.locals.secret = 'yM3^iJ7?hR2&oA'
+const postsCount = async (req, res, next)=> {
+  await posts.countDocuments({})
+  .then((count)=>{
+    res.locals.count = count
+    next()
+  })
+  .catch(next)
+}
 
 //User Routes
 app.post("/user/register", async (req, res) => {
@@ -86,22 +96,22 @@ app.post('/user/login', async (req, res) => {
   }
 
   const session_token = jwt.sign(payload, app.locals.secret)
-  res.cookie('session_token', session_token, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+  return res.cookie('session_token', session_token, {expires: req.body.remember_me?new Date(Date.now()+7*24*3600000):"", sameSite: "None", secure: true}).send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
 })
 
-app.get('/user/auth', (req, res, next)=>{
+app.get('/user/auth', authenticate, (req, res, next)=>{
   const user = res.locals.user
-   try{
-    if(user && user.isAdmin){
-      return res.status(200).send('Authentication Successful')
+  const path = req.query.q
+  if(user!==undefined){
+    if(path.includes('administrator') && !user.isAdmin){
+        throw {status: 403, message: 'Not Authorized'}
       }
-      throw {status: 403, message: 'Not Authorized'}
-    }catch(error){
-      next(error)
+      return res.sendStatus(200)
     }
+    throw {status: 403, message: 'Not Authorized'}
 })
 
-app.get('/users', async(req, res, next) => {
+app.get('/users', authenticate, async(req, res, next) => {
   await users.find({}).select(['-pswdhash', '-__v'])
   .then((users)=>{
     return res.send(users)
@@ -109,11 +119,17 @@ app.get('/users', async(req, res, next) => {
   .catch(next)
 })
 
-app.get('/user/:userId', async (req, res, next) => {
-  if(req.params.userId){
-    const user = await users.findById(req.params.userId);
-    res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+app.get('/user/profile', authenticate, (req, res, next) => {
+  const user = res.locals.user;
+  return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
+})
+
+app.get('/user/:userId', authenticate, (req, res, next) => {
+  const user = res.locals.user;
+  if(req.params.userId && user){
+    return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin});
   }
+  throw {status: 403, message: 'Not Authorized'}
 })
 
 
@@ -134,27 +150,46 @@ app.delete('/user/:userId', async(req, res, next) => {
   .catch(next)
 })
 
-app.post('/user/profile', async (req, res, next) => {
-  const user = await users.findById(req.query.id).select(["-pswdhash", "-__v"])
-  if(user){
-    user.avatar = req.body.avatar
-    await user.save()
-    return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin})
-  }
-    res.status(400).send("There Was An Error")
-})
-
-// Post routes
-app.get('/posts', async (req, res, next)=> {
-  await posts.countDocuments({})
-  .then((count)=>{
-    res.locals.count = count
-    next('route')
+app.post('/user/profile', authenticate, async (req, res, next) => {
+  const user = res.locals.user;
+  user.avatar = req.body.avatar
+  await user.save()
+  .then(()=>{
+      return res.send({id: user._id, name: user.name, avatar: user.avatar, role: user.role, isAdmin: user.isAdmin})
   })
   .catch(next)
 })
 
-app.get('/posts', async (req, res, next) => {
+// Post routes
+//Write new post
+app.post('/writepost', authenticate, async (req, res, next) => {
+  const user = res.locals.user
+  if(user && user.role !== 'Subscriber') {
+    const post = new posts({
+      image: req.body.image,
+      title: req.body.title,
+      intro: req.body.intro,
+      body: req.body.body.toString(),
+      meta: {
+        description: req.body.metaDescription,
+        category: req.body.category,
+        author: req.body.author,
+        featured: req.body.featured,
+        tags: req.body.tags.split(",").forEach(el => el.trim())
+      },
+      isApproved: req.body.approved
+    })
+    await post.save()
+    .then(()=>{
+      return res.send();
+    })
+    .catch(next)
+  }else{
+    throw {status: 403, message: 'Not Authorized'}
+  }
+})
+
+app.get('/posts', postsCount, async (req, res, next) => {
   const {sort, limit} = req.query
   await posts.find({})
   .select('-body')
@@ -171,7 +206,7 @@ app.get('/posts', async (req, res, next) => {
 app.get('/posts/author', async (req, res, next) => {
   const {sort, limit, postId, authorId} = req.query
   authorId !== 'undefined' &&
-  await posts.find({$and: [{'meta.author':authorId},{'_id': {$ne: postId}}]})
+  await posts.find({$and: [{'meta.author':authorId},{'_id': {$ne: postId}},{'isApproved': true}]})
   .select('-body').limit(limit?`${limit}`:0)
   .sort(`${sort}`)
   .populate('meta.author')
@@ -183,7 +218,8 @@ app.get('/posts/author', async (req, res, next) => {
 })
 
 app.get('/posts/search', async (req, res, next) => {
-  await posts.find({ $text : { $search : `${req.query.q}` }})
+  const {q, author, category} = req.query
+  await posts.find({$and: [{ $text : { $search : `${q}` }},{'isApproved': true}]})
   .select("-__v -body")
   .populate('meta.author', 'name')
   .then(posts => {
@@ -197,7 +233,8 @@ app.get('/posts/:grouping', async (req, res, next) => {
   if(query === 'undefined'||query === undefined) {
     return next('route')
   }
-  await posts.find({$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}}]})
+  await posts.find({$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}},{'isApproved': true}]})
+  .collation({locale: 'en_US', strength: 2})
   .select('-__v -body')
   .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
@@ -211,7 +248,7 @@ app.get('/posts/:grouping', async (req, res, next) => {
 
 app.get('/posts/:category', async (req, res, next) => {
   const {sort, limit} = req.query
-  await posts.find(['sports', 'fashion', 'technology', 'lifestyles','education','general'].includes(req.params.category)?{'meta.category': req.params.category}:{})
+  await posts.find(['sports', 'fashion', 'technology', 'lifestyles','education','general'].includes(req.params.category)?{$and:[{'meta.category': req.params.category},{'isApproved': true}]}:{'isApproved':true})
   .select("-__v -body")
   .limit(limit?limit:0)
   .sort(sort)
@@ -236,33 +273,6 @@ app.get('/posts/:category/:slug', async (req, res, next) => {
   .catch(next)
 })
 
-//Create new post
-app.post('/writepost', async (req, res, next) => {
-  const user = res.locals.user
-  if(user && !user.role === 'Subscriber') {
-    const post = new posts({
-      image: req.body.image,
-      title: req.body.title,
-      intro: req.body.intro,
-      body: req.body.body.toString(),
-      meta: {
-        description: req.body.metaDescription,
-        category: req.body.category,
-        author: req.body.author,
-        featured: req.body.featured,
-        tags: req.body.tags.split(",").forEach(el => el.trim())
-      },
-      isApproved: req.body.approved
-    })
-    await post.save()
-    .then(()=>{
-      return res.send();
-    })
-    .catch(next)
-  }
-  throw {status: 403, message: 'Not Authorized'}
-})
-
 app.patch('/post/likes', async (req, res) => {
   await posts.findByIdAndUpdate(req.body.id, {'meta.likes': req.body.likes})
   .then(()=>{
@@ -280,21 +290,11 @@ app.patch('/post/views', async (req, res) => {
   res.send();
 })
 
-app.patch('/post/togglestatus', async (req, res) => {
-  const {id, property, status} = req.body
-  let post = await posts.findByIdAndUpdate(id,
-    {$set:
-      {[property]: status}
-    })
-  if(!post) return res.status(404).send('Error updating post');
-  res.send('Post updated successfully')
-})
-
-app.patch('/post/comment', async (req, res) => {
+app.patch('/post/comment', authenticate, async (req, res) => {
   const user = res.locals.user
   const {postId, content, commentId} = req.body
   try{
-    if(!user || user === null ) {
+    if(user == null ) {
       return res.status(401).send('Failed to post comment - unauthorized')
     }
     let post
@@ -323,6 +323,16 @@ app.patch('/post/comment', async (req, res) => {
     }
 })
 
+//Administrator
+app.patch('/post/togglestatus', async (req, res) => {
+  const {id, property, status} = req.body
+  let post = await posts.findByIdAndUpdate(id,
+    {$set:
+      {[property]: status}
+    })
+  if(!post) return res.status(404).send('Error updating post');
+  res.send('Post updated successfully')
+})
 
 app.patch('/post/comment/togglestatus', async (req, res, next) => {
   const {postId, commentId, status} = req.body
@@ -367,11 +377,11 @@ app.delete('/post/:postId/:commentId', async(req, res, next) => {
 
 app.use((err, req, res, next)=>{
   if(err && err.status){
-    res.status(err.status).send(err.message)
+    return res.status(err.status).send(err.message)
   }else if(err instanceof jwt.JsonWebTokenError) {
-    return res.status(401).send('Missing or invalid session token.')
+    return res.status(401).send('Invalid session token.')
   }
-  return res.status(500).send()
+  return res.status(500).send('There was an error.')
 })
 
 

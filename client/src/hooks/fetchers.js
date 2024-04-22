@@ -12,33 +12,41 @@ export function usePosts(apiendpoint) {
 
     return {
         posts: data,
-        error,
-        isLoading,
-        isValidating,
-        mutate,
+        error: error,
+        loading: isLoading,
+        validating: isValidating,
+        mutating: mutate,
     }
 }
 
 export function useUsers(apiendpoint) {
     const fetcher = (url) => axios(url).then(response =>  response.data)
-    const {data, error, isLoading, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/user${apiendpoint}`, fetcher)
+    const {data, error, isLoading, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/user${apiendpoint}`,
+    fetcher,
+    {
+        shouldRetryOnError: false
+    })
 
     return {
         users: data,
-        isError: error,
-        isLoading,
-        mutate
+        error: error,
+        loading: isLoading,
+        mutating: mutate
     }
 }
 
-export function useUser() {
-    const fetcher = (url) => axios(url).then(response =>  response.data)
-    const {data, error, isLoading, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/user/login`, fetcher)
+export function useUser(apiendpoint) {
+    const fetcher = ([url, credentials]) => axios(url, credentials).then(response =>  response.data)
+    const {data, error, isLoading, mutate} = useSWR([process.env.REACT_APP_SERVER_URL + `/user${apiendpoint}`, {withCredentials:true}],
+    fetcher,
+    {
+        shouldRetryOnError: false
+    })
 
-    return [
-        data,
-        error,
-        isLoading,
-        mutate
-    ]
+    return {
+        user: data,
+        error: error,
+        loading: isLoading,
+        mutating: mutate
+    }
 }

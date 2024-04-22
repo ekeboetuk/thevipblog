@@ -8,7 +8,6 @@ import { Editor } from '@tinymce/tinymce-react';
 import '../styles.css'
 
 export const Postform = ( {token} ) => {
-    document.title = "Afriscope Administrator - Create Post"
 
     const initialstate = {
         title: "",

@@ -5,7 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import { Postcard } from "./cards"
 
 export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, continous = true, query, postId, showMeta, showEngagement}) => {
-    const {posts, isLoading, isError} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=${sort||'-_id'}&limit=${limit}&query=${query}&postId=${postId}`)
+    const {posts, loading, error} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=${sort||'-_id'}&limit=${limit}&query=${query}&postId=${postId}`)
     const [scrollindex, setScrollindex] = useState(0)
     const [play, setPlay] = useState(autoplay)
     const scrollRef = useRef()
@@ -76,9 +76,9 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
                         </div>}
                     </>
                 }
-                {isError||posts?.length === 0 ? <p className="text-center text-white">Nothing To See Here Today!</p>:
+                {error||posts?.length === 0 ? <p className="text-center text-white">Nothing To See Here Today!</p>:
                     <div id="carousel" className={`row row-cols-1 row-cols-md-${count} flex-nowrap`}>
-                    {isLoading ?
+                    {loading ?
                         <>
                             <div className="d-flex flex-column pe-4">
                                 <Skeleton className="w-100" height="180px"/>

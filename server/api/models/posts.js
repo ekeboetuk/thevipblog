@@ -67,7 +67,7 @@ const postschema = Schema({
             type: String,
             default: 'general',
             enum: {
-                values: ['sports','lifestyles','fashion','technology','education','genera'],
+                values: ['sports','lifestyles','fashion','technology','education','general'],
                 message: 'enum validator failed for path `{PATH}` with value `{VALUE}`',
             },
             required: true
