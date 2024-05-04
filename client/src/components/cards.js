@@ -170,7 +170,7 @@ export const PostcardTransparent = ({
     return (
         <>
             <div
-                className="w-100 w-md-50 position-relative overflow-hidden"
+                className="w-100 w-md-50 position-relative overflow-hidden reveal"
                 style={{
                     backgroundImage: `url(${image})`,
                     backgroundSize: "cover",

@@ -6,6 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import Skeleton, {SkeletonTheme} from 'react-loading-skeleton';
 import DOMPurify from 'isomorphic-dompurify';
+import { Helmet } from 'react-helmet-async';
 
 import Modal from '../components/modal';
 import { Login } from "../components/users";
@@ -28,6 +29,7 @@ function Post({ token, unsetToken }) {
     const {posts, error, loading} = usePosts(`/${params.category}/${params.slug}?id=${state?.id}`);
 	const {setToken} = useContext(userContext)
     const commentRef = useRef()
+    let title
 
     useEffect(()=>{
         (async function(){
@@ -35,8 +37,8 @@ function Post({ token, unsetToken }) {
             .then((response) => {
                 setAuthorsPosts(response.data)
             })
-            .catch((error)=>{
-                console.log(error)
+            .catch(()=>{
+                return null
             })
         })()
     },[posts?.id, posts?.meta.author.id])
@@ -101,8 +103,7 @@ function Post({ token, unsetToken }) {
             </SkeletonTheme>
         </div>
     }else if(posts) {
-            let title = posts.title.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
-            document.title = `Afriscope Blog - ${title}`
+            title = posts.title.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
             content=
                 <>
                     <div id="header" className="d-flex align-items-center pb-3">
@@ -141,7 +142,7 @@ function Post({ token, unsetToken }) {
                                 <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
                                     <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
                                         {comment.content}
-                                        <div className="d-inline-flex align-self-end">
+                                        <div className="d-flex flex-row align-self-start">
                                             {token && commenting.edit !== true && token?.name === comment?.user.name && <div className="border border-1 rounded-pill px-3 me-2 fs-6" role="button" onClick={(e)=>{setCommenting({...commenting, edit: true, content: comment.content, id: comment.id}); commentRef.current.scrollIntoView(false)}}>Edit</div>}
                                             {token && <div className="border border-1 rounded-pill px-3 fs-6" role="button">Reply</div>}
                                         </div>
@@ -196,6 +197,20 @@ function Post({ token, unsetToken }) {
 
     return (
         <>
+            <Helmet prioritizeSeoTags>
+                <title>{`Afriscope Blog - ${title}`}</title>
+                <meta name="description" content={title} data-rh="true" />
+
+                <meta property="og:description" content={title} data-rh="true" />
+                <meta property="og:type" content="article" data-rh="true" />
+                <meta property="og:url" content={window.location.href} data-rh="true" />
+                <meta property="og:image" content={posts?.image} data-rh="true" />
+
+                <meta name="twitter:description" content={title} data-rh="true" />
+                <meta name="twitter:card" content="article" data-rh="true" />
+                <meta property="twitter:url" content={window.location.href} data-rh="true" />
+                <meta name="twitter:image" content={posts?.image} data-rh="true" />
+            </Helmet>
             <section className={`container-md d-flex flex-column flex-md-row`}>
                 <div id="post" className={`${loading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
                     {content}

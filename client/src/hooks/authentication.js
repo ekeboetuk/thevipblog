@@ -11,8 +11,8 @@ export const useToken = () => {
         await axios.get(process.env.REACT_APP_SERVER_URL + `/user/${token?.id}`,{
           withCredentials: true
         })
-        .then(() => {
-            return null
+        .then((response) => {
+            return setToken(response.data)
         })
         .catch((error) => {
             if(error.request && error.response.status >= 500){
@@ -23,7 +23,7 @@ export const useToken = () => {
         })
       }
     )()
-  },[token])
+  },[])
 
   const saveToken = (token) => {
     localStorage.setItem("token", JSON.stringify(token));

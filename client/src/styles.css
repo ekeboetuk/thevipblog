@@ -143,7 +143,6 @@ a {
 
 a>img:hover {
   opacity: 0.8;
-  border: 1px solid #cccccc;
 }
 
 .nav-link {
@@ -403,6 +402,11 @@ footer {
   transition: padding-bottom 0.5s ease-in-out, opacity 1s linear;
 }
 
+.postcontent:hover .postintro{
+  opacity: 0.75;
+  padding-bottom: 40px;
+}
+
 .postintro .intro, .intro {
   font-weight: 700;
   margin-left: 5px;
@@ -414,15 +418,15 @@ footer {
   display: none;
 }
 
-.postcontent:hover .postintro{
-  opacity: 0.75;
-  padding-bottom: 40px;
-}
-
 .postcontent:hover .meta {
   display: block;
   opacity: 0.75;
   animation: revealuptransparent 1s ease-in-out 0s alternate ;
+}
+
+@keyframes revealuptransparent {
+  from {transform: translate(0, 100%); opacity: 1;}
+  to {transform: translate(0, 0); opacity: 0.75}
 }
 
 #post #content, #post #metadesc, #post #intro {
@@ -453,22 +457,12 @@ footer {
   padding: 5px !important
 }
 
-#author div:not(:nth-child(3n)), #featured div {
+#featured div {
+  padding-right: 5px !important;
+}
+
+#author div:not(:nth-child(3n)) {
   padding-right: 20px !important;
-}
-
-.componentreveal {
-  animation: reveal 0.5s ease-in-out
-}
-
-@keyframes reveal {
-  0% {opacity: 0;}
-  100% {opacity: 1}
-}
-
-@keyframes revealuptransparent {
-  from {transform: translate(0, 100%); opacity: 1;}
-  to {transform: translate(0, 0); opacity: 0.75}
 }
 
 /**Admin Area Only**/
@@ -512,6 +506,19 @@ footer {
 }
 
 /* Global Animations Classes */
+.reveal {
+  animation: reveal .5s ease-in-out
+}
+
+@keyframes reveal {
+  0% {opacity: 0}
+  100% {opacity: 1}
+}
+
+.smooth {
+  transition: height 2s ease-in-out
+
+}
 .notch-upward {
   transition: transform 0.5s ease-in-out
 }

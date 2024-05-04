@@ -23,7 +23,7 @@ export default function Search({limit = 20}) {
     useEffect(()=>{
         document.title = `Afriscope Blog Search - ${state.query}`
         window.scrollTo({top:0,left:0,behavior:'smooth'})
-        window.history.replaceState({query:state.query},`Afriscope Blog Search - ${state.query}`,`?q=${state.query}${state.category===''?'':`&category=${state.category}`}${state.author == ''?'':`&author=${state.author}`}`)
+        window.history.replaceState({query:state.query},`Afriscope Blog Search - ${state.query}`,`?q=${state.query}${state.category===''?'':`&category=${state.category}`}${state.author === ''?'':`&author=${state.author}`}`)
     },[search, state])
 
     const serializeFormQuery = (e) => {

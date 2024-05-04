@@ -6,6 +6,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, N
 //3rd Party Libraries/Modules Import
 //import {KindeProvider} from "@kinde-oss/kinde-auth-react";
 import axios from 'axios';
+import { HelmetProvider } from 'react-helmet-async';
 
 //Styles Import
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
@@ -38,6 +39,7 @@ export const userContext = createContext()
 
 function Afriscope() {
   const {token, setToken, unsetToken} = useToken();
+  const helmetContext = {};
 
   async function auth({request}) {
 		const url = new URL(request.url)
@@ -91,11 +93,13 @@ function Afriscope() {
   )
 
   return (
+    <HelmetProvider context={helmetContext}>
       <RouterProvider router={router} >
         <ScrollRestoration getKey={(location, matches) => {
             return location.pathname;
         }}/>
       </RouterProvider>
+    </HelmetProvider>
   )
 };
 

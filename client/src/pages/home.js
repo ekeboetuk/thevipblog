@@ -163,7 +163,7 @@ function Home() {
                         <p className='container-md'>You are all caught up here. Enjoy other selections.</p>
                     }
                 </section>
-                <section className="container-fluid" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
+                <section className="container-fluid smooth" style={{backgroundColor: 'rgba(88, 88, 88, 0.1)'}}>
                     <div className="container-md mx-auto row justify-content-center">
                         <div className="col-12 col-md-4 order-md-2 ps-md-4">
                             <Advertise title="Look Here" content={quote.current} />

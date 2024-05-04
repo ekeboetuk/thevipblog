@@ -195,8 +195,6 @@ app.get('/posts', postsCount, async (req, res, next) => {
   .select('-body')
   .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
-  .populate('meta.author')
-  .populate('comments.user')
   .then((posts) => {
     res.send(posts);
   })
@@ -230,7 +228,7 @@ app.get('/posts/search', async (req, res, next) => {
 
 app.get('/posts/:grouping', async (req, res, next) => {
   const {sort, limit, query, postId} = req.query
-  if(query === 'undefined'||query === undefined) {
+  if(query == null||query==='undefined') {
     return next('route')
   }
   await posts.find({$and: [{'meta.tags':{$in: query?.split(',')}},{'_id':{$ne:postId}},{'isApproved': true}]})
@@ -238,8 +236,6 @@ app.get('/posts/:grouping', async (req, res, next) => {
   .select('-__v -body')
   .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
-  .populate('meta.author')
-  .populate('comments.user')
   .then((posts) => {
     return res.send(posts);
   })
@@ -260,12 +256,12 @@ app.get('/posts/:category', async (req, res, next) => {
 })
 
 app.get('/posts/:category/:slug', async (req, res, next) => {
-  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}]}, {__v: 0 })
+  await posts.findOne({$or:[{'_id': new ObjectId(req.query.id?.length<12?"123456789012":req.query.id)},{'title': req.params.slug.split('-').join(' ')}],'isApproved':true})
   .collation({locale: 'en_US', strength: 2})
   .populate('meta.author', 'avatar name isActive')
   .populate('comments.user', 'avatar name isActive')
   .then((post) => {
-    if(post === null||!post.isApproved) {
+    if(post === null) {
       throw {status: 404, message: 'Not Found'}
     }
     return res.send(post)
@@ -381,7 +377,7 @@ app.use((err, req, res, next)=>{
   }else if(err instanceof jwt.JsonWebTokenError) {
     return res.status(401).send('Expired Or Invalid Session Token.')
   }
-  console.log(error)
+  console.log(err)
   return res.status(500).send('There was an error.')
 })
 

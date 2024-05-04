@@ -20,7 +20,7 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
     }
 
     useEffect(()=>{
-        if(play && overflowCount > 0){
+        if(!loading && play && overflowCount > 0){
         if(posts?.length > 0 && document.getElementById("carousel")){
             scrollRef.current = setTimeout(()=>{
                 if(scrollindex === overflowCount){
@@ -34,7 +34,7 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
             }, delay*1000)
         }
       }
-    },[])
+    },[loading, carousel?.style, continous, delay, overflowCount, play, postWidth, posts?.length, scrollCount, scrollindex])
 
     const handleClick = (navigation) => {
         clearTimeout(scrollRef.current)
@@ -123,7 +123,7 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
     )
 }
 
-export const CarouselWrapper = ({children, autoplay=false, continous=false, delay=10, scrollCount=1, limit}) => {
+export const CarouselWrapper = ({children, autoplay=false, continous=false, delay=30, scrollCount=1, limit}) => {
     const [scrollindex, setScrollindex] = useState(0)
     const [play, setPlay] = useState(autoplay)
     const scrollRef = useRef()
@@ -139,7 +139,7 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
 
     useEffect(()=>{
         if(play && overflowCount > 0){
-        if(limit > 0 && document.getElementById("carousel")){
+        if(limit > 0 && document.getElementById("featured")){
             scrollRef.current = setTimeout(()=>{
                 if(scrollindex === overflowCount){
                     carousel.style.transform = `translateX(-${0}px)`
@@ -152,7 +152,7 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
             }, delay*1000)
         }
       }
-    },[])
+    },[carousel?.style, continous, delay, limit, overflowCount, play, postWidth, scrollCount, scrollindex])
 
     const handleClick = (navigation) => {
         clearTimeout(scrollRef.current)
@@ -182,12 +182,24 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
             <div className="position-relative">
                 {children}
                 <>
-                    {scrollindex > 0 && <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
-                        <i className="fa-solid fa-circle-arrow-left fa-2xl text-brand"></i>
-                    </div>}
-                    {scrollindex < overflowCount && <div className="position-absolute top-50 end-0 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: "1"}}>
-                        <i className="fa-solid fa-circle-arrow-right fa-2xl text-brand"></i>
-                    </div>}
+                    {scrollindex > 0 &&
+                        <>
+                            <div className="bg-dark opacity-75 position-absolute top-0 start-0" style={{height: '100%', width: '35px'}}>
+                            </div>
+                            <div className="position-absolute top-50 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: '1', left:'5px'}}>
+                                <i className="fa-solid fa-circle-arrow-left fa-xl text-white"></i>
+                            </div>
+                        </>
+                    }
+                    {scrollindex < overflowCount &&
+                        <>
+                            <div className="bg-dark opacity-75 position-absolute top-0 end-0" style={{height: '100%', width: '35px'}}>
+                            </div>
+                            <div className="position-absolute top-50 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: '1', right:'5px'}}>
+                                <i className="fa-solid fa-circle-arrow-right fa-xl text-white"></i>
+                            </div>
+                        </>
+                    }
                 </>
             </div>
         </div>

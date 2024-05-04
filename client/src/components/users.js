@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { useUser } from '../hooks/fetchers';
 import { Error } from "./errors";
@@ -128,10 +128,16 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
         }
         if(state?.msg !== undefined) {
             const alert = document.createElement('div')
-            alert.setAttribute('class', 'text-brand fw-bolder px-3 py-2 bg-tertiary rounded mb-5 z-2')
+            alert.setAttribute('class', 'notification text-brand fw-bolder px-3 py-2 bg-tertiary rounded mb-5 z-2')
             alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${state.msg}`
             const elem = document.getElementById('login')
             elem.insertBefore(alert, elem.children[0])
+            setTimeout(()=>{
+                const notification = document.getElementsByClassName('notification')[0]
+                if(notification){
+                    notification.remove()
+                }
+            }, 10000)
         }
         if(token && !state?.resetToken){
             navigate(state?.path==null?'/':`${state.path}${state.query?`?q=${state.query}`:''}`,{replace:true})
@@ -159,10 +165,8 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
             message.classList.remove('d-none')
             message.innerHTML = "Login successful";
             message.style.color = "green";
-            setTimeout(()=>{
-                setPortal && setPortal(false)
-                setToken(response.data);
-            }, 10)
+            setPortal && setPortal(false)
+            setToken(response.data);
         })
         .catch((error) => {
             setSending(false)
@@ -229,18 +233,17 @@ export function Profile({ token, setToken }) {
             window.history.replaceState({},"",`/profile?q=${user?.name.toLowerCase()}`)
         }
         if(!token) {
-            navigate('/login',{state:{msg:'Session expired.', path:'/profile', resetToken:true}, replace:true})
+            return navigate('/login',{state:{msg:'Expired or invalid session token.', path:'/profile', resetToken:true}, replace:true})
         }
     }, [navigate, token, user])
-
 
     const previewFile = (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
         setAction("preview")
 
-        if (file) {
-           if(file.size > 1024 * 3000) {
+        if(file) {
+           if(file.size > 1024 * 1000) {
             let msg = document.createElement("div")
             msg?.classList.add("text-danger", "fw-bolder", "mt-4")
             let text = document.createTextNode(`File Size Too Large (300kb Max)`)
@@ -274,8 +277,9 @@ export function Profile({ token, setToken }) {
             msg?.classList.add("text-success", "fw-bolder", "mt-4")
             msg.appendChild(document.createTextNode("Successful"))
             ref.current.insertAdjacentElement("afterend", msg)
-            setAction("")
+            setAction("updated")
             setToken(response.data)
+            setState({...state, avatar: response.data.avatar})
             setTimeout(()=>{
                 msg.remove()
             },5000)
@@ -302,41 +306,38 @@ export function Profile({ token, setToken }) {
             </section>
         )
     }
-    if(error){
-        if(error.message==='Network Error' || error.response?.status >= 500) {
+    if(error && (error.message==='Network Error' || error.response?.status >= 500)){
             return <Error status="500" message="Problem Loading Profile Data"/>
-        }else{
-            return <Navigate to='/login' state={{msg:error.response.data, path:'/profile', resetToken:true}} replace={true} />
-            }
         }
     if(user){
         return (
-        <>
-            <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
-                <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
-                    <div id="profileimagearea"
-                        className="border border-2 rounded-circle position-relative"
-                        style={{width: "200px", height: "200px", backgroundImage:`url(${action==='edit'||action==='preview'?state.avatar:user.avatar||'/media/photo-placeholder-male.jpeg'})`, backgroundPosition: "center", backgroundSize:"cover"}}
-                        >
-                        <div className={`${action!=="" && action!=="sending"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
-                            <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
-                            &nbsp;
+            <>
+                <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
+                    <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
+                        <div id="profileimagearea"
+                            className="border border-2 rounded-circle position-relative"
+                            style={{width: "200px", height: "200px", backgroundImage:`url(${action===''||action==='edit'?user.avatar:state.avatar||'/media/photo-placeholder-male.jpeg'})`, backgroundPosition: "center", backgroundSize:"cover"}}
+                            >
+                            <div className={`${action!=="" && action!=="sending" && action!=="updated"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
+                                <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
+                                &nbsp;
+                            </div>
+                            <label htmlFor="profile-picture" className={`${action!=="" && action!=="sending" && action!=="updated"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
+                                <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
+                            </label>
+                            {loading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
                         </div>
-                        <label htmlFor="profile-picture" className={`${action!=="" && action!=="sending"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
-                            <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
-                        </label>
-                        {loading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
                     </div>
-                </div>
-                <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{user?.name} </strong>{action!=="sending" && <i className="fa-solid fa-pen-to-square" role="button" onClick={(e)=>{action===""?setAction("edit"):setAction("")}}></i>}</h4>
-                {(action!=="")  &&
-                    <button id="update" ref={ref} className={`btn btn-primary px-4 px-2 rounded-pill`}
-                        onClick={updateProfile}
-                        disabled={action==="sending"||action!=="preview"}>
-                        {action==="sending"?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:<><i className="fa-solid fa-floppy-disk pe-2"></i>Save Profile</>}
-                    </button>
-                }
-            </section>
-        </>)
+                    <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{user?.name} </strong>{action!=="sending" && <i className="fa-solid fa-pen-to-square" role="button" onClick={(e)=>{action===""?setAction("edit"):setAction("")}}></i>}</h4>
+                    {(action!==""&& action!=="updated")  &&
+                        <button id="update" ref={ref} className={`btn btn-primary px-4 px-2 rounded-pill`}
+                            onClick={updateProfile}
+                            disabled={action==="sending"||action!=="preview"}>
+                            {action==="sending"?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:<><i className="fa-solid fa-floppy-disk pe-2"></i>Save Profile</>}
+                        </button>
+                    }
+                </section>
+            </>
+        )
     }
 }
