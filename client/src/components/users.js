@@ -68,7 +68,7 @@ export function Register() {
                 <div className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center bg-primary text-center text-white p-5 rounded-start" style={{backgroundImage: "url('/assets/icon-faded.png')", backgroundSize:"contain", backgroundRepeat:"no-repeat", backgroundPosition: "center"}}>
                     <h3 className="text-bold">Hello!</h3>
                     <p>Do you have an account?</p>
-                    <Link type="button" className="btn btn-outline-light py-3 px-5 rounded" to="/login">Login</Link>
+                    <Link type="button" className="btn btn-outline-light py-3 px-5 rounded" to="/login" state={window.history.state} replace={true}>Login</Link>
                 </div>
                 <div id="formarea" className="col-12 col-md-8 bg-tertiary text-center text-brand px-5 pb-5 rounded-end display-relative">
                     <img src="/media/login-avatar-white.webp" width={80} className="bg-primary display-absolute top-0 end-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
@@ -81,11 +81,12 @@ export function Register() {
                             value={state.names??""}
                             className="w-100 mb-4"
                             onChange ={handleChange}
+                            autoComplete="name" 
                             placeholder="Name"/>
                         <input type="email" id="email" name="email" className="w-100 mb-4" value={state.email??""}
-                                onChange ={handleChange} placeholder="E-mail"/>
+                                onChange ={handleChange} autoComplete="email" placeholder="E-mail"/>
                         <input type="password" id="password" name="password" className="w-100 mb-4" value={state.password??""}
-                                onChange ={handleChange} placeholder="Password"/>
+                                onChange ={handleChange} autoComplete="current-password" placeholder="Password"/>
                         <div className="d-flex flex-column flex-md-row justify-content-between mb-4">
                             <strong className="d-flex flex-row align-items-center">Register As <i className="fa-solid fa-caret-right"></i></strong>
                             <div className="d-flex flex-row">
@@ -128,12 +129,12 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
         if(state?.msg !== undefined) {
             const alert = document.createElement('div')
             alert.setAttribute('class', 'text-brand fw-bolder px-3 py-2 bg-tertiary rounded mb-5 z-2')
-            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${state.msg} Please login to try again.`
+            alert.innerHTML = `<i class='fa-solid fa-circle-info'></i> ${state.msg}`
             const elem = document.getElementById('login')
             elem.insertBefore(alert, elem.children[0])
         }
         if(token && !state?.resetToken){
-            navigate(state?.path==null?'/':`/${state.path}`,{replace:true})
+            navigate(state?.path==null?'/':`${state.path}${state.query?`?q=${state.query}`:''}`,{replace:true})
         }
     },[state, token, navigate, unsetToken])
 
@@ -194,8 +195,8 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
                     <img src="/media/login-avatar-white.webp" width={80} height={80} className="bg-primary display-absolute top-0 start-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
                     <h4 className="fw-bold pb-5">Please Sign In To Continue</h4>
                     <form onSubmit={handleLogin} className="d-flex flex-column px-0 px-md-5 mx-0 mx-md-5">
-                        <input type="email" id="email" name="email" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.email??""} placeholder="E-mail" autoComplete="on"/>
-                        <input type="password" id="password" name="password" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.password??""} placeholder="Password"/>
+                        <input type="email" id="email" name="email" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.email??""} placeholder="E-mail" autoComplete="email"/>
+                        <input type="password" id="password" name="password" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.password??""} autoComplete="current-password" placeholder="Password"/>
                         <div className="d-inline-flex align-items-center mb-4">
                             <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setDetails({...details, remember_me: !details.remember_me})} checked={details.remember_me} />
                             <label htmlFor="remember_me">Remember Me</label>
@@ -207,7 +208,7 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
                 <div className="col-12 col-md-4 d-flex flex-column justify-content-center align-items-center bg-primary text-center align-middle text-white p-5 rounded-start" style={{backgroundImage: "url('/assets/icon-faded.png')", backgroundSize:"contain", backgroundRepeat:"no-repeat", backgroundPosition: "center"}}>
                     <h3 className="text-bold">Welcome Back!</h3>
                     <p>Don't have an account?</p>
-                    <Link type="button" className="btn btn-outline-light py-3 rounded px-5" to="/register">Register</Link>
+                    <Link type="button" className="btn btn-outline-light py-3 rounded px-5" to="/register" state={window.history.state} replace={true}>Register</Link>
                 </div>
             </div>
         </section>
@@ -228,7 +229,7 @@ export function Profile({ token, setToken }) {
             window.history.replaceState({},"",`/profile?q=${user?.name.toLowerCase()}`)
         }
         if(!token) {
-            navigate('/login',{state:{msg:'Session expired.', path:'profile', resetToken:true}, replace:true})
+            navigate('/login',{state:{msg:'Session expired.', path:'/profile', resetToken:true}, replace:true})
         }
     }, [navigate, token, user])
 
@@ -305,7 +306,7 @@ export function Profile({ token, setToken }) {
         if(error.message==='Network Error' || error.response?.status >= 500) {
             return <Error status="500" message="Problem Loading Profile Data"/>
         }else{
-            return <Navigate to='/login' state={{msg:'Invalid session token.', path:'profile', resetToken:true}} replace={true} />
+            return <Navigate to='/login' state={{msg:error.response.data, path:'/profile', resetToken:true}} replace={true} />
             }
         }
     if(user){

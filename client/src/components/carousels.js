@@ -100,7 +100,7 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
                             </div>
                         </>:
                         posts && posts.slice(0, limit).map((post) => (
-                            <div key={post._id} className={`notch-upward col g-4 gx-md-${count||3} gy-md-0 d-flex flex-column`}>
+                            <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
                                 <Postcard
                                     id={post._id}
                                     slug={post.slug}
@@ -118,6 +118,77 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
                         ))}
                     </div>
                 }
+            </div>
+        </div>
+    )
+}
+
+export const CarouselWrapper = ({children, autoplay=false, continous=false, delay=10, scrollCount=1, limit}) => {
+    const [scrollindex, setScrollindex] = useState(0)
+    const [play, setPlay] = useState(autoplay)
+    const scrollRef = useRef()
+    let postWidth, containerWidth, carousel, carouselWidth, overflowCount
+
+    if(children && document.getElementsByClassName("notch-upward")[0]){
+        postWidth = document.getElementsByClassName("notch-upward")[0].getBoundingClientRect().width
+        containerWidth = postWidth * limit
+        carousel = document.getElementById("featured")
+        carouselWidth = carousel.getBoundingClientRect().width
+        overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
+    }
+
+    useEffect(()=>{
+        if(play && overflowCount > 0){
+        if(limit > 0 && document.getElementById("carousel")){
+            scrollRef.current = setTimeout(()=>{
+                if(scrollindex === overflowCount){
+                    carousel.style.transform = `translateX(-${0}px)`
+                    setScrollindex(0)
+                    return setPlay(continous)
+                }else{
+                    carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
+                    return setScrollindex(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
+                }
+            }, delay*1000)
+        }
+      }
+    },[])
+
+    const handleClick = (navigation) => {
+        clearTimeout(scrollRef.current)
+        setPlay(false)
+        if(navigation === "left" ){
+        	if(scrollindex <= 0){
+		        return
+	        }else{
+	          carousel.style.transform = `translateX(-${postWidth*(scrollindex-(scrollindex>scrollCount?scrollCount:scrollindex||1))}px)`
+	          setScrollindex(scrollindex-(scrollindex>scrollCount?scrollCount:scrollindex||1))
+	        }
+        }else{
+	        if(scrollindex === overflowCount){
+		        return
+	        }else{
+	          carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
+	          setScrollindex(scrollindex +(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
+	        }
+        }
+
+        setTimeout(()=>{
+            setPlay(continous)
+        }, 10000)
+    }
+    return (
+        <div className="container-md overflow-hidden">
+            <div className="position-relative">
+                {children}
+                <>
+                    {scrollindex > 0 && <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
+                        <i className="fa-solid fa-circle-arrow-left fa-2xl text-brand"></i>
+                    </div>}
+                    {scrollindex < overflowCount && <div className="position-absolute top-50 end-0 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: "1"}}>
+                        <i className="fa-solid fa-circle-arrow-right fa-2xl text-brand"></i>
+                    </div>}
+                </>
             </div>
         </div>
     )

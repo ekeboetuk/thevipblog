@@ -141,6 +141,11 @@ a {
   overflow: hidden;
 }
 
+a>img:hover {
+  opacity: 0.8;
+  border: 1px solid #cccccc;
+}
+
 .nav-link {
   color: #FFFFFF;
   font-weight: 700;
@@ -290,7 +295,7 @@ td, th {
   transition: width 0.2s linear !important;
 }
 
-#carousel {
+#carousel, #featured {
   transition: transform 1s linear
 }
 
@@ -448,7 +453,7 @@ footer {
   padding: 5px !important
 }
 
-#author div:not(:nth-child(3n)), #featured div:not(:nth-child(3n)) {
+#author div:not(:nth-child(3n)), #featured div {
   padding-right: 20px !important;
 }
 

@@ -49,6 +49,7 @@ export default function Main(){
 				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/about-us"><i className="fa-solid fa-address-card pe-2"></i><span className="fs-6">About</span></NavLink>
 				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
 				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0 ms-md-5" to="/community"><i className="fa-solid fa-layer-group pe-2"></i><span className="fs-6">Community</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0" to="/media"><i className="fa-solid fa-photo-film pe-2"></i><span className="fs-6">Media Only</span></NavLink>
 			</div>
 		</div>
     )
@@ -88,7 +89,7 @@ export function User() {
 							</div>}
 					</div>
 				</> :
-				<Link className="text-white border border-primary rounded-pill px-3 py-2 fs-6" to="/login" onClick={(e)=>{e.preventDefault(); navigate('login',{state: {path:window.location.pathname.replace('/','')}, replace:true})}} role="button">
+				<Link className="text-white border border-primary rounded-pill px-3 py-2 fs-6" to="/login" onClick={(e)=>{e.preventDefault(); navigate('/login',{state: {query: window.history.state.query, path:window.location.pathname}, replace:true})}} role="button">
 					<i className="fa-solid fa-unlock-keyhole me-2"></i>
 					Login
 				</Link>

@@ -255,11 +255,11 @@ export const Contact = () => {
 
     return (
         <form onSubmit={handleSubmit} className="row flex-wrap gap-4 justify-content-between">
-            <input type="text" name="names" id="names" className="col-12" value={names} onChange={(e)=>setNames(e.target.value)} placeholder="Full Name*" required />
-            <input type="email" name="email" id="email" className="col-7" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="E-mail Address*" required />
-            <input type="phone" name="mobile" id="mobile" className="col-4" value={mobile} onChange={(e)=>setMobile(e.target.value)} placeholder="Mobile Phone*" required />
-            <input type="text" name="subject" id="subject" className="col-12" value={subject} onChange={(e)=>setSubject(e.target.value)} placeholder="Subject*" required />
-            <textarea name="message" value={message} onChange={(e)=>setMessage(e.target.value)} placeholder="Kindly type in the details of your request here*" required/>
+            <input type="text" name="names" id="names" className="col-12" value={names} onChange={(e)=>setNames(e.target.value)} placeholder="Full Name*" autoComplete="name" required />
+            <input type="email" name="email" id="email" className="col-7" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="E-mail Address*" autoComplete="email" required />
+            <input type="phone" name="mobile" id="mobile" className="col-4" value={mobile} onChange={(e)=>setMobile(e.target.value)} placeholder="Mobile Phone*" autoComplete="tel" required />
+            <input type="text" name="subject" id="subject" className="col-12" value={subject} onChange={(e)=>setSubject(e.target.value)} placeholder="Subject*" autoComplete="no" required />
+            <textarea name="message" value={message} onChange={(e)=>setMessage(e.target.value)} placeholder="Kindly type in the details of your request here*" autoComplete="no" required/>
             <div className="d-flex align-items-center">
                 <input type="checkbox" id="subscribe" name="subscribe" checked={subscribe} onChange={(e)=>setSubscribe(e.target.checked)}/>
                 <label htmlFor="subscribe" className="ps-2">Subscribe to our periodic newsletter?</label>
@@ -299,9 +299,9 @@ export const Subscription = () => {
 
     return (
         <form onSubmit={handleSubscribe} className="d-flex flex-column">
-            <input type="text" name="fullname" className="p-2" value={names} onChange={(e)=>setNames(e.target.value)} placeholder="Full Name *" required />
+            <input type="text" name="fullname" className="p-2" value={names} onChange={(e)=>setNames(e.target.value)} placeholder="Full Name *" autoComplete="name" required />
             <i className="mb-3 fs-6">At Least Two Names</i>
-            <input type="email" name="email" className="p-2" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email Address *" required/>
+            <input type="email" name="email" className="p-2" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email Address *" autoComplete="email" required/>
             <i className="mb-3 fs-6">* Required</i>
             <button type="submit" className="btn-primary flex-fill border-0 text-white p-2" disabled={sending}>Subscribe <i className={`${sending?'fa-regular fa-paper-plane fa-beat-fade':'fa-regular fa-paper-plane'}`}></i></button>
         </form>

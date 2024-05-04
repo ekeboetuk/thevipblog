@@ -36,7 +36,7 @@ function Post({ token, unsetToken }) {
                 setAuthorsPosts(response.data)
             })
             .catch((error)=>{
-                console.log(error.response?.message)
+                console.log(error)
             })
         })()
     },[posts?.id, posts?.meta.author.id])
@@ -142,7 +142,7 @@ function Post({ token, unsetToken }) {
                                     <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
                                         {comment.content}
                                         <div className="d-inline-flex align-self-end">
-                                            {token && token?.name === comment?.user.name && <div className="border border-1 rounded-pill px-3 me-2 fs-6" role="button" onClick={(e)=>{setCommenting({...commenting, edit: true, content: comment.content, id: comment.id}); commentRef.current.scrollIntoView(false)}}>Edit</div>}
+                                            {token && commenting.edit !== true && token?.name === comment?.user.name && <div className="border border-1 rounded-pill px-3 me-2 fs-6" role="button" onClick={(e)=>{setCommenting({...commenting, edit: true, content: comment.content, id: comment.id}); commentRef.current.scrollIntoView(false)}}>Edit</div>}
                                             {token && <div className="border border-1 rounded-pill px-3 fs-6" role="button">Reply</div>}
                                         </div>
                                 </td>
@@ -152,7 +152,7 @@ function Post({ token, unsetToken }) {
                     </table>
                     {token?
                         <form id="commentform" ref={commentRef} name="commentform" className="postcomment mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
-                            <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={commenting.content} onChange={(e)=> setCommenting({...commenting, content: e.target.value})} disabled={sending} required />
+                            <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={commenting.content} onChange={(e)=> setCommenting({...commenting, content: e.target.value})} disabled={sending} autoComplete="off" required />
                             <div className="d-flex flex-column flex-md-row">
                                 <span id="message" className="me-auto "></span>
                                 <button type="submit" id="submit" className="btn-primary border-0 text-white py-2 px-5 text-nowrap rounded-0 align-selft-stretch align-self-md-start" disabled={sending}>{sending ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting</>:commenting.edit?"Update Comment":"Submit Comment"}</button>
@@ -160,11 +160,11 @@ function Post({ token, unsetToken }) {
                         </form>:
                         <div className="postcomment text-center mb-5 py-5 bg-light">
                             <p>Kindly login to contribute</p>
-                            <button onClick={()=>{setPortal(true); window.history.replaceState(state, `Afriscope Blog - ${title}`)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
+                            <button onClick={()=>{setPortal(true)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
                             {portal &&
                                 createPortal(
                                     <Modal onClick={()=>setPortal(false)}>
-                                        <Login setToken = {setToken} setPortal={setPortal} />
+                                        <Login setToken={setToken} setPortal={setPortal} />
                                     </Modal>,
                                     document.body
                                 )

@@ -379,8 +379,9 @@ app.use((err, req, res, next)=>{
   if(err && err.status){
     return res.status(err.status).send(err.message)
   }else if(err instanceof jwt.JsonWebTokenError) {
-    return res.status(401).send('Invalid session token.')
+    return res.status(401).send('Expired Or Invalid Session Token.')
   }
+  console.log(error)
   return res.status(500).send('There was an error.')
 })
 

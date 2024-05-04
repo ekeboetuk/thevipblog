@@ -6,7 +6,7 @@ import { usePosts } from '../hooks/fetchers';
 import { Postcard, PostcardTransparent } from '../components/cards';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Error } from '../components/errors';
-import { PostsCarousel } from '../components/carousels';
+import { PostsCarousel, CarouselWrapper } from '../components/carousels';
 
 function Posts() {
     const category = useParams().category
@@ -147,7 +147,9 @@ function Posts() {
                     <div className="container-md mx-auto row">
                         <div className="col-12 col-md-3 order-md-last">
                             <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
-                            <Subscribe />
+                            <div className="sticky-top pb-2" style={{top: "65px", zIndex: "-1"}}>
+                                <Subscribe />
+                            </div>
                         </div>
                         <h3 className="col-12 border-left">{`Latest`}</h3>
                         <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
@@ -163,6 +165,7 @@ function Posts() {
                                     intro={`${post.intro.slice(0, 500)}...`}
                                     comments={post.comments}
                                     meta={post.meta}
+                                    showMeta={true}
                                     created={post.created}
                                     showFeatured={false}
                                     />
@@ -174,10 +177,10 @@ function Posts() {
                 <section className="container-fluid mx-auto">
                     <h3 className="container-md border-left">{`Featured In ${category}`}</h3>
                     {featuredIn.length > 0?
-                        <div className="container-md d-flex flex-column flex-md-row">
-                            <div id="featured" className="col-12 row row-cols-1 row-cols-md-3">
-                                {featuredIn.slice(0,3).map((post) => (
-                                    <div key={post._id} className="col d-flex flex-row pb-5 align-self-start transition">
+                        <CarouselWrapper limit={Math.min(featuredIn.length, 6)}>
+                            <div id="featured" className="col-12 row row-cols-1 row-cols-md-3 flex-nowrap">
+                                {featuredIn.slice(0,6).map((post) => (
+                                    <div key={post._id} className="notch-upward col d-flex flex-row align-self-start transition">
                                         <Postcard
                                             id={post._id}
                                             slug={post.slug}
@@ -198,7 +201,7 @@ function Posts() {
                                     </div>
                                 ))}
                             </div>
-                        </div>:
+                        </CarouselWrapper>:
                         <p className="container-md">Nothing To See Here Today!</p>
                     }
                 </section>
