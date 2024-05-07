@@ -7,7 +7,7 @@ export function usePosts(apiendpoint) {
         fetcher,
         {
             keepPreviousData: true,
-            refreshInterval: 10000,
+            refreshInterval: 60000,
             shouldRetryOnError: false
         })
 

@@ -294,7 +294,7 @@ td, th {
   transition: width 0.2s linear !important;
 }
 
-#carousel, #featured {
+#carousel {
   transition: transform 1s linear
 }
 
@@ -366,12 +366,17 @@ div.listing:hover i[type="button"], div.post:hover span[type="button"], .text-bl
 
 }
 
-.actionmenu .menuitem {
+#mainnavigation .menuitem {
   border-radius: 0px;
   padding: 8px 20px !important;
   /*text-transform: uppercase;
   font-size: 0.9rem;*/
   text-align: left !important;
+  color: #000000;
+}
+
+#footernavigation .menuitem {
+  color: #FFFFFF;
 }
 
 .actionmenu .menuitem:hover {
@@ -457,7 +462,7 @@ footer {
   padding: 5px !important
 }
 
-#featured div {
+.featured div {
   padding-right: 5px !important;
 }
 
@@ -618,7 +623,7 @@ footer {
     height: 60px !important
   }
 
-  #author div:not(:nth-child(3n)), #featured div:not(:nth-child(3n)) {
+  #author div:not(:nth-child(3n)), .featured div:not(:nth-child(3n)) {
     padding-right: 0 !important;
   }
 

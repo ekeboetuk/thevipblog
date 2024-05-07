@@ -6,13 +6,14 @@ import Skeleton from 'react-loading-skeleton';
 
 import { useUser } from '../hooks/fetchers';
 import { Error } from "./errors";
+import Toast from "./toasts";
 
 export function Register() {
     document.title = "Afriscope Blog - Register"
 
+    const [toast, setToast] = useState({})
     const [state, setState] = useState({password:''})
     const [sending, setSending] = useState(false)
-    const message = document.getElementById("message")
     const formelements = document.querySelectorAll("#names, #email, #password, [name='role'], #submit")
 
         const handleChange = (e) => {
@@ -22,15 +23,14 @@ export function Register() {
             [e.target.name]: value
           });
 
-          if(message){
-            message.classList.add('d-none')
+          if(toast.state){
+            setToast({state:false})
           }
         }
 
         const handleRegister = async(e) => {
             e.preventDefault()
             setSending(true)
-            message.classList.remove('text-success', 'text-danger')
             formelements.forEach(elem => elem.disabled = true);
 
            await axios.post(process.env.REACT_APP_SERVER_URL + `/user/register`, {
@@ -41,23 +41,23 @@ export function Register() {
                 }
             )
             .then(() => {
+                setToast({...toast, state:true, color: '#FFFFFF', status: 'success', msg:"Registeration successful! Login to continue"})
                 setTimeout(()=>{
-                    message.classList.remove('d-none')
-                    message.classList.add('text-success')
-                    message.innerHTML = "Registeration successful! Login to continue";
                     formelements.forEach(elem => elem.disabled = false);
                     setState({});
                     setSending(false)
-                }, 5000)
+                }, 10000)
             })
             .catch((error) => {
+                if(error.request && !error.response) {
+                    setToast({...toast, state:true, color: '#FFFFFF', status: 'warning', msg:"Network Error. Please Check Your Internet & Try Again!"})
+                }else{
+                    setToast({...toast, state:true, color: '#FFFFFF', status: 'error', msg:error.response.data})
+                }
                 setTimeout(()=>{
-                    message.classList.remove('d-none')
-                    message.classList.add('text-danger')
-                    message.innerHTML = `${error.response.data}`
                     formelements.forEach(elem => elem.disabled = false);
                     setSending(false)
-                })
+                }, 10000)
             })
         }
 
@@ -104,6 +104,11 @@ export function Register() {
                     </form>
                 </div>
             </div>
+            {toast.state &&
+                <Toast toast={toast} setToast={setToast} position="top-left">
+                    {toast.msg}
+                </Toast>
+            }
         </section>
     )
 }
@@ -118,7 +123,7 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
         remember_me:sessionStorage.getItem('remember_me')==="true"
         })
     const [sending, setSending] = useState(false)
-    const message = document.getElementById("message")
+    const [toast, setToast] = useState({})
 
     useEffect(()=>{
         if(state?.resetToken){
@@ -161,20 +166,18 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
                 sessionStorage.removeItem("email", details.email)
                 sessionStorage.removeItem("remember_me", details.remember_me)
             }
-            message.classList.remove('d-none')
-            message.innerHTML = "Login successful";
-            message.style.color = "green";
-            setPortal && setPortal(false)
-            setToken(response.data);
+            setToast({...toast, state:true, color: '#FFFFFF', status: 'success', msg:"Login Successful. Please wait, you'll redirected shortly!"})
+            setTimeout(()=>{
+                setPortal && setPortal(false)
+                setToken(response.data);
+            },2000)
         })
         .catch((error) => {
             setSending(false)
-            message.classList.remove('d-none')
-            message.style.color = "red";
-            if(error.request) {
-                message.innerHTML = "Network Error. Please Try Again"
+            if(error.request && !error.response) {
+                setToast({...toast, state:true, color: '#FFFFFF', status: 'warning', msg:"Network Error. Please Try Again"})
             }else{
-                message.innerHTML = `${error.response?.data}`;
+                setToast({...toast, state:true, color: '#FFFFFF', status: 'error', msg:error.response?.data})
             }
         })
     }
@@ -186,8 +189,8 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
             [e.target.name]: value
         });
 
-        if(message){
-            message.classList.add('d-none')
+        if(toast.state){
+           setToast({state:false})
         }
     }
 
@@ -198,10 +201,10 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
                     <img src="/media/login-avatar-white.webp" width={80} height={80} className="bg-primary display-absolute top-0 start-50 translate-middle-y p-4 shadow rounded-circle" alt="login avatar" style={{backgroundColor: 'red'}}/>
                     <h4 className="fw-bold pb-5">Please Sign In To Continue</h4>
                     <form onSubmit={handleLogin} className="d-flex flex-column px-0 px-md-5 mx-0 mx-md-5">
-                        <input type="email" id="email" name="email" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.email??""} placeholder="E-mail" autoComplete="email"/>
-                        <input type="password" id="password" name="password" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.password??""} autoComplete="current-password" placeholder="Password"/>
+                        <input type="email" id="email" name="email" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.email??""} placeholder="E-mail" autoComplete="email" disabled={sending} />
+                        <input type="password" id="password" name="password" className="w-100 text-black-50 mb-4" onChange={handleChange} value={details.password??""} autoComplete="current-password" placeholder="Password" disabled={sending} />
                         <div className="d-inline-flex align-items-center mb-4">
-                            <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setDetails({...details, remember_me: !details.remember_me})} checked={details.remember_me} />
+                            <input type="checkbox" id="remember_me" className="me-3" name="remember_me" onChange={() => setDetails({...details, remember_me: !details.remember_me})} checked={details.remember_me} disabled={sending} />
                             <label htmlFor="remember_me">Remember Me</label>
                         </div>
                         <button type="submit" className="btn-primary rounded"  disabled={!details.email || details.password.length < 5 || sending}>{sending?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:"Submit"}</button>
@@ -214,6 +217,11 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
                     <Link type="button" className="btn btn-outline-light py-3 rounded px-5" to="/register" state={window.history.state} replace={true}>Register</Link>
                 </div>
             </div>
+            {toast.state &&
+                <Toast toast={toast} setToast={setToast} position="top-left">
+                    {toast.msg}
+                </Toast>
+            }
         </section>
     )
 }
@@ -293,6 +301,7 @@ export function Profile({ token, setToken }) {
             },20000)
         })
     }
+    window.scrollTo({top:0, left:0, behavior:'smooth'})
     if(loading){
         return (
             <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">

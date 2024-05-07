@@ -4,7 +4,7 @@ import Skeleton from "react-loading-skeleton";
 
 import { Postcard } from "./cards"
 
-export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, continous = true, query, postId, showMeta, showEngagement}) => {
+export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4, scrollCount = 1, autoplay, delay = 8, continous = true, height = 180, query, postId, showMeta, showEngagement}) => {
     const {posts, loading, error} = usePosts(`/${title.toLowerCase().split(' ')[0]}/?sort=${sort||'-_id'}&limit=${limit}&query=${query}&postId=${postId}`)
     const [scrollindex, setScrollindex] = useState(0)
     const [play, setPlay] = useState(autoplay)
@@ -60,67 +60,67 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
         }, 10000)
     }
 
-
-
-    return(
-        <div className="container-md overflow-hidden">
-            {title && <h4 className="text-center text-uppercase text-white mb-5">{title}</h4>}
-            <div className="position-relative">
-                {posts?.length > 0 && overflowCount > 0 &&
-                    <>
-                        {scrollindex > 0 && <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
-                            <i className="fa-solid fa-circle-arrow-left fa-2xl text-white"></i>
-                        </div>}
-                        {scrollindex < overflowCount && <div className="position-absolute top-50 end-0 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: "1"}}>
-                            <i className="fa-solid fa-circle-arrow-right fa-2xl text-white"></i>
-                        </div>}
-                    </>
-                }
-                {error||posts?.length === 0 ? <p className="text-center text-white">Nothing To See Here Today!</p>:
-                    <div id="carousel" className={`row row-cols-1 row-cols-md-${count} flex-nowrap`}>
-                    {loading ?
+    if(posts){
+        return(
+            <div className="container-md overflow-hidden">
+                {title && <h4 className="text-center text-uppercase text-white mb-5">{title}</h4>}
+                <div className="position-relative">
+                    {posts?.length > 0 && overflowCount > 0 &&
                         <>
-                            <div className="d-flex flex-column pe-4">
-                                <Skeleton className="w-100" height="180px"/>
-                                <div className="p-4" style={{backgroundColor: "#FBFBFB"}}>
-                                    <Skeleton count={2} />
+                            {scrollindex > 0 && <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
+                                <i className="fa-solid fa-circle-arrow-left fa-2xl text-white"></i>
+                            </div>}
+                            {scrollindex < overflowCount && <div className="position-absolute top-50 end-0 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: "1"}}>
+                                <i className="fa-solid fa-circle-arrow-right fa-2xl text-white"></i>
+                            </div>}
+                        </>
+                    }
+                    {error||posts?.length === 0 ? <p id="info" className="text-center text-white">Nothing To See Here Today!</p>:
+                        <div id="carousel" className={`row row-cols-1 row-cols-md-${count} flex-nowrap`}>
+                        {loading ?
+                            <>
+                                <div className="d-flex flex-column pe-4">
+                                    <Skeleton className="w-100" height="180px"/>
+                                    <div className="p-4" style={{backgroundColor: "#FBFBFB"}}>
+                                        <Skeleton count={2} />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="d-flex flex-column pe-4">
-                                <Skeleton className="w-100" height="180px"/>
-                                <div className="p-4" style={{backgroundColor: "#FBFBFB"}}>
-                                    <Skeleton count={2} />
+                                <div className="d-flex flex-column pe-4">
+                                    <Skeleton className="w-100" height="180px"/>
+                                    <div className="p-4" style={{backgroundColor: "#FBFBFB"}}>
+                                        <Skeleton count={2} />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="d-flex flex-column pe-4">
-                                <Skeleton className="w-100" height="180px"/>
-                                <div className="p-4" style={{backgroundColor: "#FBFBFB"}}>
-                                    <Skeleton count={2} />
+                                <div className="d-flex flex-column pe-4">
+                                    <Skeleton className="w-100" height="180px"/>
+                                    <div className="p-4" style={{backgroundColor: "#FBFBFB"}}>
+                                        <Skeleton count={2} />
+                                    </div>
                                 </div>
-                            </div>
-                        </>:
-                        posts && posts.slice(0, limit).map((post) => (
-                            <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
-                                <Postcard
-                                    id={post._id}
-                                    slug={post.slug}
-                                    image={post.image}
-                                    title={post.title}
-                                    comments={post.comments}
-                                    meta={post.meta}
-                                    created={post.created}
-                                    height="180px"
-                                    showMeta={showMeta}
-                                    showEngagement={showEngagement}
-                                    font="1.5rem"
-                                />
-                            </div>
-                        ))}
-                    </div>
-                }
+                            </>:
+                            posts && posts.slice(0, limit).map((post) => (
+                                <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
+                                    <Postcard
+                                        id={post._id}
+                                        slug={post.slug}
+                                        image={post.image}
+                                        title={post.title}
+                                        comments={post.comments}
+                                        meta={post.meta}
+                                        created={post.created}
+                                        height={`${height}px`}
+                                        showMeta={showMeta}
+                                        showEngagement={showEngagement}
+                                        font="0.9em"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export const CarouselWrapper = ({children, autoplay=false, continous=false, delay=30, scrollCount=1, limit}) => {
@@ -132,14 +132,14 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
     if(children && document.getElementsByClassName("notch-upward")[0]){
         postWidth = document.getElementsByClassName("notch-upward")[0].getBoundingClientRect().width
         containerWidth = postWidth * limit
-        carousel = document.getElementById("featured")
+        carousel = document.getElementById("carousel")
         carouselWidth = carousel.getBoundingClientRect().width
         overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
     }
 
     useEffect(()=>{
         if(play && overflowCount > 0){
-        if(limit > 0 && document.getElementById("featured")){
+        if(limit > 0 && document.getElementById("carousel")){
             scrollRef.current = setTimeout(()=>{
                 if(scrollindex === overflowCount){
                     carousel.style.transform = `translateX(-${0}px)`
@@ -183,22 +183,18 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
                 {children}
                 <>
                     {scrollindex > 0 &&
-                        <>
-                            <div className="bg-dark opacity-75 position-absolute top-0 start-0" style={{height: '100%', width: '35px'}}>
-                            </div>
-                            <div className="position-absolute top-50 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: '1', left:'5px'}}>
+                        <div onClick={()=>handleClick("left")} role="button">
+                            <div className="d-flex justify-content-center align-items-center bg-dark opacity-75 position-absolute top-0 start-0" style={{height: '100%', width: '35px'}}>
                                 <i className="fa-solid fa-circle-arrow-left fa-xl text-white"></i>
                             </div>
-                        </>
+                        </div>
                     }
                     {scrollindex < overflowCount &&
-                        <>
-                            <div className="bg-dark opacity-75 position-absolute top-0 end-0" style={{height: '100%', width: '35px'}}>
-                            </div>
-                            <div className="position-absolute top-50 translate-middle-y" role="button" onClick={()=>handleClick("right")} style={{zIndex: '1', right:'5px'}}>
+                        <div onClick={()=>handleClick("right")} role="button">
+                            <div className="d-flex justify-content-center align-items-center bg-dark opacity-75 position-absolute top-0 end-0" style={{height: '100%', width: '35px'}}>
                                 <i className="fa-solid fa-circle-arrow-right fa-xl text-white"></i>
                             </div>
-                        </>
+                        </div>
                     }
                 </>
             </div>

@@ -167,7 +167,7 @@ function Home() {
                     <div className="container-md mx-auto row justify-content-center">
                         <div className="col-12 col-md-4 order-md-2 ps-md-4">
                             <Advertise title="Look Here" content={quote.current} />
-                            <div className="sticky-top mb-5 mb-md-4" style={{top: "60px", zIndex: "-1"}}>
+                            <div className="sticky-top mb-5 mb-md-4" style={{top: "60px", zIndex: "0"}}>
                                 <Subscribe />
                             </div>
                         </div>

@@ -5,8 +5,8 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, N
 
 //3rd Party Libraries/Modules Import
 //import {KindeProvider} from "@kinde-oss/kinde-auth-react";
-import axios from 'axios';
-import { HelmetProvider } from 'react-helmet-async';
+import axios from "axios";
+import { HelmetProvider } from "react-helmet-async";
 
 //Styles Import
 import "mdb-react-ui-kit/dist/css/mdb.min.css";

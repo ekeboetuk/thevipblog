@@ -1,8 +1,13 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { Subscription } from "./forms";
+import { UserMenu } from "./navigations";
+import { userContext } from "..";
 
 function Footer() {
+    const context = useContext(userContext)
+
     return (
         <footer className="container-fluid mx-auto bg-secondary text-white">
             <section className="row px-4">
@@ -45,7 +50,7 @@ function Footer() {
                         </a>
                     </div>
                 </div>
-                <div className="col-12 col-md-2 mb-5 mb-md-0 px-0 px-md-1">
+                <div id="footernavigation" className="col-12 col-md-2 mb-5 mb-md-0 px-0 px-md-1">
                     <h4 className="mb-4 ">Navigation</h4>
                     <div className="d-flex flex-column">
                         <div className="d-flex flex-row align-items-center pb-2 notch-forward">
@@ -79,6 +84,14 @@ function Footer() {
                             </Link>
                         </div>
                     </div>
+                    {context.token &&
+                        <>
+                            <h4 className="my-4">User Menu</h4>
+                            <div id="usermenu" className="d-flex flex-column text-white">
+                                <UserMenu />
+                            </div>
+                        </>
+                    }
                 </div>
                 <div className="col-12 col-md-3 px-0 px-md-4">
                     <h4 className="mb-4">Subscribe</h4>

@@ -54,9 +54,9 @@ export const Postcard = ({
                             Featured
                         </span>
                     )}
-                    <small className="text-white pe-4 py-2 fw-bold position-absolute end-0 bottom-0">
+                    {showCategory && <small className="text-white pe-4 py-2 fw-bold position-absolute end-0 bottom-0">
                         {meta.category?.toUpperCase()}
-                    </small>
+                    </small>}
                 </div>
             )}
             <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">

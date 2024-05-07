@@ -122,38 +122,40 @@ function Post({ token, unsetToken }) {
                         <p style={{fontSize: "1.7rem", fontWeight: 800}}>{posts.intro}</p>
                     </div>
                     <div id="content" className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
-                    <div id="comments" className="mt-2 bg-tertiary px-3">
-                        <Meta slug={posts.slug} id={posts._id} meta={posts.meta} comments={posts.comments} />
+                    <div className="d-flex flex-column border rounded-4 mt-2 p-1">
+                        <div id="comments" className="bg-tertiary px-3">
+                            <Meta slug={posts.slug} id={posts._id} meta={posts.meta} comments={posts.comments} />
+                        </div>
+                        <table className="table table-striped mb-0">
+                            <tbody className="position-relative">
+                            {posts.comments?.length > 0 && posts.comments.map((comment, index) => (
+                                comment.approved &&
+                                <tr key={index} id="comments" className="d-flex">
+                                    <td className="avatar flex-shrink-0 p-2 border-0">
+                                        <img src={`${(comment.user?.isActive && comment.user?.avatar)||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" height="50px" alt="Avatar"/>
+                                    </td>
+                                    <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
+                                        <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
+                                            {comment.content}
+                                            <div className="d-flex flex-row align-self-start">
+                                                {token && commenting.edit !== true && token?.name === comment?.user.name && <div className="border border-1 rounded-pill px-3 me-2 fs-6" role="button" onClick={(e)=>{setCommenting({...commenting, edit: true, content: comment.content, id: comment.id}); commentRef.current.scrollIntoView(false)}}>Edit</div>}
+                                                {token && <div className="border border-1 rounded-pill px-3 fs-6" role="button">Reply</div>}
+                                            </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
                     </div>
-                    <table className="table table-striped mb-0">
-                        <tbody className="position-relative">
-                        {posts.comments?.length > 0 && posts.comments.map((comment, index) => (
-                            comment.approved &&
-                            <tr key={index} id="comments" className="d-flex">
-                                <td className="avatar flex-shrink-0 p-2 border-0">
-                                    <img src={`${(comment.user?.isActive && comment.user?.avatar)||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" height="50px" alt="Avatar"/>
-                                </td>
-                                <td className="d-flex flex-column flex-grow-1 justify-content-center p-2 border-0">
-                                    <div className="fw-bold p-0">{token?.id === comment.user?._id ? "You": (comment.user?.isActive && comment.user?._id === posts.meta.author._id?"Author":comment.user?.isActive && comment.user?.name) || "Anonymous"}</div>
-                                        {comment.content}
-                                        <div className="d-flex flex-row align-self-start">
-                                            {token && commenting.edit !== true && token?.name === comment?.user.name && <div className="border border-1 rounded-pill px-3 me-2 fs-6" role="button" onClick={(e)=>{setCommenting({...commenting, edit: true, content: comment.content, id: comment.id}); commentRef.current.scrollIntoView(false)}}>Edit</div>}
-                                            {token && <div className="border border-1 rounded-pill px-3 fs-6" role="button">Reply</div>}
-                                        </div>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
                     {token?
-                        <form id="commentform" ref={commentRef} name="commentform" className="postcomment mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
-                            <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 border-tertiary rounded-0 bg-white" rows={8} cols={30} value={commenting.content} onChange={(e)=> setCommenting({...commenting, content: e.target.value})} disabled={sending} autoComplete="off" required />
+                        <form id="commentform" ref={commentRef} name="commentform" className="postcomment mt-2 mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
+                            <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 rounded-4 bg-white" rows={5} cols={30} value={commenting.content} onChange={(e)=> setCommenting({...commenting, content: e.target.value})} disabled={sending} autoComplete="off" required />
                             <div className="d-flex flex-column flex-md-row">
                                 <span id="message" className="me-auto "></span>
                                 <button type="submit" id="submit" className="btn-primary border-0 text-white py-2 px-5 text-nowrap rounded-0 align-selft-stretch align-self-md-start" disabled={sending}>{sending ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait!</>:commenting.edit?"Update Comment":"Submit Comment"}</button>
                             </div>
                         </form>:
-                        <div className="postcomment text-center mb-5 py-5 bg-light">
+                        <div className="postcomment text-center mt-2 mb-5 py-5 bg-light rounded-4">
                             <p>Kindly login to contribute</p>
                             <button onClick={()=>{setPortal(true)}} className="btn btn-primary rounded-0 fw-bold"><i className="fas fa-right-to-bracket me-2"></i>Login</button>
                             {portal &&

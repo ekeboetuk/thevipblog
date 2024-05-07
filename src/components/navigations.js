@@ -55,9 +55,27 @@ export default function Main(){
     )
 }
 
+export function UserMenu() {
+	const {token, unsetToken} = useContext(userContext)
+	const navigate = useNavigate()
+
+	return(
+		<>
+			<Link to='profile' className="menuitem"><li className="fas fa-address-card me-2"></li>My Profile</Link>
+			{token?.role !== 'Subscriber' &&
+				<>
+					<Link className="menuitem" to="/write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
+				</>
+			}
+			{token?.isAdmin && <Link to='administrator/posts' onClick={(e)=>{e.preventDefault(); navigate('administrator/posts')}} className="menuitem"><li className="fa-solid fa-toolbox me-2"></li>Administrator</Link>}
+			<Link to="#" className="menuitem" role="button" onClick={(e)=>{e.preventDefault(); unsetToken()}}><li className="fa-solid fa-lock-open me-2"></li>Sign Out</Link>
+		</>
+	)
+}
+
 export function User() {
 	const [usermenu, showUsermenu] = useState(false)
-	const {token, unsetToken} = useContext(userContext)
+	const {token} = useContext(userContext)
 	const navigate = useNavigate()
 
     function handleClick () {
@@ -76,17 +94,11 @@ export function User() {
                             <img src={`${token.avatar || "/assets/icon-white.webp"}`} role="button" className="me-2 rounded-circle" height={30} width={30} alt="icon" style={{objectFit: "cover"}}/>
 							<i role="button" className="fas fa-circle-chevron-down fa-lg lh-1"></i>
 						</button>
-						{usermenu &&
+						{usermenu && 
 							<div id="usermenu" className="d-flex flex-column position-absolute top-100 end-0 bg-tertiary actionmenu shadow-sm">
-								<Link to='profile' className="menuitem link-dark"><li className="fas fa-address-card me-2"></li>My Profile</Link>
-								{token?.role !== 'Subscriber' &&
-									<>
-										<Link className="menuitem link-dark" to="/write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
-									</>
-								}
-								{token?.isAdmin && <Link to='administrator/posts' onClick={(e)=>{e.preventDefault(); navigate('administrator/posts')}} className="menuitem link-dark"><li className="fa-solid fa-toolbox me-2"></li>Administrator</Link>}
-								<div className="menuitem link-dark" role="button" onClick={unsetToken}><li className="fa-solid fa-lock-open me-2"></li>Sign Out</div>
-							</div>}
+								<UserMenu />
+							</div>
+						}
 					</div>
 				</> :
 				<Link className="text-white border border-primary rounded-pill px-3 py-2 fs-6" to="/login" onClick={(e)=>{e.preventDefault(); navigate('/login',{state: {query: window.history.state.query, path:window.location.pathname}, replace:true})}} role="button">

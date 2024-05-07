@@ -19,7 +19,7 @@ function Posts() {
             <section className="container-md mx-auto">
                 <Error status="404" element="Page" />
                 <h3 className="border-left">You Might Be Interested In</h3>
-                <PostsCarousel count={4}/>
+                <PostsCarousel count={4} limit={8} height={120}/>
             </section>
         )
     }
@@ -147,7 +147,7 @@ function Posts() {
                     <div className="container-md mx-auto row">
                         <div className="col-12 col-md-3 order-md-last">
                             <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
-                            <div className="sticky-top pb-2" style={{top: "65px", zIndex: "-1"}}>
+                            <div className="sticky-top pb-2" style={{top: "65px", zIndex: "0"}}>
                                 <Subscribe />
                             </div>
                         </div>
@@ -178,14 +178,14 @@ function Posts() {
                     <h3 className="container-md border-left">{`Featured In ${category}`}</h3>
                     {featuredIn.length > 0?
                         <CarouselWrapper limit={Math.min(featuredIn.length, 6)} autoplay={true} continous={false}>
-                            <div id="featured" className="col-12 row row-cols-1 row-cols-md-3 flex-nowrap">
+                            <div id="carousel" className="featured col-12 row row-cols-1 row-cols-md-3 flex-nowrap">
                                 {featuredIn.slice(0,6).map((post) => (
                                     <div key={post._id} className="notch-upward col d-flex flex-row align-self-start transition">
                                         <Postcard
                                             id={post._id}
                                             slug={post.slug}
                                             image={post.image}
-                                            height="125px"
+                                            height="120px"
                                             title={post.title}
                                             comments={post.comments}
                                             meta={post.meta}
