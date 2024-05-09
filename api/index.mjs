@@ -1,11 +1,11 @@
 import 'dotenv/config.js';
-//import fs, { readSync } from 'fs';
-//import path from 'path';
+//import fs, { readSync } from 'node:fs';
+import path from 'path';
 
 import express from 'express';
 import { ObjectId } from 'mongodb'
 import { connect } from 'mongoose';
-import cors from 'cors';
+//import cors from 'cors';
 import cookieparser from 'cookie-parser';
 //import morgan from 'morgan';
 import bcrypt from 'bcryptjs'
@@ -23,21 +23,25 @@ const app = express();
 //const __dirname = path.resolve();
 app.locals.secret = 'yM3^iJ7?hR2&oA'
 
+if (process.env.NODE_ENV !== "production") {
+  const webpackDev = (await import("./dev.js")).default;
+  app.use(webpackDev.comp).use(webpackDev.hot);
+}
+
 // Middleware
 //app.use(morgan('tiny'));
+app.use(express.static(path.join(process.cwd(), "public")));
 app.use(express.urlencoded({limit: '25mb', extended: false }));
 app.use(express.json({limit: '25mb'}));
-app.use(cors({
+/*app.use(cors({
   origin: ['http://localhost','https://afriscope.vercel.app'],
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   headers: ['Authorization', 'Content-Type']
-}));
+}));*/
 app.use(cookieparser());
 
-
-
-// Middlewares
+// Custom Middlewares
 const authenticate = async (req, res, next) => {
   const session_token = req.cookies['session_token']
   try{
@@ -369,6 +373,13 @@ app.delete('/post/:postId/:commentId', async(req, res, next) => {
 })
 
 
+//Catchall Route
+app.get("/*", (req, res) => {
+  return res.sendFile(path.join(process.cwd(), "public", "index.html"));
+});
+
+
+//Global Error Handling Middleware
 app.use((err, req, res, next)=>{
   if(err && err.status){
     return res.status(err.status).send(err.message)
@@ -391,7 +402,7 @@ connect(db)
   });
 
 // Start the server
-const port = 3000;
+const port = process.env.PORT||80;
 try{
   const listening = app.listen(port, () => {
     console.debug(`Server is running on port ${port}`);

@@ -31,11 +31,6 @@ function Layout() {
                 </ErrorBoundary>
             </main>
             <Footer />
-            <div
-                className="position-fixed bottom-0 end-0 alert text-center me-4"
-                id="alert"
-                role="alert"
-            ></div>
         </div>
     );
 }

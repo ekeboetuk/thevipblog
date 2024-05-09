@@ -19,37 +19,37 @@ export default function Main(){
 					</div>
 					<div id ="categories" className="collapse dropdown">
 						<div className="d-flex flex-column flex-md-row px-3">
-							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/lifestyles">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="lifestyles">
 								<i className="fa-solid fa-headset pe-2"></i>
 								<span className="fs-6">Lifestyles</span>
 							</NavLink>
-							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/sports">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="sports">
 								<i className="fa-solid fa-dumbbell pe-2"></i>
 								<span className="fs-6">Sports</span>
 							</NavLink>
-							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/fashion">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="fashion">
 								<i className="fa-solid fa-hat-cowboy pe-2"></i>
 								<span className="fs-6">Fashion</span>
 							</NavLink>
-							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/technology">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="technology">
 								<i className="fa-solid fa-microchip pe-2"></i>
 								<span className="fs-6">Technology</span>
 							</NavLink>
-							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/education">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="education">
 								<i className="fa-solid fa-book-open-reader pe-2"></i>
 								<span className="fs-6">Education</span>
 							</NavLink>
-							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="/general">
+							<NavLink preventScrollReset={true} className="d-flex flex-row nav-link" to="general">
 								<i className="fa-solid fa-layer-group pe-2"></i>
 								<span className="fs-6">General</span>
 							</NavLink>
 						</div>
 					</div>
 				</div>
-				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/about-us"><i className="fa-solid fa-address-card pe-2"></i><span className="fs-6">About</span></NavLink>
-				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="/contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
-				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0 ms-md-5" to="/community"><i className="fa-solid fa-layer-group pe-2"></i><span className="fs-6">Community</span></NavLink>
-				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0" to="/media"><i className="fa-solid fa-photo-film pe-2"></i><span className="fs-6">Media Only</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="about-us"><i className="fa-solid fa-address-card pe-2"></i><span className="fs-6">About</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link" to="contact-us"><i className="fa-solid fa-envelope-open-text pe-2"></i><span className="fs-6">Contact</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0 ms-md-5" to="community"><i className="fa-solid fa-layer-group pe-2"></i><span className="fs-6">Community</span></NavLink>
+				<NavLink preventScrollReset={true} className="d-flex flex-row flex-md-column align-items-center nav-link mt-5 mt-md-0" to="media"><i className="fa-solid fa-photo-film pe-2"></i><span className="fs-6">Media Only</span></NavLink>
 			</div>
 		</div>
     )
@@ -64,7 +64,7 @@ export function UserMenu() {
 			<Link to='profile' className="menuitem"><li className="fas fa-address-card me-2"></li>My Profile</Link>
 			{token?.role !== 'Subscriber' &&
 				<>
-					<Link className="menuitem" to="/write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
+					<Link className="menuitem" to="write-post"><i className="fa-solid fa-keyboard me-2"></i>Write Post</Link>
 				</>
 			}
 			{token?.isAdmin && <Link to='administrator/posts' onClick={(e)=>{e.preventDefault(); navigate('administrator/posts')}} className="menuitem"><li className="fa-solid fa-toolbox me-2"></li>Administrator</Link>}

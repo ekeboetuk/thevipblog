@@ -49,32 +49,32 @@ function Home() {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
         content =
             <div className="container-md row mx-auto p-4 p-md-0 my-5">
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-2 mb-2 mt-4">
                     <Skeleton width="5px" height="28px" baseColor="#EBEBEB"/>
                     <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
                 </div>
                 <div className="col-12 col-md-8 pe-md-4 align-self-start">
                     <SkeletonTheme baseColor="#FAFAFA">
-                        <Skeleton width="100%" height="265px"/>
+                        <Skeleton width="100%" height="300px"/>
                         <div className="p-4 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
                             <Skeleton width="80%" height="20px" className="mb-2"/>
-                            <Skeleton count={5.2} width="100%" height="10px"/>
+                            <Skeleton count={5.2} width="100%" height="10px" className="mb-2" />
                         </div>
                     </SkeletonTheme>
                 </div>
                 <div className="col-12 col-md-4 ps-md-4">
                     <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
                         <Skeleton width="100%" height="165px"/>
-                        <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
-                            <Skeleton count={2.7} width="100%" height="15px" />
+                        <div className="p-4 mb-3"style={{backgroundColor: "#ebebeb"}}>
+                            <Skeleton count={2.7} width="100%" height="16px" className="mb-1" />
                         </div>
                     </SkeletonTheme>
-                    <div className="bg-tertiary p-3 mb-3" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
-                        <Skeleton  count ={1.8} width="100%" height="15px"/>
+                    <div className="bg-tertiary p-4 mb-3" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                        <Skeleton  count ={1.8} width="100%" height="16px" className="mb-2" />
                         <Skeleton width="40%" height="15px" />
                     </div>
-                    <div className="bg-tertiary p-3 mb-3 lh-2" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
-                        <Skeleton  count ={1.8} width="100%" height="15px"/>
+                    <div className="bg-tertiary p-4 mb-3 lh-2" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                        <Skeleton  count ={1.8} width="100%" height="16px" className="mb-1" />
                         <Skeleton width="40%" height="15px" />
                     </div>
                 </div>
@@ -95,7 +95,7 @@ function Home() {
                                     id={featured[0]._id}
                                     slug={featured[0].slug}
                                     image={featured[0].image}
-                                    height="450px"
+                                    height="100%"
                                     title={featured[0].title}
                                     intro={`${featured[0].intro.slice(0, 500)}...`}
                                     comments={featured[0].comments}

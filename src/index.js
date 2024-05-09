@@ -56,7 +56,7 @@ function Afriscope() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route exact path="/" element={
+        <Route path="/" element={
           <userContext.Provider value={{token: token, setToken: setToken, unsetToken: unsetToken }}>
             <Layout />
           </userContext.Provider>
@@ -108,3 +108,8 @@ root.render(
       <Afriscope />
   </StrictMode>
 );
+
+
+if (module.hot) {
+  module.hot.accept();
+}

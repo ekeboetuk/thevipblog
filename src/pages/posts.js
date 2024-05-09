@@ -28,37 +28,37 @@ function Posts() {
         window.scrollTo({top:0,left:0,behavior:'smooth'})
         content =
             <section>
-                <div className="container-md row mx-auto">
-                    <div className="d-flex gap-2">
-                        <Skeleton width="5px" height="30px" baseColor="#EBEBEB"/>
-                        <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
-                    </div>
-                    <div className="col-12 col-md-8 pe-md-4 align-self-start">
-                        <SkeletonTheme baseColor="#FAFAFA">
-                            <Skeleton width="100%" height="265px"/>
-                            <div className="p-4 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
-                                <Skeleton width="80%" height="20px" className="mb-2"/>
-                                <Skeleton count={5.2} width="100%" height="10px"/>
-                            </div>
-                        </SkeletonTheme>
-                    </div>
-                    <div className="col-12 col-md-4 ps-md-4">
-                        <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
-                            <Skeleton width="100%" height="165px"/>
-                            <div className="p-3 mb-3"style={{backgroundColor: "#ebebeb"}}>
-                                <Skeleton count={2.7} width="100%" height="15px" />
-                            </div>
-                        </SkeletonTheme>
-                        <div className="bg-tertiary p-3 mb-3" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
-                            <Skeleton  count ={1.8} width="100%" height="15px"/>
-                            <Skeleton width="40%" height="15px" />
+            <div className="container-md row mx-auto p-4 p-md-0">
+                <div className="d-flex gap-2 mb-2">
+                    <Skeleton width="5px" height="28px" baseColor="#EBEBEB"/>
+                    <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
+                </div>
+                <div className="col-12 col-md-8 pe-md-4 align-self-start">
+                    <SkeletonTheme baseColor="#FAFAFA">
+                        <Skeleton width="100%" height="300px"/>
+                        <div className="p-4 mb-5"style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                            <Skeleton width="80%" height="20px" className="mb-2"/>
+                            <Skeleton count={5.2} width="100%" height="10px" className="mb-2" />
                         </div>
-                        <div className="bg-tertiary p-3 mb-3 lh-2" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
-                            <Skeleton  count ={1.8} width="100%" height="15px"/>
-                            <Skeleton width="40%" height="15px" />
+                    </SkeletonTheme>
+                </div>
+                <div className="col-12 col-md-4 ps-md-4">
+                    <SkeletonTheme baseColor="#FAFAFA" containerClassName="mb-5">
+                        <Skeleton width="100%" height="165px"/>
+                        <div className="p-4 mb-3"style={{backgroundColor: "#ebebeb"}}>
+                            <Skeleton count={2.7} width="100%" height="16px" className="mb-1" />
                         </div>
+                    </SkeletonTheme>
+                    <div className="bg-tertiary p-4 mb-3" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                        <Skeleton  count ={1.8} width="100%" height="16px" className="mb-2" />
+                        <Skeleton width="40%" height="15px" />
+                    </div>
+                    <div className="bg-tertiary p-4 mb-3 lh-2" style={{backgroundColor: "#ebebeb", lineHeight: "1.8rem"}}>
+                        <Skeleton  count ={1.8} width="100%" height="16px" className="mb-1" />
+                        <Skeleton width="40%" height="15px" />
                     </div>
                 </div>
+            </div>
             </section>
     } else if(posts) {
         document.title = `Afriscope Blog - ${category[0].toLocaleUpperCase()+category.slice(1)}`

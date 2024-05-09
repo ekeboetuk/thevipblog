@@ -23,7 +23,7 @@ export const useToken = () => {
         })
       }
     )()
-  },[token])
+  },[])
 
   const saveToken = (token) => {
     localStorage.setItem("token", JSON.stringify(token));

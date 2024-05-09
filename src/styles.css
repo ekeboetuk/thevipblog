@@ -440,7 +440,7 @@ footer {
 
 #post #content img {
   width: 100%;
-  height: 100% !important;
+  /*height: 100% !important;*/
   object-fit: cover;
 }
 
@@ -512,7 +512,7 @@ footer {
 
 /* Global Animations Classes */
 .slideoutleft{
-  animation: slideoutleft 1.05s linear normal
+  animation: slideoutleft 1.0s linear normal
 }
 
 @keyframes slideoutleft {
@@ -521,7 +521,7 @@ footer {
 }
 
 .slideinleft{
-  animation: slideinleft 1s linear normal
+  animation: slideinleft 0.5s linear normal
 }
 
 @keyframes slideinleft {
@@ -532,7 +532,7 @@ footer {
 }
 
 .slideinright{
-  animation: slideinright 1s linear normal
+  animation: slideinright 0.5s linear normal
 }
 
 @keyframes slideinright {
@@ -542,7 +542,7 @@ footer {
 }
 
 .slideoutright{
-  animation: slideoutright 1.05s linear normal
+  animation: slideoutright 1.0s linear normal
 }
 
 @keyframes slideoutright {
@@ -554,7 +554,7 @@ footer {
 
 .progress {
   width: 100%;
-  animation: progress 10.1s linear
+  animation: progress 5.0s linear
 }
 
 @keyframes progress {

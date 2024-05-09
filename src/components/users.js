@@ -245,6 +245,7 @@ export function Profile({ token, setToken }) {
     }, [navigate, token, user])
 
     const previewFile = (e) => {
+        console.log(e.target.name)
         const file = e.target.files[0];
         const reader = new FileReader();
         setAction("preview")
@@ -326,11 +327,11 @@ export function Profile({ token, setToken }) {
                             className="border border-2 rounded-circle position-relative"
                             style={{width: "200px", height: "200px", backgroundImage:`url(${action===''||action==='edit'?user.avatar:state.avatar||'/media/photo-placeholder-male.jpeg'})`, backgroundPosition: "center", backgroundSize:"cover"}}
                             >
-                            <div className={`${action!=="" && action!=="sending" && action!=="updated"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
+                            <div className={`${action==="edit"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
                                 <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
                                 &nbsp;
                             </div>
-                            <label htmlFor="profile-picture" className={`${action!=="" && action!=="sending" && action!=="updated"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
+                            <label htmlFor="profile-picture" className={`${action==="edit"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
                                 <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
                             </label>
                             {loading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}

@@ -84,16 +84,16 @@ function Post({ token, unsetToken }) {
         <div id="loading" className="d-flex flex-column flex-fill justify-content-start align-self-start pe-md-2 mb-5">
             <SkeletonTheme>
                 <div className="d-inline-flex">
-                    <Skeleton width="85px" height="100px" containerClassName="pe-3" />
+                    <Skeleton width="85px" height="100px" containerClassName="pe-3 mb-3" />
                     <div className="flex-fill" >
-                        <Skeleton count={2.4} width="80%" height="25px" />
+                        <Skeleton count={2.4} width="80%" height="25px" className="mb-1" />
                         <Skeleton width="25%" height="15px" inline={true} containerClassName="pe-2" />
                         <Skeleton width="25%" height="15px" inline={true} containerClassName="pe-2" />
                         <Skeleton width="25%" height="15px" />
                     </div>
                 </div>
-                <Skeleton height="300px" />
-                <Skeleton count={37.2} />
+                <Skeleton height="300px" className="mb-1" />
+                <Skeleton count={37.2} className="mb-1" />
             </SkeletonTheme>
         </div>
     }else if(posts) {
@@ -119,7 +119,7 @@ function Post({ token, unsetToken }) {
                     }
                     <img src={posts.image} style={{width: "100%", height: "400px", objectFit: "cover"}} className="shadow" alt={posts.meta.description}/>
                     <div id="intro" className="my-4">
-                        <p style={{fontSize: "1.7rem", fontWeight: 800}}>{posts.intro}</p>
+                        <p style={{fontSize: "1.6rem", fontWeight: 800}}>{posts.intro}</p>
                     </div>
                     <div id="content" className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
                     <div className="d-flex flex-column border rounded-4 mt-2 p-1">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function Toast({children, position, toast, setToast, timeout=10}) {
+export default function Toast({children, position, toast, setToast, timeout=5}) {
   const [parent, setParent] = useState(toast.state)
   const [child, setChild] = useState(false)
   const manualClose = useRef()

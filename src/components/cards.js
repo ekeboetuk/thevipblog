@@ -175,8 +175,8 @@ export const PostcardTransparent = ({
                     backgroundImage: `url(${image})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    minHeight: height,
-                    height: "100%"
+                    minHeight: "300px",
+                    height: height
                 }}
             >
                 <div className="d-flex flex-row position-absolute start-0 top-0">
