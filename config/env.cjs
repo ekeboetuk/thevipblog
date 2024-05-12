@@ -1,11 +1,12 @@
 'use strict';
 
+require('dotenv/config');
 const fs = require('fs');
 const path = require('path');
-const paths = require('./paths');
+const paths = require('./paths.cjs');
 
 // Make sure that including paths.js after env.js will read .env variables.
-delete require.cache[require.resolve('./paths')];
+delete require.cache[require.resolve('./paths.cjs')];
 
 const NODE_ENV = process.env.NODE_ENV;
 

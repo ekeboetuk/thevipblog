@@ -14,10 +14,10 @@ import { Login } from "../components/users";
 import { Error } from '../components/errors';
 import { usePosts } from '../hooks/fetchers';
 import { PostsCarousel } from '../components/carousels';
-import { Advertise, Subscribe } from '../components/widgets'
+import { Advertise } from '../components/widgets'
 import { Postcard } from '../components/cards';
 
-import { userContext } from '../index';
+import { userContext } from '../components/routes.js';
 
 const Toast = lazy(()=>import ('../components/toasts'));
 
@@ -112,25 +112,25 @@ function Post({ token, unsetToken }) {
                         </div>
                     </div>
                     {posts.meta.description &&
-                        <div id="metadesc" className="my-4">
+                        <div id="metadesc">
                             <h4 className="border-left">Meta Description</h4>
-                            <p style={{fontWeight: 800}}>{posts.meta.description}</p>
+                            <p className="fw-bold text-black-50">{posts.meta.description}</p>
                         </div>
                     }
                     <img src={posts.image} style={{width: "100%", height: "400px", objectFit: "cover"}} className="shadow" alt={posts.meta.description}/>
-                    <div id="intro" className="my-4">
-                        <p style={{fontSize: "1.6rem", fontWeight: 800}}>{posts.intro}</p>
-                    </div>
-                    <div id="content" className="pt-4">{<div dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />}</div>
-                    <div className="d-flex flex-column border rounded-4 mt-2 p-1">
-                        <div id="comments" className="bg-tertiary px-3">
+                    <p id="intro" className="my-4 fw-semibold">
+                        {posts.intro}
+                    </p>
+                    <div id="content" className="text-body" dangerouslySetInnerHTML={{ __html:DOMPurify.sanitize(posts.body.replace(/\s{1,}/gim, ' '))}} />
+                    <div className="d-flex flex-column border rounded-4">
+                        <div id="engagements" className="bg-tertiary px-3">
                             <Meta slug={posts.slug} id={posts._id} meta={posts.meta} comments={posts.comments} />
                         </div>
-                        <table className="table table-striped mb-0">
+                        <table id="comments" className="table table-striped mb-0">
                             <tbody className="position-relative">
                             {posts.comments?.length > 0 && posts.comments.map((comment, index) => (
                                 comment.approved &&
-                                <tr key={index} id="comments" className="d-flex">
+                                <tr key={index} className="d-flex">
                                     <td className="avatar flex-shrink-0 p-2 border-0">
                                         <img src={`${(comment.user?.isActive && comment.user?.avatar)||"/assets/icon.png"}`} className="bg-light p-2 rounded-circle" width = "50px" height="50px" alt="Avatar"/>
                                     </td>
@@ -148,7 +148,7 @@ function Post({ token, unsetToken }) {
                         </table>
                     </div>
                     {token?
-                        <form id="commentform" ref={commentRef} name="commentform" className="postcomment mt-2 mb-5 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
+                        <form id="commentform" ref={commentRef} name="commentform" className="postcomment mt-2 d-flex flex-column justify-content-right" onSubmit={handleCommentSubmit}>
                             <textarea id="comment" name="comment" className="px-3 py-2 mb-3 border border-1 rounded-4 bg-white" rows={5} cols={30} value={commenting.content} onChange={(e)=> setCommenting({...commenting, content: e.target.value})} disabled={sending} autoComplete="off" required />
                             <div className="d-flex flex-column flex-md-row">
                                 <span id="message" className="me-auto "></span>
@@ -173,7 +173,7 @@ function Post({ token, unsetToken }) {
                 posts.meta.tags !== undefined ?
                     <>
                         <div className="d-flex flex-wrap mb-3">
-                            {posts.meta.tags.map((tag, index) => <Link to={`/search?${new URLSearchParams(`q=${encodeURIComponent(`"${tag}"`)}`)}`} key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fw-semibold fs-5 shadow-sm">{tag}</Link>)}
+                            {posts.meta.tags.map((tag, index) => <Link to={`/search?${new URLSearchParams(`q=${encodeURIComponent(`"${tag}"`)}`)}`} key={index} className="rounded-pill px-4 py-1 me-2 mb-2 bg-tertiary text-body fs-5 shadow-sm">{tag}</Link>)}
                         </div>
                     </>:"No Tags"
             author =
@@ -208,7 +208,7 @@ function Post({ token, unsetToken }) {
                 <meta name="twitter:image" content={posts?.image} data-rh="true" />
             </Helmet>
             <section className={`container-md d-flex flex-column flex-md-row`}>
-                <div id="post" className={`${loading?"opacity-25":""}col-12 col-md-9 pe-0 pe-md-5`}>
+                <div id="post" className={`${loading?"opacity-25":""} col-12 col-md-8 p-md-4`}>
                     {content}
                     <div className="d-flex flex-column align-items-center position-fixed top-50 start-0 fs-1 ms-2 rounded">
                         <Link to="#" className="text-brand"><i className="fa-brands fa-facebook-f pt-3 pb-2"></i></Link>
@@ -216,10 +216,10 @@ function Post({ token, unsetToken }) {
                         <Link to="#" className="text-brand"><i className="fa-brands fa-instagram pt-2 pb-3"></i></Link>
                     </div>
                 </div>
-                <div className="col-12 col-md-3 d-flex flex-column align-items-start" >
+                <div id="sidebar" className="col-12 col-md-4 d-flex flex-column align-items-start ps-0 p-md-4" >
                     <Advertise title="Advertise Here" content={{quote: "Advertise you products here at an affordable rate", name: "Afriscope"}}/>
                     <div className="w-100 mb-5">
-                        <h5 className="fw-bolder text-uppercase mb-4">Tags</h5>
+                        <h4>Tags</h4>
                         {loading?
                             <SkeletonTheme>
                                 <Skeleton inline={true} width="20%" containerClassName="pe-2" />
@@ -239,49 +239,69 @@ function Post({ token, unsetToken }) {
                         }
                     </div>
                     {author}
-                    <div className="" style={{position: "sticky", top: "70px", marginBottom: "0"}}>
-                        <Subscribe />
-                    </div>
+                    {posts &&
+                        <>
+                            <h4>{`More From ${posts.meta?.author.name.split(" ")[0]}`}</h4>
+                            {authorsPosts === null?
+                                <>
+                                    <div className="d-flex flex-row row-cols-2 w-100 mb-4">
+                                        <Skeleton height="100%" className="col lh-base"/>
+                                        <div className="col bg-tertiary px-2 py-4 lh-1">
+                                            <Skeleton  count ={1.8} width="100%" height="12px" className="mb-2" />
+                                            <Skeleton width="40%" height="12px" />
+                                        </div>
+                                    </div>
+                                    <div className="d-flex flex-row row-cols-2 w-100 mb-4">
+                                        <Skeleton height="100%" className="col lh-base"/>
+                                        <div className="col bg-tertiary px-2 py-4 lh-1">
+                                            <Skeleton  count ={1.8} width="100%" height="12px" className="mb-2" />
+                                            <Skeleton width="40%" height="12px" />
+                                        </div>
+                                    </div>
+                                    <div className="d-flex flex-row row-cols-2 w-100 mb-4">
+                                        <Skeleton height="100%" className="col lh-base"/>
+                                        <div className="col bg-tertiary px-2 py-4 lh-1">
+                                            <Skeleton  count ={1.8} width="100%" height="12px" className="mb-2" />
+                                            <Skeleton width="40%" height="12px" />
+                                        </div>
+                                    </div>
+                                </>:
+                                (authorsPosts?.length !== 0 ?
+                                    <div id="author" className="col-12 row row-cols-1">
+                                        {authorsPosts.slice(0,4).map((post) =>
+                                            <div key={post._id} className="col d-flex flex-row pb-4 align-self-start transition">
+                                                <Postcard
+                                                    id={post._id}
+                                                    slug={post.slug}
+                                                    image={post.image}
+                                                    imgWidth='60%'
+                                                    height="70px"
+                                                    title={post.title}
+                                                    comments={post.comments}
+                                                    meta={post.meta}
+                                                    category={post.meta.category}
+                                                    created={post.created}
+                                                    showCategory={false}
+                                                    showMeta={false}
+                                                    showReadmore={false}
+                                                    showEngagement={false}
+                                                    font="1.2rem"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>:
+                                    <p>Working On Something!</p>
+                                )
+                            }
+                        </>
+                    }
                 </div>
             </section>
-            <section className="container-md">
-                {posts &&
-                    <>
-                        <h4 className="text-uppercase mb-4">{`More From ${posts.meta?.author.name.split(" ")[0]}`}</h4>
-                        {authorsPosts === null?
-                            <div className="fst-italic"><i className="fa-solid fa-rotate-right fa-spin"></i>Loading</div>:
-                            (authorsPosts?.length !== 0 ?
-                                <div id="author" className="col-12 row row-cols-1 row-cols-md-3">
-                                    {authorsPosts.slice(0,6).map((post) =>
-                                        <div key={post._id} className="col d-flex flex-row pb-5 align-self-start transition">
-                                            <Postcard
-                                                id={post._id}
-                                                slug={post.slug}
-                                                image={post.image}
-                                                height="100px"
-                                                title={post.title}
-                                                comments={post.comments}
-                                                meta={post.meta}
-                                                category={post.meta.category}
-                                                created={post.created}
-                                                showCategory={false}
-                                                showMeta={false}
-                                                showReadmore={false}
-                                                showEngagement={false}
-                                                font="1.2rem"
-                                            />
-                                        </div>
-                                    )}
-                                </div>:
-                                <p className="container-md">Working On Something!</p>
-                            )
-                        }
-                    </>
-                }
-            </section>
-            <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                {typeof related !== "string"?<PostsCarousel count={3} limit={4} title="Related Posts" autoplay={true} query={posts?.meta.tags} postId={posts?.id} />:<div className="text-center text-white">{related}</div>}
-            </section>
+            {related?.length>0 &&
+                <section className="d-flex flex-column text-dark">
+                    {typeof related !== "string"?<PostsCarousel count={4} limit={4} title="Related Posts" autoplay={true} query={posts?.meta.tags} postId={posts?.id} />:<div className="text-center text-dark">{related}</div>}
+                </section>
+            }
             {toast.state &&
                 <Toast toast={toast} setToast={setToast} position="top-left">
                     {toast.msg}

@@ -155,7 +155,7 @@ export function Login( {token, setToken, unsetToken, setPortal} ) {
             email: details.email,
             password: details.password,
             remember_me: details.remember_me
-        },{
+        }, {
             withCredentials: true
             })
         .then((response) => {
@@ -245,7 +245,6 @@ export function Profile({ token, setToken }) {
     }, [navigate, token, user])
 
     const previewFile = (e) => {
-        console.log(e.target.name)
         const file = e.target.files[0];
         const reader = new FileReader();
         setAction("preview")
@@ -306,7 +305,7 @@ export function Profile({ token, setToken }) {
     if(loading){
         return (
             <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
-                <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
+                <div className="d-flex flex-column justify-content-center align-items-center position-absolute mt-n5 top-0 start-50 translate-middle">
                     <Skeleton width="200px" height="200px" circle={true} className="border border-2 position-relative"/>
                 </div>
                 <div className="pt-5 pb-2 mt-5">
@@ -321,30 +320,34 @@ export function Profile({ token, setToken }) {
     if(user){
         return (
             <>
-                <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative align-items-center">
-                    <div className="d-flex flex-column justify-content-center align-items-center position-absolute top-0 start-50 translate-middle">
-                        <div id="profileimagearea"
-                            className="border border-2 rounded-circle position-relative"
-                            style={{width: "200px", height: "200px", backgroundImage:`url(${action===''||action==='edit'?user.avatar:state.avatar||'/media/photo-placeholder-male.jpeg'})`, backgroundPosition: "center", backgroundSize:"cover"}}
-                            >
-                            <div className={`${action==="edit"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
-                                <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
-                                &nbsp;
+                <section className="container-md d-flex flex-column mx-auto my-5 rounded-6 position-relative">
+                    <div className="d-flex flex-row justify-content-end">
+                        <div className="col-2 w-50 position-absolute mt-n5 top-0 start-0 translate-middle-y px-5">
+                            <div id="profileimagearea"
+                                className="border border-2 rounded-circle position-relative"
+                                style={{width: "200px", height: "200px", backgroundImage:`url(${action===''||action==='edit'?user.avatar:state.avatar||'/media/photo-placeholder-male.jpeg'})`, backgroundPosition: "center", backgroundSize:"cover"}}
+                                >
+                                <div className={`${action==="edit"?"overlay opacity-50":"d-none"} rounded-circle bg-brand`}>
+                                    <input type="file" id="profile-picture" name="profile-picture" accept="image/jpeg, image/jpg, image/png, image/webp" onChange={previewFile} hidden />
+                                    &nbsp;
+                                </div>
+                                <label htmlFor="profile-picture" className={`${action==="edit"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
+                                    <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
+                                </label>
+                                {loading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
                             </div>
-                            <label htmlFor="profile-picture" className={`${action==="edit"?"overlay position-absolute top-50 start-50 translate-middle":"d-none"}`}>
-                                <i className="fa-solid fa-camera text-white fa-3x" role="button"></i>
-                            </label>
-                            {loading||action==="sending"?<div className="position-absolute top-50 start-50 translate-middle"><i className="fa-solid fa-arrows-rotate fa-spin fs-2"></i></div>:""}
+                        </div>
+                        <div className="col-10 w-50 d-flex flex-column ps-5 ms-5 mt-n5">
+                            <h4 className="mb-4 fs-3"><strong>{user?.name.toUpperCase()} </strong>{action!=="sending" && <i className="fa-solid fa-pen-to-square" role="button" onClick={(e)=>{action===""?setAction("edit"):setAction("")}}></i>}</h4>
+                            {(action!==""&& action!=="updated")  &&
+                                <button id="update" ref={ref} className={`btn btn-primary px-4 px-2 rounded-pill`}
+                                    onClick={updateProfile}
+                                    disabled={action==="sending"||action!=="preview"}>
+                                    {action==="sending"?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:<><i className="fa-solid fa-floppy-disk pe-2"></i>Save Profile</>}
+                                </button>
+                            }
                         </div>
                     </div>
-                    <h4 className="pt-5 pb-2 mt-5">Welcome, <strong>{user?.name} </strong>{action!=="sending" && <i className="fa-solid fa-pen-to-square" role="button" onClick={(e)=>{action===""?setAction("edit"):setAction("")}}></i>}</h4>
-                    {(action!==""&& action!=="updated")  &&
-                        <button id="update" ref={ref} className={`btn btn-primary px-4 px-2 rounded-pill`}
-                            onClick={updateProfile}
-                            disabled={action==="sending"||action!=="preview"}>
-                            {action==="sending"?<><i className="fa-solid fa-circle-notch fa-spin"></i> Please Wait</>:<><i className="fa-solid fa-floppy-disk pe-2"></i>Save Profile</>}
-                        </button>
-                    }
                 </section>
             </>
         )

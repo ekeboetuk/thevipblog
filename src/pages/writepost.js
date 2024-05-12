@@ -27,7 +27,9 @@ function WritePost( {token} ) {
                         </div>
                     </section>
                     <section className="container-fluid d-flex flex-column" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                        <PostsCarousel count={4} limit={6} autoplay={true} continous={true} />
+                        <div className="container-md text-center text-white">
+                            <PostsCarousel count={4} limit={6} autoplay={true} continous={true} />
+                        </div>
                     </section>
                 </>:
                 <Error status="401" token={token} />

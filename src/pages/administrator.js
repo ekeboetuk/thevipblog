@@ -52,9 +52,8 @@ function Administrator() {
                 </ErrorBoundary>
             </main>
             <footer className="fixed-bottom p-0">
-                <div className="position-fixed bottom-0 end-0 alert mb-2 me-3" id="alert" role="alert"></div>
                 <section id="copyright" className="bg-secondary square border-top border-primary py-2 text-light">
-                    <div className="container-md text-center">
+                    <div className="text-center">
                         <small className="m-0 fw-normal">Copyright © 2023 Africope | MOC Inc | All Rights Reserved.</small>
                     </div>
                 </section>

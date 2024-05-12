@@ -62,9 +62,9 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
 
     if(posts){
         return(
-            <div className="container-md overflow-hidden">
-                {title && <h4 className="text-center text-uppercase text-white mb-5">{title}</h4>}
-                <div className="position-relative">
+            <>
+                {title && <h4 className="mb-4">{title}</h4>}
+                <div className="position-relative overflow-hidden">
                     {posts?.length > 0 && overflowCount > 0 &&
                         <>
                             {scrollindex > 0 && <div className="position-absolute top-50 start-0 translate-middle-y" role="button" onClick={()=>handleClick("left")}  style={{zIndex: "1"}}>
@@ -99,7 +99,7 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
                                 </div>
                             </>:
                             posts && posts.slice(0, limit).map((post) => (
-                                <div key={post._id} className={`notch-upward col g-4 gx-md-${count} gy-md-0 d-flex flex-column`}>
+                                <div key={post._id} className={`notch-upward col gx-md-${count} gy-md-0 d-flex flex-column`}>
                                     <Postcard
                                         id={post._id}
                                         slug={post.slug}
@@ -111,21 +111,23 @@ export const PostsCarousel = ({title = "Latest Post", sort, count = 3, limit = 4
                                         height={`${height}px`}
                                         showMeta={showMeta}
                                         showEngagement={showEngagement}
-                                        font="0.9em"
+                                        font="1.2em"
                                     />
                                 </div>
                             ))}
                         </div>
                     }
                 </div>
-            </div>
+            </>
         )
     }
 }
 
-export const CarouselWrapper = ({children, autoplay=false, continous=false, delay=30, scrollCount=1, limit}) => {
+export const CarouselWrapper = ({children, autoplay=false, continous=false, delay=10, scrollCount=1, limit}) => {
     const [scrollindex, setScrollindex] = useState(0)
     const [play, setPlay] = useState(autoplay)
+    const [playcount, setPlaycount] = useState(0)
+    const [nav, setNav] = useState(false)
     const scrollRef = useRef()
     let postWidth, containerWidth, carousel, carouselWidth, overflowCount
 
@@ -133,7 +135,7 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
         postWidth = document.getElementsByClassName("notch-upward")[0].getBoundingClientRect().width
         containerWidth = postWidth * limit
         carousel = document.getElementById("carousel")
-        carouselWidth = carousel.getBoundingClientRect().width
+        carouselWidth = carousel?.getBoundingClientRect().width
         overflowCount = Math.round((containerWidth - carouselWidth)/postWidth)
     }
 
@@ -144,6 +146,7 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
                 if(scrollindex === overflowCount){
                     carousel.style.transform = `translateX(-${0}px)`
                     setScrollindex(0)
+                    setPlaycount(playcount=>playcount+1)
                     return setPlay(continous)
                 }else{
                     carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
@@ -152,7 +155,7 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
             }, delay*1000)
         }
       }
-    },[carousel?.style, continous, delay, limit, overflowCount, play, postWidth, scrollCount, scrollindex])
+    },[carousel?.style, continous, delay, limit, overflowCount, play, playcount, postWidth, scrollCount, scrollindex])
 
     const handleClick = (navigation) => {
         clearTimeout(scrollRef.current)
@@ -164,32 +167,50 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
 	          carousel.style.transform = `translateX(-${postWidth*(scrollindex-(scrollindex>scrollCount?scrollCount:scrollindex||1))}px)`
 	          setScrollindex(scrollindex-(scrollindex>scrollCount?scrollCount:scrollindex||1))
 	        }
-        }else{
+        }else if(navigation==="right"){
 	        if(scrollindex === overflowCount){
 		        return
 	        }else{
 	          carousel.style.transform = `translateX(-${postWidth*(scrollindex+(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))}px)`
 	          setScrollindex(scrollindex +(overflowCount-scrollindex > scrollCount?scrollCount:overflowCount-scrollindex||1))
 	        }
+        }else{
+            switch(navigation.i) {
+                case(0): {
+                    carousel.style.transform = `translateX(-${postWidth*navigation.i}px)`
+                    setScrollindex(navigation.i)
+                    break
+                }
+                case(navigation.arr.length - 1): {
+                    carousel.style.transform = `translateX(-${postWidth*overflowCount}px)`
+                    setScrollindex(overflowCount)
+                    break
+                }
+                default: {
+                    carousel.style.transform = `translateX(-${postWidth*navigation.i*scrollCount}px)`
+                    setScrollindex(navigation.i)
+                }
+            }
         }
 
         setTimeout(()=>{
             setPlay(continous)
-        }, 10000)
+        }, 5000)
     }
+
     return (
-        <div className="container-md overflow-hidden">
-            <div className="position-relative">
+        <div className="d-flex flex-column overflow-hidden">
+            <div className="position-relative" onMouseOver={()=>{setNav(true); clearTimeout(scrollRef.current); setPlay(false)}} onMouseOut={()=>{setNav(false); setPlay(continous?continous:scrollindex !== overflowCount && playcount < 1)}}>
                 {children}
                 <>
-                    {scrollindex > 0 &&
+                    {scrollindex > 0 && nav &&
                         <div onClick={()=>handleClick("left")} role="button">
                             <div className="d-flex justify-content-center align-items-center bg-dark opacity-75 position-absolute top-0 start-0" style={{height: '100%', width: '35px'}}>
                                 <i className="fa-solid fa-circle-arrow-left fa-xl text-white"></i>
                             </div>
                         </div>
                     }
-                    {scrollindex < overflowCount &&
+                    {scrollindex < overflowCount && nav &&
                         <div onClick={()=>handleClick("right")} role="button">
                             <div className="d-flex justify-content-center align-items-center bg-dark opacity-75 position-absolute top-0 end-0" style={{height: '100%', width: '35px'}}>
                                 <i className="fa-solid fa-circle-arrow-right fa-xl text-white"></i>
@@ -198,6 +219,7 @@ export const CarouselWrapper = ({children, autoplay=false, continous=false, dela
                     }
                 </>
             </div>
+            <div className="d-inline-flex justify-content-center mt-4">{overflowCount>0 && Array(Math.ceil(overflowCount/scrollCount)+1).fill(0).map((el, i, arr)=><div key={i} className="align-self-center border border-2 border-primary rounded-circle me-2"><div className={`rounded-circle ${i===Math.ceil(scrollindex/scrollCount) && 'bg-primary border border-1 border-tertiary'}`} style={{width: '7px', height: '7px'}} role="button" onClick={()=>handleClick({i, arr})} disabled={i===scrollindex}></div></div>)}</div>
         </div>
     )
 }

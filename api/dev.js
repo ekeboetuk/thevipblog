@@ -1,12 +1,12 @@
-const webpack = require("webpack");
-const webpackHotMiddleware = require("webpack-hot-middleware");
-const webpackDevMiddleware = require("webpack-dev-middleware");
-const config = require("../config/webpack.config");
+import webpack from "webpack";
+import webpackHotMiddleware from "webpack-hot-middleware";
+import webpackDevMiddleware from "webpack-dev-middleware";
+import config from "../config/webpack.config.cjs";
 const webpackConfig = config({development:true});
 
 const compiler = webpack(webpackConfig);
 
-exports.comp = webpackDevMiddleware(compiler, {
+export const comp = webpackDevMiddleware(compiler, {
   publicPath: webpackConfig.output.publicPath,
 });
-exports.hot = webpackHotMiddleware(compiler);
+export const hot = webpackHotMiddleware(compiler);

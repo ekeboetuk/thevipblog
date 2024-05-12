@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { Link } from "react-router-dom";
 
-import { userContext } from '../index';
+import { userContext } from '../components/routes.js';
 
 function Toolbar() {
 	const {token, unsetToken} = useContext(userContext)

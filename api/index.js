@@ -1,35 +1,42 @@
-import 'dotenv/config.js';
+import 'dotenv/config';
 //import fs, { readSync } from 'node:fs';
 import path from 'path';
 
+/*
+import React from 'react';
+import ReactDOMServer from 'react-dom/server'
+import { createStaticHandler, createStaticRouter, StaticRouterProvider} from 'react-router-dom/server.js';
+import createFetchRequest from './request.js';
+*/
 import express from 'express';
-import { ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb';
 import { connect } from 'mongoose';
 //import cors from 'cors';
 import cookieparser from 'cookie-parser';
-//import morgan from 'morgan';
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-//import { json } from 'express';
 
 // Models
-import posts from './models/posts.mjs';
-import users from './models/users.mjs';
+import posts from './models/posts.js';
+import users from './models/users.js';
+
+// Routes
+//import Routes from '../src/routes.js';
 
 // Create an Express app
 const app = express();
+//let {query, dataRoutes} = createStaticHandler(Routes());
 
 //Constants
 //const __dirname = path.resolve();
 app.locals.secret = 'yM3^iJ7?hR2&oA'
 
 if (process.env.NODE_ENV !== "production") {
-  const webpackDev = (await import("./dev.js")).default;
+  const webpackDev = await import("./dev.js");
   app.use(webpackDev.comp).use(webpackDev.hot);
 }
 
 // Middleware
-//app.use(morgan('tiny'));
 app.use(express.static(path.join(process.cwd(), "public")));
 app.use(express.urlencoded({limit: '25mb', extended: false }));
 app.use(express.json({limit: '25mb'}));
@@ -197,20 +204,32 @@ app.get('/posts', postsCount, async (req, res, next) => {
   .select('-body')
   .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
+  .populate('meta.author', '-avatar -pswdhash -__v')
+  .populate('comments.user', '-avatar -pswdhash -__v')
   .then((posts) => {
     res.send(posts);
   })
   .catch(next)
 })
 
+app.get('/posts/categories', async (req, res, next) => {
+  try{
+    const categories = posts.schema.path('meta.category').enumValues
+    res.send(categories)
+  }catch(error){
+    next(error)
+  }
+})
+
 app.get('/posts/author', async (req, res, next) => {
   const {sort, limit, postId, authorId} = req.query
   authorId !== 'undefined' &&
   await posts.find({$and: [{'meta.author':authorId},{'_id': {$ne: postId}},{'isApproved': true}]})
-  .select('-body').limit(limit?`${limit}`:0)
-  .sort(`${sort}`)
-  .populate('meta.author')
-  .populate('comments.user')
+  .select('-body')
+  .limit(limit?limit:0)
+  .sort(sort)
+  .populate('meta.author', '-pswdhash -__v')
+  .populate('comments.user', '-pswdhash -__v')
   .then((posts) => {
     res.send(posts);
   })
@@ -238,6 +257,7 @@ app.get('/posts/:grouping', async (req, res, next) => {
   .select('-__v -body')
   .limit(limit?`${limit}`:0)
   .sort(`${sort}`)
+  .populate('meta.author', '-pswdhash -__v -avatar')
   .then((posts) => {
     return res.send(posts);
   })
@@ -250,7 +270,7 @@ app.get('/posts/:category', async (req, res, next) => {
   .select("-__v -body")
   .limit(limit?limit:0)
   .sort(sort)
-  .populate('meta.author', 'name')
+  .populate('meta.author', '-pswdhash -__v -avatar')
   .then(posts => {
     return res.send(posts)
   })
@@ -374,10 +394,16 @@ app.delete('/post/:postId/:commentId', async(req, res, next) => {
 
 
 //Catchall Route
-app.get("/*", (req, res) => {
-  return res.sendFile(path.join(process.cwd(), "public", "index.html"));
-});
+/*
+app.get("*", async(req, res) => {
+  let fetchRequest = createFetchRequest(req, res);
+  let context = await query(fetchRequest);
+  let router = createStaticRouter(dataRoutes, context);
+  let html = ReactDOMServer.renderToString(React.createElement(StaticRouterProvider, {router:router, context:context}));
 
+  res.send("<!DOCTYPE html>" + html);
+});
+*/
 
 //Global Error Handling Middleware
 app.use((err, req, res, next)=>{

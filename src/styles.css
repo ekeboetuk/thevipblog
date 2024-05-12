@@ -4,6 +4,7 @@
   --primary-color: #74415D;
   --secondary-color: #2F2B2B;
   --tertiary-color: #FAFAFA;
+  --dark-color: #322C2C;
   font-size: 67.5%;
 }
 
@@ -16,6 +17,7 @@ body, pre, .table, .content {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 1.4rem;
+  font-weight: 500;
 }
 
 code {
@@ -31,8 +33,12 @@ body {
 /** Overwrites **/
 h1, h2, h3, h4, h5, h6 {
   position: relative !important;
-  margin-bottom: 0 !important;
-  font-weight: 700;
+  font-weight: 600;
+}
+
+#sidebar h4 {
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 footer h1::after, footer h2::after, footer h3::after, footer h4::after, footer h5::after, footer h6::after {
@@ -51,12 +57,21 @@ footer h1::after, footer h2::after, footer h3::after, footer h4::after, footer h
   to {width: 20%;}
 }
 
-section {
-  padding: 50px 20px !important;
+main {
+  background-image: url('http://localhost/assets/icon-faded-lg.png');
+  background-position: -80px 220px;
+  background-size: 40%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
+/*section {
+  padding: 30px 20px !important;
+}*/
+
 .container-md {
-  max-width: 1040px !important;
+  max-width: 1000px !important;
+  padding: 20px !important;
 }
 
 .container-sm {
@@ -147,7 +162,7 @@ a>img:hover {
 
 .nav-link {
   color: #FFFFFF;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: none;
   padding: 1rem 1rem 0 1rem !important;
 }
@@ -286,7 +301,7 @@ td, th {
 #page-title {
   position: absolute;
   top: 50%;
-  left: 14%;
+  left: 15%;
   transform: translateY(-50%) !important;
 }
 
@@ -339,6 +354,10 @@ td, th {
   color: var(--primary-color);
 }
 
+.text-dark {
+  color: var(--dark-color);
+}
+
 a.text-brand:hover {
   color: var(--secondary-color) !important;
 }
@@ -362,7 +381,7 @@ div.listing:hover i[type="button"], div.post:hover span[type="button"], .text-bl
   transform: translateY(10px);
   width: 200px;
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 500;
 
 }
 
@@ -397,33 +416,34 @@ footer {
   background-image: repeating-linear-gradient(45deg, #000000 0, #000000 0.5px, #2F2B2B 0, #2F2B2B 50%);
 }
 
-.postintro {
+.caption {
   position: absolute;
   bottom: 0;
-  padding: 20px 15px 20px;
-  max-height: 50%;
+  padding: 10px 15px 10px;
+  min-height: 35%;
+  max-height: 60%;
   opacity:  1;
   overflow: hidden;
   transition: padding-bottom 0.5s ease-in-out, opacity 1s linear;
 }
 
-.postcontent:hover .postintro{
+.postcontent:hover .caption{
   opacity: 0.75;
   padding-bottom: 40px;
 }
 
-.postintro .intro, .intro {
-  font-weight: 700;
+.caption .intro, .intro {
   margin-left: 5px;
   padding-left: 10px;
   border-left: 3px solid var(--primary-color);
 }
 
-.postcontent .meta {
+.postcontent .engagement {
   display: none;
 }
 
-.postcontent:hover .meta {
+
+.postcontent:hover .engagement {
   display: block;
   opacity: 0.75;
   animation: revealuptransparent 1s ease-in-out 0s alternate ;
@@ -434,40 +454,58 @@ footer {
   to {transform: translate(0, 0); opacity: 0.75}
 }
 
-#post #content, #post #metadesc, #post #intro {
-  text-align: justify;
-}
-
-#post #content img {
-  width: 100%;
-  /*height: 100% !important;*/
-  object-fit: cover;
-}
-
-#post #content table {
-  width: 100%;
-  border: 0 !important;
-  margin-bottom: 2rem !important;
-}
-
-#post #content table thead tr {
-  background-color: rgba(116, 65, 93, 0.14) !important
-}
-
-#post table tr:nth-child(odd) {
-  background-color: var(--tertiary-color) !important;
-}
-
-#post #content table td {
-  padding: 5px !important
+#post {
+  #metadesc, #intro {
+    text-align: justify;
+    margin: 1.5rem 0;
+  };
+  #content {
+      h1, h2, h3, h4, h5 {
+        text-transform: capitalize;
+      };
+      ol[reversed] {
+        margin-left: 1.0rem;
+      };
+      li {
+        margin-bottom: 1.2rem;
+      };
+      li::marker{
+        font-size: 1.75rem;
+        font-weight: 600
+      };
+      img {
+        margin: 1.5rem 0;
+        width: 100%;
+        height: 400px !important;
+        object-fit: cover;
+      };
+      table {
+        width: 100%;
+        border: 0 !important;
+        margin-bottom: 2rem !important;
+        tr:nth-child(odd) {
+          thead & {
+            background-color: rgba(116, 65, 93, 0.14) !important
+          }
+          background-color: var(--tertiary-color) !important;
+        };
+        td {
+          padding: 5px !important
+        }
+    }
+  }
 }
 
 .featured div {
   padding-right: 5px !important;
 }
 
-#author div:not(:nth-child(3n)) {
+/*#author div:not(:nth-child(3n)) {
   padding-right: 20px !important;
+}*/
+
+#technology .row div:not(:last-child) {
+  padding-right: 1.5rem !important;
 }
 
 /**Admin Area Only**/
@@ -546,9 +584,10 @@ footer {
 }
 
 @keyframes slideoutright {
-  0% {transform: translateX(-10%)}
-  10% {transform: translateX(-20%)}
-  20% {transform: translateX(0%)}
+  0% {transform: translateX(-20%)}
+  20% {transform: translateX(20%)}
+  40% {transform: translateX(40%)}
+  80% {transform: translateX(80%)}
   100% {transform: translateX(100%)}
 }
 
@@ -572,7 +611,7 @@ footer {
 }
 
 .smooth {
-  transition: height 2s ease-in-out
+  transition: all 2s ease-out
 
 }
 .notch-upward {
@@ -600,6 +639,12 @@ footer {
 }
 
 /* Media queries */
+@media only screen and (min-width: 992px) {
+  /*section {
+    padding: 30px 100px !important;
+  }*/
+}
+
 @media only screen and (max-width: 767px) {
   #adminnavigation {
     position: relative !important;
@@ -619,16 +664,16 @@ footer {
 }
 
 @media only screen and (max-width: 576px) {
-  #advert {
-    height: 60px !important
-  }
+  /*#author div:not(:nth-child(3n)), .featured div:not(:nth-child(3n)) {
+    padding-right: 0 !important;
+  }*/
 
-  #author div:not(:nth-child(3n)), .featured div:not(:nth-child(3n)) {
+  #technology .row div:not(:last-child) {
     padding-right: 0 !important;
   }
 
   .nav-link {
-    padding: 1rem!important;
+    padding: 1.5rem 2rem !important;
   }
 
   .dropdown {

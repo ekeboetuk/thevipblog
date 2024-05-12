@@ -2,8 +2,8 @@ import useSWR from 'swr';
 import axios from 'axios';
 
 export function usePosts(apiendpoint) {
-    const fetcher = (url) => axios(url).then(response =>  {return response.data})
-    const {data, error, isLoading, isValidating, mutate} = useSWR(process.env.REACT_APP_SERVER_URL + `/posts${apiendpoint}`,
+    const fetcher = ([url]) => axios(url, {signal: AbortSignal.timeout(30000)}).then(response =>  {return response.data})
+    const {data, error, isLoading, isValidating, mutate} = useSWR([process.env.REACT_APP_SERVER_URL + `/posts${apiendpoint}`],
         fetcher,
         {
             keepPreviousData: true,
@@ -41,7 +41,10 @@ export function useUser(apiendpoint) {
     const {data, error, isLoading, mutate} = useSWR([process.env.REACT_APP_SERVER_URL + `/user${apiendpoint}`, {withCredentials:true}],
     fetcher,
     {
-        shouldRetryOnError: false
+        shouldRetryOnError: false,
+        keepPreviousData: true,
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false
     })
 
     return {

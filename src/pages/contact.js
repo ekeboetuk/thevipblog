@@ -21,8 +21,7 @@ function ContactUs() {
                             <span><i className="fa-solid fa-phone pe-2 text-brand"></i>+234-**********</span>
                         </div>
                     </div>
-                    <div className="col-12 col-md-6 p-3
-                    p-md-5 mb-5 bg-tertiary">
+                    <div className="col-12 col-md-6 p-3 p-md-5 bg-tertiary">
                         <Contact />
                     </div>
                 </div>

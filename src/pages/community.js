@@ -14,7 +14,9 @@ export default function Forum(){
                     <progress id="loading" className="border-0 w-25" value="10" max="100"> 10% </progress>
             </section>
             <section className="container-fluid" style={{backgroundColor: 'rgba(88, 88, 88, 0.8)'}}>
-                <PostsCarousel count={4}/>
+                <div className="container-md text-center text-white">
+                    <PostsCarousel count={4}/>
+                </div>
             </section>
         </>
     )

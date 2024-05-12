@@ -1,17 +1,13 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { Subscription } from "./forms";
-import { UserMenu } from "./navigations";
-import { userContext } from "..";
 
 function Footer() {
-    const context = useContext(userContext)
 
     return (
         <footer className="container-fluid mx-auto bg-secondary text-white">
-            <section className="row px-4">
-                <div className="d-flex flex-column col-12 col-md-5 pe-0 pe-md-5 mb-5">
+            <section className="row p-5">
+                <div className="d-flex flex-column col-12 col-md-5 mb-5">
                     <Link to="/">
                         <img
                             src="/assets/logo-white.png"
@@ -35,10 +31,10 @@ function Footer() {
                         or write us a note to contribute as an Editor.
                     </span>
                 </div>
-                <div className="col-12 col-md-2 mb-5 mb-md-0 px-0 px-md-1">
+                <div className="col-12 col-md-2 mb-5">
                     <h4 className="mb-5">Tweets</h4>
-                    <h4 className="mt-4 mb-4">We Are Social</h4>
-                    <div className="d-flex justify-content-left align-items-center mb-5 mb-md-0">
+                    <h4 className="mb-5">We Are Social</h4>
+                    <div className="">
                         <a className="text-light" href="https://f.me/afriscope">
                             <i className="fa-brands fa-square-facebook fa-lg pe-4"></i>
                         </a>
@@ -50,7 +46,7 @@ function Footer() {
                         </a>
                     </div>
                 </div>
-                <div id="footernavigation" className="col-12 col-md-2 mb-5 mb-md-0 px-0 px-md-1">
+                <div id="footernavigation" className="col-12 col-md-2 mb-5">
                     <h4 className="mb-4 ">Navigation</h4>
                     <div className="d-flex flex-column">
                         <div className="d-flex flex-row align-items-center pb-2 notch-forward">
@@ -84,16 +80,8 @@ function Footer() {
                             </Link>
                         </div>
                     </div>
-                    {context.token &&
-                        <>
-                            <h4 className="my-4">User Menu</h4>
-                            <div id="usermenu" className="d-flex flex-column text-white">
-                                <UserMenu />
-                            </div>
-                        </>
-                    }
                 </div>
-                <div className="col-12 col-md-3 px-0 px-md-4">
+                <div className="col-12 col-md-3">
                     <h4 className="mb-4">Subscribe</h4>
                     <p className="">
                         Subscribe to our newsletter. Be always in trend!
@@ -101,16 +89,10 @@ function Footer() {
                     <Subscription />
                 </div>
             </section>
-            <div
-                id="copyright"
-                className="bg-secondary square border-top border-primary p-2 text-light"
-            >
-                <div className="container-md text-center">
-                    <small className="m-0 fw-normal">
-                        Copyright © 2023 Africope | MOC Inc | All Rights
-                        Reserved.
-                    </small>
-                </div>
+            <div id="copyright" className="bg-secondary square border-top border-primary p-2 text-light text-center">
+                <small className="fw-normal">
+                    Copyright © 2023 Africope | MOC Inc | All Rights Reserved.
+                </small>
             </div>
         </footer>
     );

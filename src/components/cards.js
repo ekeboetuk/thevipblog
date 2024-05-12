@@ -50,17 +50,17 @@ export const Postcard = ({
                     }}
                 >
                     {meta.featured && showFeatured && (
-                        <span className="bg-danger m-2 px-3 py-1 text-white fw-bold position-absolute start-0 top-0 rounded-pill">
+                        <span className="bg-danger m-2 px-3 py-1 text-white position-absolute start-0 top-0 rounded-pill">
                             Featured
                         </span>
                     )}
-                    {showCategory && <small className="text-white pe-4 py-2 fw-bold position-absolute end-0 bottom-0">
+                    {showCategory && <small className="text-white pe-4 py-2 position-absolute end-0 bottom-0">
                         {meta.category?.toUpperCase()}
                     </small>}
                 </div>
             )}
-            <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill">
-                <div className="d-flex flex-column py-4 px-4 flex-fill justify-content-center">
+            <div className="d-flex flex-column w-100 w-md-50 justify-content-between bg-light overflow-hidden rounded-bottom flex-fill border border-1">
+                <div className="d-flex flex-column p-3 flex-fill justify-content-center">
                     <Link
                         to={`/${meta.category}/${slug}`}
                         className=""
@@ -68,13 +68,13 @@ export const Postcard = ({
                         state={{id: id}}
                         preventScrollReset={true}
                     >
-                        <h2 className="lh-1 fw-bolder text-body" style={{fontSize: font||"2rem"}}>
-                            {title.toUpperCase()}
+                        <h2 className="lh-1 text-body" style={{fontSize: font||"2rem"}}>
+                            {title.split(' ').map(i => i[0].toUpperCase() + i.substring(1)).join(' ')}
                         </h2>
                     </Link>
                     <div className="d-inline-flex align-items-center">
                         {showCategory && (
-                            <small className="me-2 text-brand fw-bolder">
+                            <small className="me-2 text-brand">
                                 {meta.category.toUpperCase()}
                             </small>
                         )}
@@ -110,7 +110,7 @@ export const Postcard = ({
                         <div className="mb-0">
                             <Link
                                 to={`/${meta.category}/${slug}`}
-                                className="text-brand fw-bold"
+                                className="text-brand"
                                 onClick={handleClick} state={{id: id}}
                                 preventScrollReset={true}
                             >
@@ -141,15 +141,18 @@ export const PostcardTransparent = ({
     image,
     height,
     title,
+    titlebg = 'dark',
     intro,
+    showIntro,
     comments,
     meta,
-    category,
-    created,
-    showIntro,
     showMeta,
+    category,
+    showCategory,
+    created,
+    showEngagement,
     showFeatured = true,
-    showCategory
+    font
 }) => {
     const updateViews = () => {
         axios
@@ -168,66 +171,80 @@ export const PostcardTransparent = ({
     };
 
     return (
-        <>
-            <div
-                className="w-100 w-md-50 position-relative overflow-hidden reveal"
-                style={{
-                    backgroundImage: `url(${image})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    minHeight: "300px",
-                    height: height
-                }}
-            >
-                <div className="d-flex flex-row position-absolute start-0 top-0">
-                    {meta.featured && showFeatured && (
-                        <small className="bg-danger px-3 py-1 text-white fw-bold">
-                            Featured
-                        </small>
-                    )}
-                    {showCategory && (
-                        <small className="bg-warning px-3 py-1 text-white fw-bold">
-                            {meta.category.charAt(0).toUpperCase()+meta.category.slice(1)}
-                        </small>
-                    )}
-                </div>
-                <div className="postcontent d-flex flex-column w-100 w-md-50 justify-content-between text-white">
-                      <div className="postintro d-flex flex-column bg-dark justify-content-between w-100">
-                          <Link
-                              to={`/${meta.category}/${slug}`}
-                              onClick={updateViews} state={{id: id}}
-                              preventScrollReset={true}
-                          >
-                              <h3 className="title fw-bolder text-white lh-sm">{title.toUpperCase()}</h3>
-                              {showIntro && <p className="intro text-white fs-5 mb-0">{intro}</p>}
-                          </Link>
-                        </div>
-                        {showMeta && <div className={`${showMeta && 'meta'} bg-dark position-absolute bottom-0 w-100 start-0 px-4`}>
-                            <Meta
-                                id={id}
-                                slug={slug}
-                                meta={meta}
-                                comments={comments}
-                            />
-                        </div>}
-                </div>
+        <div
+            className="w-100 w-md-50 position-relative overflow-hidden reveal shadow-sm"
+            style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                minHeight: "250px",
+                height: height
+            }}
+        >
+            <div className="d-flex flex-row position-absolute start-0 top-0">
+                {meta.featured && showFeatured && (
+                    <small className="bg-danger px-3 py-1 text-white">
+                        Featured
+                    </small>
+                )}
+                {showCategory && (
+                    <small className="bg-warning px-3 py-1 text-white">
+                        {meta.category.charAt(0).toUpperCase()+meta.category.slice(1)}
+                    </small>
+                )}
             </div>
-        </>
-    );
-};
+            <div className="postcontent d-flex flex-column w-100 w-md-50 justify-content-between text-white">
+                <div className={`caption d-flex flex-column bg-${titlebg} justify-content-between w-100`}>
+                    <Link to={`/${meta.category}/${slug}`} onClick={updateViews} state={{id: id}} preventScrollReset={true}>
+                        <h3 className={`text-${titlebg==='dark'?'white':'dark'} lh-sm mb-0`} style={{fontSize: font||"2rem"}}>{title.split(' ').map(i => i[0].toUpperCase() + i.substring(1)).join(' ')}</h3>
+                    </Link>
+                    {showIntro && <p className={`intro text-${titlebg==='dark'?'white':'dark'} fs-5 mb-3`}>{intro}</p>}
+                    {showMeta && (
+                        <div className="lh-sm mb-2">
+                            <div className={`d-flex flex-wrap text-${titlebg==='dark'?'white':'dark'}`}>
+                                <div>
+                                    <small className="fas fa-user me-1"></small>
+                                    <small className="me-2 flex-fill">
+                                        {meta.author.isActive?meta.author.name:"Administrator"}
+                                    </small>
+                                </div>
+                                <div>
+                                    <small className="fas fa-calendar-days me-1"></small>
+                                    <small className="me-1 fst-italic">
+                                        {moment(created).format(
+                                            "YYYY-MM-DD h:mm"
+                                        )}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                {showEngagement && <div className={`${showEngagement && 'engagement'} bg-dark position-absolute bottom-0 w-100 start-0 px-4`}>
+                    <Meta
+                        id={id}
+                        slug={slug}
+                        meta={meta}
+                        comments={comments}
+                    />
+                </div>}
+            </div>
+        </div>
+    )
+}
 
-export const Usercard = ({ user, handleUserStatus }) => {
+export const Usercard = ({ user, toggleUserStatus }) => {
     return (
-        <div className="bg-light rounded-5 shadow-sm">
+        <div className={`bg-light rounded-5 shadow-sm ${!user.isActive&&"opacity-50"}`}>
             <img
                 src={`${user.avatar||"/media/picture-placeholder.jpeg"}`}
                 style={{ height: "150px", width: "100%", objectFit: "cover", objectPosition: "top center"}}
                 alt="Avatar"
                 className="square bg-white"
             />
-            <div className="text-brand fw-bold pt-4">{user.name.toUpperCase()}</div>
+            <div className="text-brand pt-4">{user.name.toUpperCase()}</div>
             <div className="d-flex p-4 pt-0">
-                <div className="d-flex flex-column align-items-end fw-normal pe-2 fw-bold">
+                <div className="d-flex flex-column align-items-end fw-normal pe-2">
                     <small className="">E-mail:</small>
                     <small className="">Role:</small>
                     <small className="">Joined:</small>
@@ -246,7 +263,7 @@ export const Usercard = ({ user, handleUserStatus }) => {
                             <button
                                 className="btn-primary px-2 text-white border-0 p-1"
                                 onClick={() =>
-                                    handleUserStatus(user._id, user.isActive)
+                                    toggleUserStatus(user._id, user.isActive)
                                 }
                                 disabled={user.email === "admin@afriscope.ng"}
                             >
@@ -263,8 +280,8 @@ export const Usercard = ({ user, handleUserStatus }) => {
 export const Widgetcard = ({ title, children }) => {
     return (
         <div className="fw-normal rounded shadow-sm w-100 mb-5">
-            {title && <h4 className="bg-primary text-white p-3 rounded-top fw-bold mb-0">
-                {title} {title === "Look Here" && <i className="fa-solid fa-angles-down fa-bounce" style={{"--fa-animation-delay": "10s"}}></i>}
+            {title && <h4 className="bg-primary text-white p-3 rounded-top mb-0">
+                {title} {title === "Watch Here" && <i className="fa-solid fa-angles-down fa-bounce" style={{"--fa-animation-delay": "10s"}}></i>}
             </h4>}
             {children}
         </div>

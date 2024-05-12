@@ -1,5 +1,6 @@
 'use strict';
 
+require('dotenv/config')
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
@@ -16,9 +17,9 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const paths = require('./paths');
-const modules = require('./modules');
-const getClientEnvironment = require('./env');
+const paths = require('./paths.cjs');
+const modules = require('./modules.cjs');
+const getClientEnvironment = require('./env.cjs');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin =
   process.env.TSC_COMPILE_ON_ERROR === 'true'
@@ -26,7 +27,7 @@ const ForkTsCheckerWebpackPlugin =
     : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
+const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash.cjs');
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -43,6 +44,7 @@ const babelRuntimeEntryHelpers = require.resolve(
 const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator', {
   paths: [babelRuntimeEntry],
 });
+
 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
@@ -88,8 +90,8 @@ const hasJsxRuntime = (() => {
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function ({development, production}) {
-  const isEnvDevelopment = development;
-  const isEnvProduction = production;
+  const isEnvDevelopment = development||process.env.NODE_ENV === "development";
+  const isEnvProduction = production||process.env.NODE_ENV === "production";
 
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
@@ -200,7 +202,7 @@ module.exports = function ({development, production}) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry:  ['webpack-hot-middleware/client', paths.appIndexJs],
+    entry:  isEnvDevelopment?['webpack-hot-middleware/client', paths.appIndexJs]:[paths.appIndexJs],
     output: {
       // The build folder.
       path: paths.appBuild,
@@ -407,6 +409,9 @@ module.exports = function ({development, production}) {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               include: paths.appSrc,
               loader: require.resolve('babel-loader'),
+              resolve: {
+                fullySpecified: false,
+              },
               options: {
                 customize: require.resolve(
                   'babel-preset-react-app/webpack-overrides'
@@ -452,7 +457,6 @@ module.exports = function ({development, production}) {
                 cacheDirectory: true,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
-                
                 // Babel sourcemaps are needed for debugging into node_modules
                 // code.  Without the options below, debuggers like VSCode
                 // show incorrect code and set breakpoints on the wrong lines.

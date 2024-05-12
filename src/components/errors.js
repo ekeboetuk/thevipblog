@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 
 import Modal from './modal'
 import { Login } from './users'
-import { userContext } from '..'
+import { userContext } from './routes'
 
 export const Error = ({ status, message, element, image, token }) => {
     const [portal, setPortal] = useState(false)

@@ -7,6 +7,7 @@ import { Postcard, PostcardTransparent } from '../components/cards';
 import { Advertise, Subscribe } from '../components/widgets'
 import { Error } from '../components/errors';
 import { PostsCarousel, CarouselWrapper } from '../components/carousels';
+import { Title } from '../components/header';
 
 function Posts() {
     const category = useParams().category
@@ -29,9 +30,9 @@ function Posts() {
         content =
             <section>
             <div className="container-md row mx-auto p-4 p-md-0">
-                <div className="d-flex gap-2 mb-2">
-                    <Skeleton width="5px" height="28px" baseColor="#EBEBEB"/>
-                    <Skeleton width="100px" height="25px" baseColor="#FAFAFA"/>
+                <div className="d-flex gap-2 mb-2 mt-4 align-items-center">
+                    <Skeleton width="30px" height="30px" baseColor="#EBEBEB" className="rounded-circle"/>
+                    <Skeleton width="150px" height="20px" baseColor="#FAFAFA"/>
                 </div>
                 <div className="col-12 col-md-8 pe-md-4 align-self-start">
                     <SkeletonTheme baseColor="#FAFAFA">
@@ -70,9 +71,9 @@ function Posts() {
         content =
             <>
                 <section>
-                    <h3 className="container-md border-left">Editor's Pick</h3>
                     {editorsPick.length !== 0?
                         <div className="container-md mx-auto row row-col-2">
+                            <Title title={`Editor's Pick`} />
                             <div className={`col col-12 col-md-${editorsPick.length>1?8:12} pe-md-4 mb-5 mb-md-0 align-self-stretch`}>
                                 <PostcardTransparent
                                     id={editorsPick[0]._id}
@@ -85,7 +86,7 @@ function Posts() {
                                     meta={editorsPick[0].meta}
                                     created={editorsPick[0].created}
                                     showIntro={true}
-                                    showMeta={true}
+                                    showEngagement={true}
                                     />
                             </div>
                                 <div className="col col-12 col-md-4 ps-md-4">
@@ -151,7 +152,7 @@ function Posts() {
                                 <Subscribe />
                             </div>
                         </div>
-                        <h3 className="col-12 border-left">{`Latest`}</h3>
+                        <Title title={`Latest`} />
                         <div className="col-12 col-md-9 row row-cols-1 row-cols-md-3 pe-0 pe-md-4">
                             {filtered.slice(0,6).map((post) => (
                                 <div key={post._id} className="col pe-md-3
@@ -165,9 +166,9 @@ function Posts() {
                                     intro={`${post.intro.slice(0, 500)}...`}
                                     comments={post.comments}
                                     meta={post.meta}
-                                    showMeta={true}
+                                    showEngagement={true}
                                     created={post.created}
-                                    showFeatured={false}
+                                    showFeatured={true}
                                     />
                                 </div>
                             ))}
@@ -175,35 +176,37 @@ function Posts() {
                     </div>
                 </section>
                 <section className="container-fluid mx-auto">
-                    <h3 className="container-md border-left">{`Featured In ${category}`}</h3>
-                    {featuredIn.length > 0?
-                        <CarouselWrapper limit={Math.min(featuredIn.length, 6)} autoplay={true} continous={false}>
-                            <div id="carousel" className="featured col-12 row row-cols-1 row-cols-md-3 flex-nowrap">
-                                {featuredIn.slice(0,6).map((post) => (
-                                    <div key={post._id} className="notch-upward col d-flex flex-row align-self-start transition">
-                                        <Postcard
-                                            id={post._id}
-                                            slug={post.slug}
-                                            image={post.image}
-                                            height="120px"
-                                            title={post.title}
-                                            comments={post.comments}
-                                            meta={post.meta}
-                                            category={post.meta.category}
-                                            created={post.created}
-                                            showCategory={false}
-                                            showMeta={false}
-                                            showFeatured={false}
-                                            showReadmore={false}
-                                            showEngagement={false}
-                                            font="1.4rem"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </CarouselWrapper>:
-                        <p className="container-md">Nothing To See Here Today!</p>
-                    }
+                    <div className="container-md">
+                        <Title title={`Featured In ${category.charAt(0).toUpperCase()}${category.slice(1)}`} />
+                        {featuredIn.length > 0?
+                            <CarouselWrapper limit={Math.min(featuredIn.length, 6)}>
+                                <div id="carousel" className="featured col-12 row row-cols-1 row-cols-md-3 flex-nowrap">
+                                    {featuredIn.slice(0,6).map((post) => (
+                                        <div key={post._id} className="notch-upward col d-flex flex-row align-self-start transition">
+                                            <Postcard
+                                                id={post._id}
+                                                slug={post.slug}
+                                                image={post.image}
+                                                height="120px"
+                                                title={post.title}
+                                                comments={post.comments}
+                                                meta={post.meta}
+                                                category={post.meta.category}
+                                                created={post.created}
+                                                showCategory={false}
+                                                showMeta={false}
+                                                showFeatured={false}
+                                                showReadmore={false}
+                                                showEngagement={false}
+                                                font="1.4rem"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </CarouselWrapper>:
+                            <p className="container-md">Nothing To See Here Today!</p>
+                        }
+                    </div>
                 </section>
             </>
     } else if(error || error === undefined) {

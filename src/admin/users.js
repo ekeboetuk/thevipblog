@@ -12,11 +12,11 @@ function Users({token}) {
         document.title = "Afriscope Administrator - Manage Users"
     })
 
-    const {users, error, loading, mutating} = useUsers('s')
+    const {users, error, loading, mutating} = useUsers('')
     const user_view = useRef(`${localStorage.getItem('users_view')}`)
     const [view, setView] = useState(user_view.current === 'null'?'List':user_view.current);
 
-    const toggleUserActivation = async(id, status)=>{
+    const toggleUserStatus = async(id, status)=>{
         mutating(users.map((user) => {
             if(user.id === id) {
                     return {...user, isActive: !status}
@@ -68,7 +68,7 @@ function Users({token}) {
                                 {users?.length>0 ?
                                     users.map((user) => (
                                         <div key={user._id} className="col text-center g-4">
-                                            <Usercard user = {user} toggleUserActivation={toggleUserActivation} />
+                                            <Usercard user = {user} toggleUserStatus={toggleUserStatus} />
                                         </div>
                                     )):
                                     <div id="message" className="mx-3 p-2"><i className="fa-solid fa-circle-notch fa-spin me-2"></i>Loading...</div>
@@ -90,7 +90,7 @@ function Users({token}) {
                                                     <small className="d-flex no-wrap align-self-center">
                                                         <i type="button" className="fa-solid fa-trash pe-3" onClick={()=>handleDeleteUser(user._id)}></i>
                                                         <i type="button" className="fa-regular fa-pen-to-square pe-3"></i>
-                                                        <i type="button" className={`fa-regular ${user.isActive?"fa-eye-slash":"fa-eye"}`} onClick={()=>toggleUserActivation(user._id, user.isActive)}></i>
+                                                        <i type="button" className={`fa-regular ${user.isActive?"fa-eye-slash":"fa-eye"}`} onClick={()=>toggleUserStatus(user._id, user.isActive)}></i>
                                                     </small>
                                                 }
                                             </div>

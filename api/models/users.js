@@ -60,6 +60,11 @@ const userschema = Schema({
     posts: {
         type: Schema.Types.ObjectId,
         ref: "posts"
+    },
+    views: {
+        type: [Schema.Types.ObjectId],
+        ref: "posts",
+        default: undefined
     }
 }, options);
 
